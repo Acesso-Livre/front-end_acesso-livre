@@ -16,28 +16,6 @@
 </head>
 
 <body>
-    <!-- ===== HEADER ===== -->
-    <header>
-        <nav>
-            <!-- Logos e texto -->
-            <div class="logo-text-container">
-                <img src="../../assets/img/global/logo-acesso-livre.png" alt="logo Acesso Livre" class="logo">
-                <span class="logo-text">Acesso Livre</span>
-                <img src="../../assets/img/global/logo-ifba.png" alt="logo IFBA" class="logo-ifba">
-            </div>
-
-            <!-- Botão menu mobile -->
-            <button class="menu-toggle" id="menu-toggle">&#9776;</button>
-
-            <!-- Navegação principal -->
-            <ul class="nav-links" id="nav-links">
-                <li><a href="Home">Home</a></li>
-                <li><a href="Sobre">Sobre</a></li>
-                <li><a href="Contato">Contato</a></li>
-                <li><a href="Mapa">Mapa</a></li>
-            </ul>
-        </nav>
-    </header>
 
     <!-- ===== MAIN ===== -->
     <main>
@@ -79,11 +57,13 @@
         </section>
     </main>
 
+    <script src="scripts/global.js"></script>
     <script src="scripts/index.js"></script>
-    <!-- ===== FOOTER ===== -->
-    <footer>
-        <p>© 2025 Acesso Livre. Todos os direitos reservados.</p>
-    </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            loadComponent("header", "body-start");
+            loadComponent("footer", "body-end");
+        });
+    </script>
 </body>
-
 </html>

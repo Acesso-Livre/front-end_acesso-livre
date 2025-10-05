@@ -1,0 +1,84 @@
+/* ===== HEADER E NAVEGAÇÃO ===== */
+header nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(0,0,139,0.9), rgba(0,0,205,0.8));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    height: 60px;
+    z-index: 1000;
+}
+
+.logo-text-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    margin-left: 6px;
+}
+
+.logo-ifba {
+    height: 40px;
+    width: auto;
+    margin-right: 8px;
+}
+
+.menu-toggle {
+    font-size: 30px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    z-index: 1010;
+}
+
+/* ===== MENU RESPONSIVO ===== */
+.nav-links {
+    position: absolute;
+    top: 10px;
+    right: 100px;
+    display: flex;
+    gap: 15px;
+    list-style: none;
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+    transition: all 0.4s ease;
+    background: rgba(0,0,139,0.2);
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+.nav-links.show {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.nav-links li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.nav-links li a:hover {
+    color: #add8e6;
+}

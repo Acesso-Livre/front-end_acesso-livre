@@ -1,20 +1,15 @@
-// ===== MENU MOBILE =====
-document.addEventListener("DOMContentLoaded", () => {
-    const menuToggle = document.getElementById("menu-toggle");
-    const navLinks = document.getElementById("nav-links");
-
-    if (!menuToggle || !navLinks) {
-        console.error("IDs não encontrados no HTML!");
-        return;
+// ===== ANIMAÇÃO BOTÃO "EXPLORAR MAPA" =====
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.querySelector('.explorar-mapa-btn');
+    if (btn) {
+        btn.addEventListener('click', function() {
+            btn.classList.add('animar');
+            setTimeout(() => btn.classList.remove('animar'), 350);
+        });
     }
-
-    // Abre/fecha ao clicar no botão ☰
-    menuToggle.addEventListener("click", () => {
-        navLinks.classList.toggle("show");
-    });
 });
 
-// ===== TRANSFORMA LOCAL EM LINK =====
+// ===== TRANSFORMA LOCAL EM LINK ===== // 
 document.querySelectorAll('.comentario-local').forEach(function(el) {
     if (el.tagName === 'DIV') {
         const local = el.textContent.trim();
@@ -28,15 +23,3 @@ document.querySelectorAll('.comentario-local').forEach(function(el) {
         el.replaceWith(a);
     }
 });
-
-// ===== ANIMAÇÃO BOTÃO "EXPLORAR MAPA" =====
-document.addEventListener('DOMContentLoaded', function() {
-    const btn = document.querySelector('.explorar-mapa-btn');
-    if (btn) {
-        btn.addEventListener('click', function() {
-            btn.classList.add('animar');
-            setTimeout(() => btn.classList.remove('animar'), 350);
-        });
-    }
-});
-
