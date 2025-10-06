@@ -1,85 +1,75 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root {
+  --nav-h: 60px;
 }
 
-body, html {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+html, body {
+  height: 100%;
+  width: 100%;
   font-family: Arial, sans-serif;
 }
 
-/* Navbar fixa */
 .navbar {
-  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  height: var(--nav-h);
   background: #0a2a66;
   display: flex;
   align-items: center;
   padding: 0 20px;
-  z-index: 10;
+  z-index: 1000;
 }
 
 .btn {
-  background: #003366; 
+  background: #003366;
   color: #fff;
   border: none;
-  border-radius: 30px;         
-  padding: 10px 24px;
-  font-size: 1em;
-  font-weight: bold;
+  border-radius: 30px;
+  padding: 10px 20px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: 0.2s;
 }
 
 .btn:hover {
   background: #0050a0;
 }
 
-/* Container do mapa */
-.map-container {
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Área que será arrastada/zoommada */
-.map-pan {
+/* Mapa ocupa o restante da tela */
+#map {
   position: absolute;
+  top: var(--nav-h);
   left: 0;
-  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
 }
 
-/* Imagem do mapa */
-.map {
-  display: block;
-  max-width: none; /* permite zoom */
-  user-select: none;
-  pointer-events: none; /* clique passa pelos espaços da imagem */
-}
-
-/* Pins */
-.pin {
-  position: absolute;
+/* Estilo dos pins */
+.pin-marker {
   width: 32px;
   height: 32px;
-  background: #ff3b3b;
-  border-radius: 50%;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center;
+  transition: 0.12s ease;
   cursor: pointer;
-  z-index: 2;
-  transition: transform 0.2s;
 }
 
-.pin:hover {
-  transform: scale(1.2);
-  background: #ff7b00;
+.pin-marker .dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #ff3b3b;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.pin-marker:hover {
+  transform: scale(1.15);
+}
+
+/* Popup do Leaflet (opcional) */
+.leaflet-popup-content-wrapper {
+  font-size: 14px;
 }
