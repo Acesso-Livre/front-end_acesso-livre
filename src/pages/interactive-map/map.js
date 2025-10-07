@@ -55,9 +55,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const y = (p.top / 100) * H;
       const marker = L.marker([y, x], { icon: makePinIcon() }).addTo(map);
 
-      marker.bindPopup(`<strong>${p.label}</strong>`);
-      marker.on('click', () => alert(`Você clicou em ${p.label}`));
+      // Ao clicar em um pin → abre modal
+      marker.on('click', () => {
+        document.getElementById("infoModal").style.display = "flex";
+      });
     });
+
+    // Fecha modal ao clicar no X
+    document.querySelector(".close-btn").onclick = function() {
+      document.getElementById("infoModal").style.display = "none";
+    };
+
+    // Fecha modal ao clicar fora da caixa
+    window.onclick = function(event) {
+      const modal = document.getElementById("infoModal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
 
     // Recalibra o mapa ao redimensionar a janela
     let resizeTimer = null;
