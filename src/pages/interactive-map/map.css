@@ -73,3 +73,28 @@ html, body {
 .leaflet-popup-content-wrapper {
   font-size: 14px;
 }
+
+#modal-body {
+  display: flex;
+  flex-direction: column; /* empilha topo e comentários verticalmente */
+  height: 100%; /* ocupa toda a altura da modal */
+}
+
+/* Metade superior: foto + descrição lado a lado */
+.foto-local, .descricao-local {
+  flex: 1; /* metade da metade superior */
+  max-width: 50%;
+  height: 100%; /* preenche o container topo */
+}
+
+.topo-local {
+  display: flex;
+  flex: 1; /* ocupa 50% da altura total do modal */
+}
+
+/* Metade inferior: comentários */
+.comentarios-local {
+  flex: 1; /* ocupa os outros 50% da altura */
+  max-width: 100%;
+  overflow-y: auto; /* rolagem se necessário */
+}
