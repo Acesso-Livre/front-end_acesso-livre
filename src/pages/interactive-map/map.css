@@ -74,6 +74,32 @@ html, body {
   font-size: 14px;
 }
 
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1001;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  width: 100%;
+  height: 100%; /* define altura para o flex interno funcionar */
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  position: relative;
+}
+
 #modal-body {
   display: flex;
   flex-direction: column; /* empilha topo e comentários verticalmente */
@@ -85,6 +111,7 @@ html, body {
   flex: 1; /* metade da metade superior */
   max-width: 50%;
   height: 100%; /* preenche o container topo */
+  text-align: center;
 }
 
 .topo-local {
@@ -97,4 +124,22 @@ html, body {
   flex: 1; /* ocupa os outros 50% da altura */
   max-width: 100%;
   overflow-y: auto; /* rolagem se necessário */
+  text-align: center;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;       /* distância do topo */
+  right: 20px;     /* distância da direita */
+  font-size: 32px; /* aumenta o tamanho do X */
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;     /* cor do X */
+  z-index: 10;     /* garante que fique acima do conteúdo */
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+  color: #ff3b3b; /* muda a cor ao passar o mouse */
+  transform: scale(1.2); /* aumenta levemente ao passar o mouse */
 }
