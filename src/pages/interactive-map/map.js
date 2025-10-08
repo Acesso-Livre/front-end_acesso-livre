@@ -92,3 +92,49 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Erro ao carregar a imagem do mapa. Verifique o caminho.');
   };
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.querySelector(".carousel-track");
+  const cards = document.querySelectorAll(".project-card");
+  const prevBtn = document.querySelector(".carousel-btn.left");
+  const nextBtn = document.querySelector(".carousel-btn.right");
+
+  let currentIndex = 0;
+
+  // Atualiza a posição do carrossel e o estado dos botões
+  function updateCarousel() {
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+    // Controla visibilidade dos botões
+    prevBtn.style.display = currentIndex === 0 ? "none" : "block";
+    nextBtn.style.display = currentIndex === cards.length - 1 ? "none" : "block";
+  }
+
+  // Botão próximo
+  nextBtn.addEventListener("click", () => {
+    if (currentIndex < cards.length - 1) {
+      currentIndex++;
+      updateCarousel();
+    }
+  });
+
+  // Botão anterior
+  prevBtn.addEventListener("click", () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateCarousel();
+    }
+  });
+
+  // Abrir/fechar detalhes do card
+  const moreInfoBtns = document.querySelectorAll(".more-info-btn");
+  moreInfoBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const info = btn.nextElementSibling;
+      info.classList.toggle("active");
+    });
+  });
+
+  // Estado inicial
+  updateCarousel();
+});

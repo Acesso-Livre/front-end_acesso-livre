@@ -25,18 +25,40 @@
 <div id="infoModal" class="modal">
   <div class="modal-content">
     <span class="close-btn">&times;</span>
-      <div id="modal-body">
-        <div class="topo-local">
-          <div class="foto-local">
-            <span>Foto Local</span>
-          </div>
-          <div class="descricao-local">
-            <span>Descrição Local</span>
-          </div>
-          </div>
-            <div class="comentarios-local">
-          <span>Comentario Local</span>
+    <div id="modal-body">
+      <div class="topo-local">
+        <div class="foto-local">
+          <!-- Carousel integrado -->
+          <section id="projetos">
+            <h2>Meus Projetos</h2>
+            <div class="carousel-container">
+                <button class="carousel-btn left">❮</button>
+                <div class="carousel">
+                  <div class="carousel-track">
+                    <div class="project-card">
+                      <img src="/src/assets/img/map/section-map/foto-local.jpeg" alt="Projeto 1" />
+                    </div>
+                    <div class="project-card">
+                      <img src="/src/assets/img/map/section-map/foto-local-2.jpeg" alt="Projeto 2" />
+                    </div>
+                    <div class="project-card">
+                      <img src="/src/assets/img/map/section-map/foto-local-3.jpeg" alt="Projeto 3" />
+                    </div>
+                  </div>
+                </div>
+                <button class="carousel-btn right">❯</button>
+              </div>
+            </div>
+          </section>
         </div>
+
+        <div class="descricao-local">
+          <span>Descrição Local</span>
+        </div>
+      </div>
+
+      <div class="comentarios-local">
+        <span>Comentario Local</span>
       </div>
     </div>
   </div>
