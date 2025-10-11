@@ -8,14 +8,20 @@ html {
   font-size: 100%;
 }
 
+a {
+  text-decoration: none;
+}
+
 :root {
     --color-white: #ffffff;
     --color-black: #000000;
+    --color-yellow: #ffb300;
     --primary-color: #0056d2;
     --secondary-color: #0a84ff;
-    --text-color: #333333;
-    --bg-color: #00008B;
-    --bg-buttom: #1e90ff;
+    --text-color: #111111;
+    --bg-color: rgb(0, 0, 201);
+    --bg-color-gradient: rgb(0, 110, 255);
+    --bg-buttom: #003366;
 
     --font-family-heading: "Comme", sans-serif;
     --font-family-base: "Albert Sans", sans-serif;
@@ -24,9 +30,8 @@ html {
     --font-size-h2: 1.5rem;
     --font-size-h3: 1.2rem;
     --font-size-h4: 1rem;
-    --font-size-text: 0.875rem;
+    --font-size-text: 0.9rem;
 
     --font-weight-bold: 700;
-    --font-weight-medium: 500;
-    --font-weight-regular: 400;
+    --font-weight-regular: 200;
 }

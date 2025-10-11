@@ -8,5 +8,4 @@ function initHeader() {
     });
 }
 
-// chamar logo depois que o script carregar
 initHeader();
