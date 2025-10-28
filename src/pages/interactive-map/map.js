@@ -126,15 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Abrir/fechar detalhes do card
-  const moreInfoBtns = document.querySelectorAll(".more-info-btn");
-  moreInfoBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const info = btn.nextElementSibling;
-      info.classList.toggle("active");
-    });
-  });
-
-  // Estado inicial
+  // Inicializa com a primeira imagem visível e o carrossel na posição correta
   updateCarousel();
 });
