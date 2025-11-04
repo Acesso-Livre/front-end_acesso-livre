@@ -72,16 +72,9 @@ html, body {
 
 /* Modal */
 .modal {
-  display: none;
-  position: fixed;
-  z-index: 1001;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  justify-content: center;
-  align-items: center;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
 }
 
 .modal-content {
@@ -96,19 +89,24 @@ html, body {
   position: relative;
 }
 
+.foto-local, .descricao-local, .comentarios-local{
+  position: absolute;
+  border: 1px solid #ccc;
+}
+
 .foto-local {
-  flex: 1; /* Faz com que a foto ocupe metade da largura */
-  max-width: 50%; /* Limita a largura da foto a 50% */
-  height: 100%; /* Preenche a altura do contêiner */
-  text-align: center;
+    top: 0;
+  left: 0;
+  width: 50vw;
+  height: 50vh;
+  overflow: hidden;
 }
 
 .descricao-local {
-  flex: 1; /* Faz com que a descrição ocupe metade da largura */
-  max-width: 50%; /* Limita a largura da descrição a 50% */
-  height: 100%; /* Preenche a altura do contêiner */
-  text-align: left; /* Alinha o texto à esquerda */
-  padding-left: 20px; /* Adiciona um pequeno espaço à esquerda */
+  top: 0;
+  right: 0;
+  width: 50vw;
+  height: 50vh;
 }
 
 .topo-local {
@@ -119,10 +117,10 @@ html, body {
 
 /* Metade inferior: comentários */
 .comentarios-local {
-  flex: 1; /* ocupa os outros 50% da altura */
-  max-width: 100%;
-  overflow-y: auto; /* rolagem se necessário */
-  text-align: center;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 50vh;
 }
 
 .close-btn {
@@ -146,37 +144,38 @@ html, body {
 .carousel-container {
   position: relative;
   width: 100%;
-  max-width: 400px; /* limite opcional, pode ser ajustado */
-  margin: 0 auto;  /* centraliza o carrossel na tela */
+  height: 100%;  /* Faz com que o carrossel ocupe 100% da altura da div */
   overflow: hidden;
 }
 
 /* Track do carrossel */
 .carousel {
   display: flex;
-  width: 100%;
+  width: 100%; /* Garante que o carrossel ocupe toda a largura disponível */
+  height: 100%; /* Ajusta a altura do carrossel para o tamanho da div */
 }
-
 /* Faixa que contém os cards */
 .carousel-track {
   display: flex;
+  width: 100%;
   transition: transform 0.5s ease-in-out;
-  justify-content: flex-start; /* Ajusta o alinhamento para garantir que a primeira imagem fique visível */
-  gap: 10px;
+  justify-content: flex-start; 
 }
 
 /* Cada card do carrossel */
 .project-card {
-  height: 400px;
-  width: 100%; /* Ajusta a largura para que se ajuste corretamente ao container */
-  flex-shrink: 0;
-  text-align: center;
+  display: flex;
+  justify-content: center; /* Alinha a imagem horizontalmente no centro */
+  align-items: center;     /* Alinha a imagem verticalmente no centro */
+  height: 100%;            /* Garante que o card ocupe toda a altura disponível */
+  width: 100%;             /* Garante que o card ocupe toda a largura disponível */
+  overflow: hidden;        /* Impede que o conteúdo ultrapasse os limites do card */
 }
 
 .project-card img {
-  width: 100%;  /* faz a imagem ocupar toda a largura do card */
-  height: 400px; /* altura fixada */
-  object-fit: cover;  /* ajusta a imagem para cobrir completamente o card */
+  width: 100%;             /* Ajusta a largura da imagem para ocupar toda a largura do card */
+  height: 100%;            /* Ajusta a altura da imagem para ocupar toda a altura do card */
+  object-fit: cover;       /* Faz a imagem cobrir toda a div, sem distorção */
   border-radius: 12px;
   display: block;
 }
