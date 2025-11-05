@@ -2,9 +2,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     const btn = document.querySelector('.explorar-mapa-btn');
     if (btn) {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(event) {
+            // marca que o usuário veio do botão 'Explorar mapa' — mapa deve abrir (sem modal)
+            try { sessionStorage.setItem('enterFromExplore', '1'); } catch (e) { /* ignore */ }
             btn.classList.add('animar');
             setTimeout(() => btn.classList.remove('animar'), 350);
+            // navegação segue normalmente (anchor)
         });
     }
 });

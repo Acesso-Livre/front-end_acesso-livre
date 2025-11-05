@@ -1,6 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
   const imgUrl = '../../assets/img/map/mapa-ifba.png'; // ajuste o caminho da imagem
 
+  // Garante que o modal comece fechado ao carregar a página
+  const initialModal = document.getElementById('infoModal');
+  if (initialModal) initialModal.style.display = 'none';
+
+  // Se o usuário veio do botão 'Explorar mapa', limpamos o flag e garantimos
+  // que nenhum modal seja aberto automaticamente
+  try {
+    if (sessionStorage.getItem('enterFromExplore') === '1') {
+      sessionStorage.removeItem('enterFromExplore');
+    }
+  } catch (e) {
+    /* ignore */
+  }
+
   const pins = [
     { label: 'Entrada', top: 90, left: 7 },
     { label: 'Estacionamento I', top: 72, left: 32 },
@@ -50,6 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Adiciona os pins no mapa
+    // Vamos rastrear o estado do modal para controlar o comportamento do botão "Voltar"
+    let inModal = false;
+    let modalPushed = false; // se true, a abertura do modal empurrou um estado no history
+
     pins.forEach(p => {
       const x = (p.left / 100) * W;
       const y = (p.top / 100) * H;
@@ -57,22 +75,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Ao clicar em um pin → abre modal
       marker.on('click', () => {
-        document.getElementById("infoModal").style.display = "flex";
+        const modal = document.getElementById("infoModal");
+        modal.style.display = "flex";
+        inModal = true;
+
+        try {
+          // empurra um estado para que o botão voltar do browser possa fechar o modal primeiro
+          history.pushState({ modal: true }, '');
+          modalPushed = true;
+        } catch (e) {
+          // alguns ambientes (file://) podem lançar; ignore
+          modalPushed = false;
+        }
       });
     });
 
-    // Fecha modal ao clicar no X
-    document.querySelector(".close-btn").onclick = function() {
-      document.getElementById("infoModal").style.display = "none";
-    };
+    // Não fechamos o modal ao clicar fora nem temos um X: o fluxo agora é
+    // fechar o modal via botão "voltar" da navbar (arquivo index.html tem o link)
 
-    // Fecha modal ao clicar fora da caixa
-    window.onclick = function(event) {
-      const modal = document.getElementById("infoModal");
-      if (event.target === modal) {
+    // Intercepta clique no botão voltar na navbar: quando o modal estiver aberto,
+    // fecha o modal e previne a navegação; quando o modal estiver fechado, segue para a página principal
+    const navBack = document.querySelector('.btn.voltar');
+    if (navBack) {
+      navBack.addEventListener('click', function (e) {
+        const modal = document.getElementById("infoModal");
+        if (modal && modal.style.display === 'flex') {
+          // fecha modal em vez de navegar
+          e.preventDefault();
+          modal.style.display = 'none';
+          inModal = false;
+          if (modalPushed) {
+            try { history.back(); } catch (err) { /* ignore */ }
+            modalPushed = false;
+          }
+        } else {
+          // deixa o link agir normalmente (navegar para a página principal)
+        }
+      });
+    }
+
+    // Se o usuário usar o botão "voltar" do browser enquanto o modal estiver aberto
+    window.addEventListener('popstate', function (event) {
+      if (inModal) {
+        const modal = document.getElementById("infoModal");
         modal.style.display = "none";
+        inModal = false;
+        modalPushed = false;
       }
-    };
+    });
+
+    // Botão interno "Voltar" do modal: primeiro fecha o modal; se já estiver no mapa, volta para a página principal
+    const backBtn = document.querySelector('.back-btn');
+    if (backBtn) {
+      backBtn.addEventListener('click', function () {
+        if (inModal) {
+          const modal = document.getElementById("infoModal");
+          modal.style.display = "none";
+          inModal = false;
+          if (modalPushed) {
+            try { history.back(); } catch (e) { /* ignore */ }
+            modalPushed = false;
+          }
+        } else {
+          // já está no mapa: volta para a página principal
+          window.location.href = '../../index.html';
+        }
+      });
+    }
 
     // Recalibra o mapa ao redimensionar a janela
     let resizeTimer = null;
@@ -94,70 +163,180 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const track = document.querySelector(".carousel-track");
-  const cards = document.querySelectorAll(".project-card");
-  const prevBtn = document.querySelector(".carousel-btn.left");
-  const nextBtn = document.querySelector(".carousel-btn.right");
+  // Suporte a duas variações de markup:
+  // 1) Swiper (markup .swiper .swiper-wrapper .swiper-slide)
+  // 2) Carrossel custom (markup .carousel-track .project-card)
 
-  let currentIndex = 0;
+  function initCustomCarousel() {
+    const track = document.querySelector(".carousel-track");
+    const cards = document.querySelectorAll(".project-card");
+    const prevBtn = document.querySelector(".carousel-btn.left");
+    const nextBtn = document.querySelector(".carousel-btn.right");
 
-  // Função para atualizar a posição do carrossel
-  function updateCarousel() {
-    // Move a track para exibir a imagem correspondente ao índice
-    track.style.transform = `translateX(-${currentIndex * 100}%)`;
-    
-    // Controla visibilidade dos botões
-    prevBtn.style.display = currentIndex === 0 ? "none" : "block";
-    nextBtn.style.display = currentIndex === cards.length - 1 ? "none" : "block";
+    if (!track || cards.length === 0) return false;
+
+    let currentIndex = 0;
+
+    function updateCarousel() {
+      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+      if (prevBtn) prevBtn.style.display = currentIndex === 0 ? "none" : "block";
+      if (nextBtn) nextBtn.style.display = currentIndex === cards.length - 1 ? "none" : "block";
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+        if (currentIndex < cards.length - 1) {
+          currentIndex++;
+          updateCarousel();
+        }
+      });
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateCarousel();
+        }
+      });
+    }
+
+    // Inicial state
+    if (prevBtn) prevBtn.style.display = "none";
+    if (nextBtn) nextBtn.style.display = cards.length > 1 ? "block" : "none";
+    updateCarousel();
+
+    return true;
   }
 
-  // Evento para o botão "próximo"
-  nextBtn.addEventListener("click", () => {
-    if (currentIndex < cards.length - 1) {
-      currentIndex++;
-      updateCarousel();
-    }
-  });
+  function initSwiperIfAvailable() {
+    const swiperEl = document.querySelector('.swiper');
+    if (!swiperEl) return false;
 
-  // Evento para o botão "anterior"
-  prevBtn.addEventListener("click", () => {
-    if (currentIndex > 0) {
-      currentIndex--;
-      updateCarousel();
+    function createSwiper() {
+      if (typeof Swiper === 'undefined') return false;
+      // eslint-disable-next-line no-unused-vars
+      const swiper = new Swiper('.swiper', {
+        slidesPerView: 1,
+        spaceBetween: 8,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        loop: false,
+      });
+      return true;
     }
-  });
 
-  // Inicializa o carrossel com a primeira imagem visível e os botões ajustados
-  updateCarousel();
+    // Tenta criar imediatamente, se a lib já foi carregada
+    if (createSwiper()) return true;
+
+    // Se a lib ainda não carregou (map.js foi incluído antes do Swiper), aguarda o load
+    window.addEventListener('load', () => {
+      createSwiper();
+    });
+
+    return true;
+  }
+
+  // Primeiro tenta inicializar Swiper (marcações mais recentes). Se não houver, tenta o carrossel custom.
+  const used = initSwiperIfAvailable() || initCustomCarousel();
+  // se nenhum foi inicializado, não faz nada (sem erros no console)
 });
 
 document.addEventListener("DOMContentLoaded", function () {
   const tabs = document.querySelectorAll(".tab-btn");
   const tabContents = document.querySelectorAll(".tab-pane");
+  const tabWrapper = document.querySelector('.tab-content');
 
-  // Esconde todos os painéis exceto o primeiro
+  // Inicializa o layout: posiciona os painéis e mostra somente o primeiro
+  if (tabWrapper) {
+    tabWrapper.style.position = tabWrapper.style.position || 'relative';
+    tabWrapper.style.overflow = tabWrapper.style.overflow || 'hidden';
+  }
+
   tabContents.forEach((content, index) => {
+    // garante as classes iniciais
     if (index === 0) {
-      content.classList.add("active");
+      content.classList.add('active');
+      content.classList.remove('enter-right', 'exit-left');
     } else {
-      content.classList.remove("active");
+      content.classList.remove('active');
+      content.classList.add('enter-right');
     }
   });
 
   tabs.forEach(tab => {
-    tab.addEventListener("click", function () {
-      // Remove a classe active de todas as abas e adiciona à aba clicada
-      tabs.forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
+    tab.addEventListener('click', function () {
+      // Atualiza a aba ativa visual
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
 
-      // Esconde todos os painéis de conteúdo
-      tabContents.forEach(content => {
-        content.classList.remove("active");
-      });
+      const current = document.querySelector('.tab-pane.active');
+      const target = document.querySelector(`#${tab.id.replace('tab', 'content')}`);
+      if (!target || current === target) return;
 
-      // Mostra apenas o painel correspondente à aba clicada
-      const targetContent = document.querySelector(`#${tab.id.replace("tab", "content")}`);
-      targetContent.classList.add("active");
+      // Anima o painel atual para a esquerda
+      if (current) {
+        current.classList.remove('active');
+        // força reflow para garantir que a transição ocorra
+        current.classList.add('exit-left');
+        const onEnd = (e) => {
+          if (e.propertyName && (e.propertyName.indexOf('transform') === -1)) return;
+          current.classList.remove('exit-left');
+          current.removeEventListener('transitionend', onEnd);
+        };
+        current.addEventListener('transitionend', onEnd);
+      }
+
+      // Prepara o painel alvo vindo da direita
+      target.classList.remove('exit-left');
+      target.classList.add('enter-right');
+
+      // Força repaint antes de ativar (para garantir animação)
+      // eslint-disable-next-line no-unused-expressions
+      target.offsetWidth;
+
+      target.classList.add('active');
+      target.classList.remove('enter-right');
+    });
+  });
+});
+
+// Controla o estado do botão de adicionar comentário: só habilita quando a aba 'Comentarios' está ativa
+document.addEventListener('DOMContentLoaded', () => {
+  const commentBtn = document.querySelector('.comment-btn');
+  const reviewTab = document.getElementById('review-tab');
+
+  function setCommentButton(enabled) {
+    if (!commentBtn) return;
+    // Se o usuário pediu que o botão suma, usamos a classe 'hidden' para removê-lo do fluxo
+    if (enabled) {
+      commentBtn.classList.remove('hidden');
+      commentBtn.classList.remove('disabled');
+      commentBtn.disabled = false;
+    } else {
+      commentBtn.classList.add('hidden');
+      commentBtn.classList.add('disabled');
+      commentBtn.disabled = true;
+    }
+  }
+
+  // estado inicial: somente habilitado se a aba 'review' já estiver ativa
+  setCommentButton(document.querySelector('#review-content')?.classList.contains('active'));
+
+  // Quando o usuário clica em uma aba, o código já troca as classes; escutamos cliques nas abas para atualizar o botão
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      setTimeout(() => { // aguarda micro-tick para garantir que a troca de classes já tenha ocorrido
+        const isReviewActive = document.querySelector('#review-content')?.classList.contains('active');
+        setCommentButton(!!isReviewActive);
+      }, 0);
     });
   });
 });

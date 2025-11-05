@@ -14,6 +14,10 @@
   <link rel="stylesheet" href="../../styles/global.css">
   <link rel="stylesheet" href="map.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/swiper@8/swiper-bundle.min.css"
+  />
 </head>
 
 <header class="navbar">
@@ -24,28 +28,31 @@
 
 <div id="infoModal" class="modal">
     <div class="modal-content">
-      <span class="close-btn">&times;</span>
       <div id="modal-body">
         <!-- Carrossel de Imagens -->
-        <section id="projetos">
-          <div class="carousel-container">
-            <button class="carousel-btn left">❮</button>
-            <div class="carousel">
-              <div class="carousel-track">
-                <div class="project-card">
-                  <img src="/src/assets/img/map/section-map/foto-local.jpeg" alt="Imagem 1" />
-                </div>
-                <div class="project-card">
-                  <img src="/src/assets/img/map/section-map/foto-local-2.jpeg" alt="Imagem 2" />
-                </div>
-                <div class="project-card">
-                  <img src="/src/assets/img/map/section-map/foto-local-3.jpeg" alt="Imagem 3" />
-                </div>
+        <div class="swiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="project-img">
+                <img src="/src/assets/img/map/section-map/foto-local.jpeg" alt="Foto 01">
               </div>
             </div>
-            <button class="carousel-btn right">❯</button>
+            <div class="swiper-slide">
+              <div class="project-img">
+                <img src="/src/assets/img/map/section-map/foto-local-2.jpeg" alt="Foto 02">
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="project-img">
+                <img src="/src/assets/img/map/section-map/foto-local-3.jpeg" alt="Foto 03">
+              </div>
+            </div>
           </div>
-        </section>
+        
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+    </div>
 
 
         <!-- Informações -->
@@ -89,7 +96,6 @@
         <!-- Botões de Ação -->
         <div class="action-buttons">
           <button class="comment-btn">Adicionar Comentario</button>
-          <button class="back-btn">Voltar</button>
         </div>
       </section>
       </div>
@@ -98,8 +104,8 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="map.js"></script>
-  <div id="root"></div> <!-- React irá renderizar aqui -->
-  <script src="bundle.js"></script> <!-- Arquivo gerado pelo Webpack -->
+<script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+<script src="script.js"></script>
 </body>
 
 </html>
