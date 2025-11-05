@@ -26,44 +26,80 @@
     <div class="modal-content">
       <span class="close-btn">&times;</span>
       <div id="modal-body">
-        <!-- Foto Local -->
-        <div class="foto-local">
-          <section id="projetos">
-            <div class="carousel-container">
-              <button class="carousel-btn left">❮</button>
-              <div class="carousel">
-                <div class="carousel-track">
-                  <div class="project-card">
-                    <img src="/src/assets/img/map/section-map/foto-local.jpeg" alt="Projeto 1" />
-                  </div>
-                  <div class="project-card">
-                    <img src="/src/assets/img/map/section-map/foto-local-2.jpeg" alt="Projeto 2" />
-                  </div>
-                  <div class="project-card">
-                    <img src="/src/assets/img/map/section-map/foto-local-3.jpeg" alt="Projeto 3" />
-                  </div>
+        <!-- Carrossel de Imagens -->
+        <section id="projetos">
+          <div class="carousel-container">
+            <button class="carousel-btn left">❮</button>
+            <div class="carousel">
+              <div class="carousel-track">
+                <div class="project-card">
+                  <img src="/src/assets/img/map/section-map/foto-local.jpeg" alt="Imagem 1" />
+                </div>
+                <div class="project-card">
+                  <img src="/src/assets/img/map/section-map/foto-local-2.jpeg" alt="Imagem 2" />
+                </div>
+                <div class="project-card">
+                  <img src="/src/assets/img/map/section-map/foto-local-3.jpeg" alt="Imagem 3" />
                 </div>
               </div>
-              <button class="carousel-btn right">❯</button>
             </div>
-          </section>
+            <button class="carousel-btn right">❯</button>
+          </div>
+        </section>
+
+
+        <!-- Informações -->
+        <section class="info-section">
+        <h1>Rampa</h1>
+        <div class="rating">
+          <span>Nota: </span>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
         </div>
 
-        <!-- Descrição Local -->
-        <div class="descricao-local">
-          <span>Descrição Local</span>
+        <!-- Abas: Informações, Avaliações, Descrição -->
+        <div class="tabs">
+          <button class="tab-btn active" id="info-tab">Informações</button>
+          <button class="tab-btn" id="review-tab">Comentarios</button>
+          <button class="tab-btn" id="description-tab">Descrição</button>
         </div>
 
-        <!-- Comentários Local -->
-        <div class="comentarios-local">
-          <span>Comentário Local</span>
+        <!-- Conteúdo das Abas -->
+        <div class="tab-content">
+          <div class="tab-pane active" id="info-content">
+            <h3>Informações de Acessibilidade</h3>
+            <ul>
+              <li>Possui pisos táteis</li>
+              <li>Possui corrimões</li>
+            </ul>
+            <h3>Horários de Serviço</h3>
+            <p>Não Disponível</p>
+          </div>
+
+          <div class="tab-pane" id="review-content">
+            <h3>Comentarios</h3>
+            <p>Esta seção vai conter as comentarios dos usuários sobre a rampa.</p>
+          </div>
+
+          <div class="tab-pane" id="description-content">
+            <h3>Descrição do Local</h3>
+            <p>Este local possui uma rampa acessível, com boas condições de uso para cadeirantes e outras deficiências.</p>
+          </div>
         </div>
+
+        <!-- Botões de Ação -->
+        <div class="action-buttons">
+          <button class="comment-btn">Adicionar Comentario</button>
+          <button class="back-btn">Voltar</button>
+        </div>
+      </section>
       </div>
     </div>
   </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="map.js"></script>
+  <div id="root"></div> <!-- React irá renderizar aqui -->
+  <script src="bundle.js"></script> <!-- Arquivo gerado pelo Webpack -->
 </body>
 
 </html>

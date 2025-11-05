@@ -101,16 +101,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentIndex = 0;
 
-  // Atualiza a posição do carrossel e o estado dos botões
+  // Função para atualizar a posição do carrossel
   function updateCarousel() {
+    // Move a track para exibir a imagem correspondente ao índice
     track.style.transform = `translateX(-${currentIndex * 100}%)`;
-
+    
     // Controla visibilidade dos botões
     prevBtn.style.display = currentIndex === 0 ? "none" : "block";
     nextBtn.style.display = currentIndex === cards.length - 1 ? "none" : "block";
   }
 
-  // Botão próximo
+  // Evento para o botão "próximo"
   nextBtn.addEventListener("click", () => {
     if (currentIndex < cards.length - 1) {
       currentIndex++;
@@ -118,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Botão anterior
+  // Evento para o botão "anterior"
   prevBtn.addEventListener("click", () => {
     if (currentIndex > 0) {
       currentIndex--;
@@ -126,6 +127,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Inicializa com a primeira imagem visível e o carrossel na posição correta
+  // Inicializa o carrossel com a primeira imagem visível e os botões ajustados
   updateCarousel();
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const tabs = document.querySelectorAll(".tab-btn");
+  const tabContents = document.querySelectorAll(".tab-pane");
+
+  // Esconde todos os painéis exceto o primeiro
+  tabContents.forEach((content, index) => {
+    if (index === 0) {
+      content.classList.add("active");
+    } else {
+      content.classList.remove("active");
+    }
+  });
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", function () {
+      // Remove a classe active de todas as abas e adiciona à aba clicada
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      // Esconde todos os painéis de conteúdo
+      tabContents.forEach(content => {
+        content.classList.remove("active");
+      });
+
+      // Mostra apenas o painel correspondente à aba clicada
+      const targetContent = document.querySelector(`#${tab.id.replace("tab", "content")}`);
+      targetContent.classList.add("active");
+    });
+  });
 });

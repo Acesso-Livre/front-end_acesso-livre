@@ -1,19 +1,23 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 html, body {
   height: 100%;
   width: 100%;
   font-family: var(--font-family-heading);
 }
 
+/* Navbar */
 .navbar {
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: #0a2a66;
+  width: 100%;
+  background-color: #0a2a66;
+  padding: 10px;
   display: flex;
+  justify-content: flex-start;
   align-items: center;
-  padding: 0 20px;
-  z-index: 1000;
 }
 
 .btn {
@@ -28,6 +32,14 @@ html, body {
 
 .btn:hover {
   background: #0050a0;
+}
+
+.voltar {
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
 }
 
 /* Mapa ocupa o restante da tela */
@@ -77,6 +89,15 @@ html, body {
   height: 100vh;
 }
 
+.close-btn {
+  position: absolute;
+  top: 0px;
+  right: 20px;
+  font-size: 32px;
+  color: #333;
+  cursor: pointer;
+}
+
 .modal-content {
   background: #fff;
   width: 100%;
@@ -89,95 +110,53 @@ html, body {
   position: relative;
 }
 
-.foto-local, .descricao-local, .comentarios-local{
-  position: absolute;
-  border: 1px solid #ccc;
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 375px;
+    margin: 0 auto;
 }
 
-.foto-local {
-    top: 0;
-  left: 0;
-  width: 50vw;
-  height: 50vh;
-  overflow: hidden;
+.back-btn {
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
 }
 
-.descricao-local {
-  top: 0;
-  right: 0;
-  width: 50vw;
-  height: 50vh;
-}
-
-.topo-local {
-  display: flex;
-  width: 100%; /* Certifique-se de que ocupa 100% da largura disponível */
-  height: 100%; /* Certifique-se de que ocupa 100% da altura disponível */
-}
-
-/* Metade inferior: comentários */
-.comentarios-local {
-  bottom: 0;
-  left: 0;
-  width: 100vw;
-  height: 50vh;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;       /* distância do topo */
-  right: 20px;     /* distância da direita */
-  font-size: 32px; /* aumenta o tamanho do X */
-  font-weight: bold;
-  cursor: pointer;
-  color: #333;     /* cor do X */
-  z-index: 10;     /* garante que fique acima do conteúdo */
-  transition: 0.2s;
-}
-
-.close-btn:hover {
-  color: #ff3b3b; /* muda a cor ao passar o mouse */
-  transform: scale(1.2); /* aumenta levemente ao passar o mouse */
-}
-
-/* Container do carrossel */
+/* Carrossel */
 .carousel-container {
   position: relative;
   width: 100%;
-  height: 100%;  /* Faz com que o carrossel ocupe 100% da altura da div */
-  overflow: hidden;
+  height: 30vh; /* Ajuste conforme necessário */
+  margin-top: 20px;
+  overflow: hidden; /* Esconde as imagens além do tamanho da área visível */
 }
 
 /* Track do carrossel */
 .carousel {
   display: flex;
-  width: 100%; /* Garante que o carrossel ocupe toda a largura disponível */
-  height: 100%; /* Ajusta a altura do carrossel para o tamanho da div */
-}
-/* Faixa que contém os cards */
-.carousel-track {
-  display: flex;
-  width: 100%;
-  transition: transform 0.5s ease-in-out;
-  justify-content: flex-start; 
+  transition: transform 0.5s ease-in-out; /* Transição suave */
 }
 
-/* Cada card do carrossel */
-.project-card {
+.carousel-track {
   display: flex;
-  justify-content: center; /* Alinha a imagem horizontalmente no centro */
-  align-items: center;     /* Alinha a imagem verticalmente no centro */
-  height: 100%;            /* Garante que o card ocupe toda a altura disponível */
-  width: 100%;             /* Garante que o card ocupe toda a largura disponível */
-  overflow: hidden;        /* Impede que o conteúdo ultrapasse os limites do card */
+  width: 300%; /* Todas as 3 imagens em linha, com 100% de largura cada */
+}
+
+.project-card {
+  width: 100%; /* Cada imagem ocupa 100% do espaço */
+  height: 100%;
 }
 
 .project-card img {
-  width: 100%;             /* Ajusta a largura da imagem para ocupar toda a largura do card */
-  height: 100%;            /* Ajusta a altura da imagem para ocupar toda a altura do card */
-  object-fit: cover;       /* Faz a imagem cobrir toda a div, sem distorção */
-  border-radius: 12px;
-  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ajusta a imagem para cobrir toda a área do contêiner */
+  border-radius: 8px;
 }
 
 /* Botões de navegação */
@@ -185,20 +164,159 @@ html, body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: #ffffff;
-  color: #191414;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
   border: none;
-  border-radius: 50%;
-  font-size: 2rem;
+  font-size: 24px;
   cursor: pointer;
-  padding: 8px;
+  padding: 10px;
   z-index: 2;
 }
 
 .carousel-btn.left {
-  left: 17px;
+  left: 10px;
 }
 
 .carousel-btn.right {
   right: 10px;
+}
+
+/* Informações */
+.info-section {
+  width: 100%;
+  padding: 10px;
+  background-color: #fff;
+}
+
+h1 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.stars {
+  font-size: 18px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.tab-btn {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+.tab-btn.active {
+  background-color: #0a2a66;
+  color: white;
+}
+
+.tab-content {
+  margin-top: 10px;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+.tab-pane ul {
+  list-style: none;
+  padding: 0;
+}
+
+.tab-pane li {
+  margin-bottom: 5px;
+}
+
+.action-buttons {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.comment-btn, .back-btn {
+  width: 80%;
+  padding: 10px;
+  background-color: #0a2a66;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.comment-btn:hover, .back-btn:hover {
+  background-color: #0050a0;
+}
+
+/* Responsividade para telas móveis */
+@media (max-width: 375px) {
+  /* Mapa */
+  #map {
+    height: 150px; /* Ajuste conforme necessário */
+  }
+
+  .modal-content {
+    padding: 15px;
+  }
+
+  .carousel-container {
+    height: 180px; /* Ajuste conforme necessário */
+  }
+
+  .carousel-btn {
+    font-size: 18px;
+    padding: 8px;
+  }
+
+  .descricao-local, .comentarios-local {
+    font-size: 14px;
+  }
+
+  .info-section {
+    padding: 15px; /* Ajuste de espaçamento */
+  }
+
+  .tabs {
+    flex-direction: column; /* Empilha as abas verticalmente em telas menores */
+  }
+
+  .tab-btn {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .tab-btn.active {
+    background-color: #0a2a66;
+    color: white;
+  }
+
+  .tab-content {
+    font-size: 14px;
+  }
+
+  .action-buttons {
+    width: 100%; /* Ajuste para garantir que os botões ocupem o espaço correto */
+  }
+
+  .comment-btn, .back-btn {
+    width: 90%; /* Ajuste o tamanho dos botões */
+  }
 }
