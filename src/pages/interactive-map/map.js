@@ -16,22 +16,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const pins = [
-    { label: 'Entrada', top: 90, left: 7 },
-    { label: 'Estacionamento I', top: 72, left: 32 },
-    { label: 'Estacionamento II', top: 78, left: 75 },
-    { label: 'Estacionamento III', top: 40, left: 96 },
-    { label: 'Campo', top: 65, left: 12 },
-    { label: 'Quadra', top: 17, left: 10 },
-    { label: 'Quadra de Areia', top: 5, left: 14 },
-    { label: 'Bloco 06', top: 44, left: 30 },
-    { label: 'Bloco 05', top: 46, left: 48 },
-    { label: 'Bloco 08', top: 21, left: 30 },
-    { label: 'Bloco 09', top: 15, left: 46 },
-    { label: 'Cantina', top: 44, left: 71 },
-    { label: 'Auditório', top: 60, left: 54 },
-    { label: 'Bloco 16', top: 30, left: 80 },
-    { label: 'Biblioteca', top: 18, left: 86 },
-    { label: 'Cores', top: 32, left: 54 }
+    { label: 'Entrada', top: 87, left: 3.7 },
+    { label: 'Estacionamento I', top: 75, left: 27 },
+    { label: 'Estacionamento II', top: 80.5, left: 72.5 },
+    { label: 'Estacionamento III', top: 42, left: 91 },
+    { label: 'Campo', top: 66.5, left: 10.3 },
+    { label: 'Quadra', top: 20, left: 8.3 },
+    { label: 'Quadra de Areia', top: 7.5, left: 17.5 },
+    { label: 'Bloco 06', top: 42.5, left: 30 },
+    { label: 'Bloco 05', top: 45.8, left: 46.5 },
+    { label: 'Bloco 08', top: 20, left: 30 },
+    { label: 'Bloco 09', top: 14.8, left: 46 },
+    { label: 'Cantina', top: 59, left: 69 },
+    { label: 'Auditório', top: 60, left: 54.2 },
+    { label: 'Bloco 16', top: 39, left: 78 },
+    { label: 'Biblioteca', top: 21.5, left: 84.6 },
+    { label: 'Cores', top: 34.5, left: 48.2 }
   ];
 
   const img = new Image();
