@@ -60,64 +60,26 @@
   <!-- Painel Administrativo (oculto inicialmente) -->
   <div id="admin-dashboard" style="display: none;">
     <header class="admin-header">
-      <h1>Painel Administrativo</h1>
-      <button id="logout-btn" class="logout-btn">Sair</button>
+      <div class="header-left">
+        <img src="../../assets/img/global/logo-acesso-livre.png" alt="Logo Acesso Livre" class="header-logo">
+        <span class="header-name">Acesso Livre</span>
+      </div>
+      <div class="header-center">
+        <h1 class="header-title">Lista de avaliações pendentes</h1>
+      </div>
+      <div class="header-right">
+        <button id="logout-btn" class="logout-btn">Sair</button>
+      </div>
     </header>
 
     <main class="admin-container">
-      <!-- Seção de Estatísticas -->
-      <section class="admin-dashboard">
-        <h2>Estatísticas Gerais</h2>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h3>Total de Usuários</h3>
-            <p id="total-users">Carregando...</p>
-          </div>
-          <div class="stat-card">
-            <h3>Relatórios Pendentes</h3>
-            <p id="pending-reports">Carregando...</p>
-          </div>
-          <div class="stat-card">
-            <h3>Acessos Hoje</h3>
-            <p id="today-access">Carregando...</p>
-          </div>
+      <div class="reviews-container">
+        <h2>Avaliações Pendentes</h2>
+        <div id="reviews-list" class="reviews-list">
+          <!-- Avaliações serão carregadas aqui -->
         </div>
-      </section>
-
-      <!-- Seção de Ações Rápidas -->
-      <section class="admin-dashboard">
-        <h2>Ações Rápidas</h2>
-        <div class="quick-actions">
-          <button id="export-data-btn">Exportar Dados</button>
-          <button id="system-settings-btn">Configurações do Sistema</button>
-          <button id="user-management-btn">Gerenciar Usuários</button>
-        </div>
-      </section>
-
-      <!-- Seção de Logs Recentes -->
-      <section class="admin-dashboard">
-        <h2>Logs Recentes</h2>
-        <div id="recent-logs">
-          <!-- Logs serão carregados aqui -->
-        </div>
-      </section>
-    </main>
-
-    <!-- Modal para Configurações do Sistema -->
-    <div id="settingsModal" class="modal">
-      <div class="modal-content">
-        <h2>Configurações do Sistema</h2>
-        <form id="settings-form">
-          <label for="site-title">Título do Site:</label>
-          <input type="text" id="site-title" value="Acesso Livre">
-
-          <label for="maintenance-mode">Modo de Manutenção:</label>
-          <input type="checkbox" id="maintenance-mode">
-
-          <button type="submit">Salvar Configurações</button>
-        </form>
       </div>
-    </div>
+    </main>
   </div>
 
   <script src="admin.js"></script>

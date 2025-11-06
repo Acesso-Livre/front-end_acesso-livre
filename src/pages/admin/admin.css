@@ -117,9 +117,39 @@
   border-bottom: 1px solid #ddd;
 }
 
-.admin-header h1 {
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+}
+
+.header-center {
+  flex: 1;
+  text-align: center;
+}
+
+.header-right {
+  flex: 1;
+  text-align: right;
+}
+
+.header-logo {
+  height: 40px;
+  width: auto;
+}
+
+.header-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.header-title {
   margin: 0;
   color: #333;
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .logout-btn {
@@ -213,15 +243,96 @@
   margin: 0;
 }
 
-/* Container de Logs Recentes */
-#recent-logs {
+/* Container de Avaliações */
+.reviews-container {
   margin-top: 20px;
-  max-height: 300px;
-  overflow-y: auto;
+}
+
+.reviews-container h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.review-item {
   border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.review-user {
+  font-weight: bold;
+  color: #333;
+}
+
+.review-date {
+  color: #666;
+  font-size: 14px;
+}
+
+.review-rating {
+  margin: 10px 0;
+  color: #f39c12;
+}
+
+.review-location {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.review-text {
+  margin: 10px 0;
+  line-height: 1.5;
+  color: #555;
+}
+
+.review-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-approve, .btn-reject {
+  padding: 8px 16px;
+  border: none;
   border-radius: 4px;
-  padding: 10px;
-  background-color: #f9f9f9;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn-approve {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-approve:hover {
+  background-color: #218838;
+}
+
+.btn-reject {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-reject:hover {
+  background-color: #c82333;
 }
 
 /* Estilos dos Modais */

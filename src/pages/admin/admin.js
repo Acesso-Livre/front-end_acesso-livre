@@ -110,10 +110,89 @@ document.addEventListener('DOMContentLoaded', function() {
   function mostrarPainelAdmin() {
     secaoLogin.style.display = 'none';
     painelAdmin.style.display = 'block';
-    carregarEstatisticas();
-    carregarLogsRecentes();
-    inicializarPainel();
+    carregarAvaliacoesPendentes();
   }
+
+  /**
+   * Carrega as avaliações pendentes
+   */
+  function carregarAvaliacoesPendentes() {
+    const containerAvaliacoes = document.getElementById('reviews-list');
+    const avaliacoes = [
+      {
+        id: 1,
+        usuario: 'João Silva',
+        data: '2023-11-06',
+        local: 'Rampa Principal',
+        avaliacao: '⭐⭐⭐⭐⭐',
+        texto: 'Excelente rampa, muito acessível!'
+      },
+      {
+        id: 2,
+        usuario: 'Maria Oliveira',
+        data: '2023-11-05',
+        local: 'Entrada Lateral',
+        avaliacao: '⭐⭐⭐⭐',
+        texto: 'Boa estrutura, mas poderia ser melhor sinalizada.'
+      },
+      {
+        id: 3,
+        usuario: 'Carlos Santos',
+        data: '2023-11-04',
+        local: 'Corredor Central',
+        avaliacao: '⭐⭐⭐⭐⭐',
+        texto: 'Muito útil para pessoas com mobilidade reduzida.'
+      }
+    ];
+
+    containerAvaliacoes.innerHTML = avaliacoes.map(avaliacao => `
+      <div class="review-item" data-id="${avaliacao.id}">
+        <div class="review-header">
+          <span class="review-user">${avaliacao.usuario}</span>
+          <span class="review-date">${avaliacao.data}</span>
+        </div>
+        <div class="review-location">
+          <strong>Local:</strong> ${avaliacao.local}
+        </div>
+        <div class="review-rating">${avaliacao.avaliacao}</div>
+        <div class="review-text">${avaliacao.texto}</div>
+        <div class="review-actions">
+          <button class="btn-approve" onclick="aprovarAvaliacao(${avaliacao.id})">Aprovar</button>
+          <button class="btn-reject" onclick="rejeitarAvaliacao(${avaliacao.id})">Rejeitar</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  /**
+   * Aprova uma avaliação
+   */
+  function aprovarAvaliacao(id) {
+    console.log(`Avaliação ${id} aprovada`);
+    // Remover da lista
+    const item = document.querySelector(`[data-id="${id}"]`);
+    if (item) {
+      item.remove();
+    }
+    alert('Avaliação aprovada com sucesso!');
+  }
+
+  /**
+   * Rejeita uma avaliação
+   */
+  function rejeitarAvaliacao(id) {
+    console.log(`Avaliação ${id} rejeitada`);
+    // Remover da lista
+    const item = document.querySelector(`[data-id="${id}"]`);
+    if (item) {
+      item.remove();
+    }
+    alert('Avaliação rejeitada.');
+  }
+
+  // Tornar funções globais para onclick
+  window.aprovarAvaliacao = aprovarAvaliacao;
+  window.rejeitarAvaliacao = rejeitarAvaliacao;
 
   /**
    * Mostra a tela de login e oculta o painel
@@ -124,76 +203,4 @@ document.addEventListener('DOMContentLoaded', function() {
     formularioLogin.reset();
   }
 
-  /**
-   * Inicializa os componentes do painel administrativo
-   */
-  function inicializarPainel() {
-    const botaoExportar = document.getElementById('export-data-btn');
-    const botaoConfiguracoes = document.getElementById('system-settings-btn');
-    const botaoGerenciarUsuarios = document.getElementById('user-management-btn');
-    const modalConfiguracoes = document.getElementById('settingsModal');
-    const formularioConfiguracoes = document.getElementById('settings-form');
-
-    // Abrir modal de configurações
-    botaoConfiguracoes.addEventListener('click', function() {
-      modalConfiguracoes.style.display = 'block';
-    });
-
-    // Fechar modais ao clicar fora
-    window.addEventListener('click', function(evento) {
-      if (evento.target === modalConfiguracoes) {
-        modalConfiguracoes.style.display = 'none';
-      }
-      if (evento.target === modalEsqueceuSenha) {
-        modalEsqueceuSenha.style.display = 'none';
-      }
-    });
-
-    // Processar formulário de configurações
-    formularioConfiguracoes.addEventListener('submit', function(evento) {
-      evento.preventDefault();
-      const tituloSite = document.getElementById('site-title').value;
-      const modoManutencao = document.getElementById('maintenance-mode').checked;
-
-      // Em produção, enviar para o servidor
-      console.log('Configurações atualizadas:', { tituloSite, modoManutencao });
-      modalConfiguracoes.style.display = 'none';
-    });
-
-    // Ações rápidas (placeholders)
-    botaoExportar.addEventListener('click', function() {
-      console.log('Iniciando exportação de dados...');
-      alert('Funcionalidade de exportação em desenvolvimento.');
-    });
-
-    botaoGerenciarUsuarios.addEventListener('click', function() {
-      console.log('Abrindo painel de gerenciamento de usuários...');
-      alert('Funcionalidade de gerenciamento de usuários em desenvolvimento.');
-    });
-  }
-
-  /**
-   * Carrega as estatísticas do sistema
-   */
-  function carregarEstatisticas() {
-    // Simular carregamento de dados
-    document.getElementById('total-users').textContent = '1.234';
-    document.getElementById('pending-reports').textContent = '12';
-    document.getElementById('today-access').textContent = '567';
-  }
-
-  /**
-   * Carrega os logs recentes do sistema
-   */
-  function carregarLogsRecentes() {
-    const containerLogs = document.getElementById('recent-logs');
-    const logs = [
-      '2023-11-06 10:30: Login de admin realizado',
-      '2023-11-06 09:15: Novo usuário registrado',
-      '2023-11-06 08:45: Relatório gerado',
-      '2023-11-06 08:00: Sistema iniciado'
-    ];
-
-    containerLogs.innerHTML = logs.map(log => `<p>${log}</p>`).join('');
-  }
 });
