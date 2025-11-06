@@ -44,14 +44,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const map = L.map('map', {
       crs: L.CRS.Simple,
-      minZoom: -3,
+      minZoom: 0,
       maxZoom: 4,
       zoomSnap: 0.25,
-      attributionControl: false
+      attributionControl: false,
+      maxBounds: bounds,
+      maxBoundsViscosity: 1.0
     });
 
     L.imageOverlay(imgUrl, bounds).addTo(map);
     map.fitBounds(bounds);
+
+    // Calculate zoom to fill the screen
+    const viewport = map.getSize();
+    const zoomH = Math.log2(viewport.y / H);
+    const zoomW = Math.log2(viewport.x / W);
+    const fillZoom = Math.max(zoomH, zoomW);
+    map.setZoom(fillZoom);
+    map.setMinZoom(fillZoom);
 
     // Cria o ícone de pin
     function makePinIcon() {
@@ -99,7 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (navBack) {
       navBack.addEventListener('click', function (e) {
         const modal = document.getElementById("infoModal");
-        if (modal && modal.style.display === 'flex') {
+        const addModal = document.getElementById("addCommentModal");
+        if (addModal && addModal.style.display === 'flex') {
+          // fecha modal de adicionar comentário e volta para o modal de info
+          e.preventDefault();
+          addModal.style.display = 'none';
+          if (modal) modal.style.display = 'flex';
+          // inModal permanece true, pois estamos voltando para o modal de info
+        } else if (modal && modal.style.display === 'flex') {
           // fecha modal em vez de navegar
           e.preventDefault();
           modal.style.display = 'none';
@@ -388,6 +405,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const name = document.getElementById('user-name').value;
       const rating = ratingInput.value;
       const commentText = document.getElementById('comment-text').value;
+
+      // Check if rating is mandatory
+      if (!rating || rating === '') {
+        alert('Por favor, selecione uma avaliação com estrelas.');
+        return;
+      }
+
       const date = new Date().toISOString(); // Use ISO for database compatibility
 
       // Prepare comment data for future database submission
@@ -398,8 +422,21 @@ document.addEventListener('DOMContentLoaded', () => {
         date
       };
 
-      // For now, log to console (replace with database call later)
-      console.log('Comment data to send to database:', commentData);
+      // Mock: Add comment to the DOM instead of sending to database
+      const commentsList = document.querySelector('.comments-list');
+      if (commentsList) {
+        const commentCard = document.createElement('div');
+        commentCard.className = 'comment-card';
+        commentCard.innerHTML = `
+          <div class="comment-header">
+            <span class="user-name">${name}</span>
+            <span class="comment-date">${new Date().toLocaleDateString('pt-BR')}</span>
+          </div>
+          <div class="comment-rating">${'⭐'.repeat(rating)}</div>
+          <p class="comment-text">${commentText}</p>
+        `;
+        commentsList.appendChild(commentCard);
+      }
 
       // Reset form
       commentForm.reset();
