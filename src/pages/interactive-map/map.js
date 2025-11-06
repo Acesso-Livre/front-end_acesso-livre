@@ -339,4 +339,85 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 0);
     });
   });
+
+  // Event listener para abrir o modal de adicionar comentário
+  if (commentBtn) {
+    commentBtn.addEventListener('click', () => {
+      const infoModal = document.getElementById('infoModal');
+      const addModal = document.getElementById('addCommentModal');
+      if (infoModal) infoModal.style.display = 'none';
+      if (addModal) addModal.style.display = 'flex';
+    });
+  }
+
+  // Event listener para fechar o modal de adicionar comentário
+  const addCommentBackBtn = document.querySelector('#addCommentModal .back-btn');
+  if (addCommentBackBtn) {
+    addCommentBackBtn.addEventListener('click', () => {
+      const infoModal = document.getElementById('infoModal');
+      const addModal = document.getElementById('addCommentModal');
+      if (addModal) addModal.style.display = 'none';
+      if (infoModal) infoModal.style.display = 'flex';
+    });
+  }
+
+  // Star rating functionality
+  const stars = document.querySelectorAll('.star');
+  const ratingInput = document.getElementById('rating');
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      const value = star.getAttribute('data-value');
+      ratingInput.value = value;
+      stars.forEach(s => {
+        if (s.getAttribute('data-value') <= value) {
+          s.classList.add('active');
+          s.textContent = '★';
+        } else {
+          s.classList.remove('active');
+          s.textContent = '☆';
+        }
+      });
+    });
+  });
+
+  // Handle comment form submission
+  const commentForm = document.getElementById('comment-form');
+  if (commentForm) {
+    commentForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('user-name').value;
+      const rating = ratingInput.value;
+      const commentText = document.getElementById('comment-text').value;
+      const date = new Date().toISOString(); // Use ISO for database compatibility
+
+      // Prepare comment data for future database submission
+      const commentData = {
+        name,
+        rating: parseInt(rating),
+        comment: commentText,
+        date
+      };
+
+      // For now, log to console (replace with database call later)
+      console.log('Comment data to send to database:', commentData);
+
+      // Reset form
+      commentForm.reset();
+      stars.forEach(s => {
+        s.classList.remove('active');
+        s.textContent = '☆';
+      });
+      ratingInput.value = '';
+
+      // Close add comment modal and open info modal
+      const addModal = document.getElementById('addCommentModal');
+      const infoModal = document.getElementById('infoModal');
+      if (addModal) addModal.style.display = 'none';
+      if (infoModal) infoModal.style.display = 'flex';
+
+      // Switch to review tab
+      const reviewTab = document.getElementById('review-tab');
+      if (reviewTab) reviewTab.click();
+    });
+  }
 });

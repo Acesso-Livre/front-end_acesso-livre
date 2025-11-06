@@ -84,7 +84,32 @@
 
           <div class="tab-pane" id="review-content">
             <h3>Comentarios</h3>
-            <p>Esta seção vai conter as comentarios dos usuários sobre a rampa.</p>
+            <div class="comments-list">
+              <div class="comment-card">
+                <div class="comment-header">
+                  <span class="user-name">João Silva</span>
+                  <span class="comment-date">2023-10-01</span>
+                </div>
+                <div class="comment-rating">⭐⭐⭐⭐⭐</div>
+                <p class="comment-text">Excelente rampa, muito acessível!</p>
+              </div>
+              <div class="comment-card">
+                <div class="comment-header">
+                  <span class="user-name">Maria Oliveira</span>
+                  <span class="comment-date">2023-10-02</span>
+                </div>
+                <div class="comment-rating">⭐⭐⭐⭐</div>
+                <p class="comment-text">Boa estrutura, mas poderia ser melhor sinalizada.</p>
+              </div>
+              <div class="comment-card">
+                <div class="comment-header">
+                  <span class="user-name">Carlos Santos</span>
+                  <span class="comment-date">2023-10-03</span>
+                </div>
+                <div class="comment-rating">⭐⭐⭐⭐⭐</div>
+                <p class="comment-text">Muito útil para pessoas com mobilidade reduzida.</p>
+              </div>
+            </div>
           </div>
 
           <div class="tab-pane" id="description-content">
@@ -98,6 +123,34 @@
           <button class="comment-btn">Adicionar Comentario</button>
         </div>
       </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Adicionar Comentário -->
+  <div id="addCommentModal" class="modal">
+    <div class="modal-content">
+      <div id="add-comment-body">
+        <h2>Adicionar Comentário</h2>
+        <form id="comment-form">
+          <label for="user-name">Nome:</label>
+          <input type="text" id="user-name" placeholder="Seu nome" required>
+
+          <label for="rating">Avaliação:</label>
+          <div class="star-rating">
+            <span class="star" data-value="1">☆</span>
+            <span class="star" data-value="2">☆</span>
+            <span class="star" data-value="3">☆</span>
+            <span class="star" data-value="4">☆</span>
+            <span class="star" data-value="5">☆</span>
+          </div>
+          <input type="hidden" id="rating" name="rating" required>
+
+          <label for="comment-text">Comentário:</label>
+          <textarea id="comment-text" placeholder="Digite seu comentário" required></textarea>
+
+          <button type="submit" class="submit-btn">Enviar</button>
+        </form>
       </div>
     </div>
   </div>

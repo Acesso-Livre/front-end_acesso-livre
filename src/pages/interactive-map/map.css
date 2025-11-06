@@ -277,6 +277,139 @@ h1 {
   display: none !important;
 }
 
+/* Estilos para comentários */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.comment-card {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.user-name {
+  font-weight: bold;
+  color: #0a2a66;
+}
+
+.comment-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.comment-rating {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.comment-text {
+  color: #333;
+  line-height: 1.5;
+}
+
+/* Estilos para o modal de adicionar comentário */
+#addCommentModal {
+  display: none; /* Inicialmente oculto */
+}
+
+#add-comment-body {
+  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+}
+
+#add-comment-body h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #0a2a66;
+}
+
+#comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#comment-form label {
+  font-weight: bold;
+  color: #333;
+}
+
+#comment-form input,
+#comment-form select,
+#comment-form textarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+#comment-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.submit-btn {
+  padding: 10px;
+  background-color: #0a2a66;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background-color: #0050a0;
+}
+
+.back-btn {
+  padding: 10px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.back-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Star Rating Styles */
+.star-rating {
+  display: flex;
+  gap: 5px;
+}
+
+.star {
+  font-size: 30px;
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.star:hover,
+.star.active {
+  color: #ffd700;
+}
+
 /* Responsividade para telas móveis */
 @media (max-width: 375px) {
   /* Mapa */
@@ -329,5 +462,13 @@ h1 {
 
   .comment-btn, .back-btn {
     width: 90%; /* Ajuste o tamanho dos botões */
+  }
+
+  #add-comment-body {
+    padding: 15px;
+  }
+
+  #add-comment-body h2 {
+    font-size: 20px;
   }
 }
