@@ -9,10 +9,29 @@
         <button class="menu-toggle" id="menu-toggle">&#9776;</button>
 
         <ul class="nav-links" id="nav-links">
-            <li><a href="Home">Home</a></li>
-            <li><a href="Sobre">Sobre</a></li>
-            <li><a href="Contato">Contato</a></li>
-            <li><a href="Mapa">Mapa</a></li>
+            <li><button id="about-btn">Sobre</button></li>
+            <li><button id="contact-btn">Contato</button></li>
         </ul>
     </nav>
+
+    <!-- Modal Sobre -->
+    <div id="about-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-about-modal">&times;</span>
+            <h2>Sobre o Projeto Acesso Livre</h2>
+            <p>O projeto Acesso Livre é uma iniciativa dedicada a promover a acessibilidade no IFBA Campus Eunápolis. Nosso objetivo é mapear e avaliar os meios de acessibilidade disponíveis, facilitando a navegação e o acesso para todos os usuários.</p>
+            <p>Com este mapa interativo, você pode explorar os locais do campus, verificar avaliações de acessibilidade e contribuir com suas próprias experiências para melhorar a inclusão.</p>
+        </div>
+    </div>
+
+    <!-- Modal Contato -->
+    <div id="contact-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-contact-modal">&times;</span>
+            <h2>Contato</h2>
+            <p>Telefone: (73) 99999-9999</p>
+            <p>Email: acessolivre@ifba.edu.br</p>
+            <p>Caso tenha alguma sugestão, <a href="https://forms.google.com/example" target="_blank">use o formulário</a>.</p>
+        </div>
+    </div>
 </header>
