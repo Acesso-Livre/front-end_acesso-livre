@@ -1,79 +1,19 @@
-let locationsData = [];
+async function fetchData() {
+            try {
+                const response = await fetch('https://acesso-livre-api.onrender.com/api/locations'); // Endereço da API FastAPI
 
-async function fetchData(id = null) {
-  try {
-    const url = id ? `https://acesso-livre-api.onrender.com/api/locations/${id}` : "https://acesso-livre-api.onrender.com/api/locations";
-    const response = await fetch(url);
-
-    if (response.ok) {
-      const data = await response.json();
-      if (id) {
-        // For specific location - return data without logging
-        return data;
-      } else {
-        // For all locations
-        locationsData = data.locations;
-        console.log("Locations:");
-        locationsData.forEach((location, index) => {
-          console.log(`Index ${index}:`, location);
-        });
-        return locationsData;
-      }
-    } else {
-      throw new Error("Erro ao fazer requisição: " + response.status);
-    }
-  } catch (error) {
-    console.error("Erro na requisição:", error);
-    return id ? null : [];
-  }
-}
-
-async function getLocations(skip = 0, limit = 100) {
-  try {
-    const params = new URLSearchParams();
-    params.append('skip', skip.toString());
-    params.append('limit', limit.toString());
-    const url = `https://acesso-livre-api.onrender.com/api/locations/?${params.toString()}`;
-
-    const response = await fetch(url);
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log("Locations with pagination:");
-      data.locations.forEach((location, index) => {
-        console.log(`Index ${index}:`, location);
-      });
-      return data.locations;
-    } else {
-      throw new Error("Erro ao fazer requisição: " + response.status);
-    }
-  } catch (error) {
-    console.error("Erro na requisição:", error);
-    return [];
-  }
-}
-
-async function getAccessibilityItems() {
-  try {
-    const url = "https://acesso-livre-api.onrender.com/api/locations/accessibility-items/";
-
-    const response = await fetch(url);
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log("Accessibility items:");
-      data.accessibility_items.forEach((item, index) => {
-        console.log(`Item ${index}:`, item);
-      });
-      return data.accessibility_items;
-    } else {
-      throw new Error("Erro ao fazer requisição: " + response.status);
-    }
-  } catch (error) {
-    console.error("Erro na requisição:", error);
-    return [];
-  }
-}
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Location:');
+                    data.forEach(location => {
+                        console.log(location);
+                    });
+                } else {
+                    throw new Error('Erro ao fazer requisição: ' + response.status);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
 
 window.onload = fetchData;
-
