@@ -116,78 +116,88 @@ document.addEventListener('DOMContentLoaded', function() {
   /**
    * Carrega as avaliações pendentes
    */
-  function carregarAvaliacoesPendentes() {
+  async function carregarAvaliacoesPendentes() {
     const containerAvaliacoes = document.getElementById('reviews-list');
-    const avaliacoes = [
-      {
-        id: 1,
-        usuario: 'João Silva',
-        data: '2023-11-06',
-        local: 'Rampa Principal',
-        avaliacao: '⭐⭐⭐⭐⭐',
-        texto: 'Excelente rampa, muito acessível!'
-      },
-      {
-        id: 2,
-        usuario: 'Maria Oliveira',
-        data: '2023-11-05',
-        local: 'Entrada Lateral',
-        avaliacao: '⭐⭐⭐⭐',
-        texto: 'Boa estrutura, mas poderia ser melhor sinalizada.'
-      },
-      {
-        id: 3,
-        usuario: 'Carlos Santos',
-        data: '2023-11-04',
-        local: 'Corredor Central',
-        avaliacao: '⭐⭐⭐⭐⭐',
-        texto: 'Muito útil para pessoas com mobilidade reduzida.'
-      }
-    ];
+    containerAvaliacoes.innerHTML = '<p>Carregando...</p>';
 
-    containerAvaliacoes.innerHTML = avaliacoes.map(avaliacao => `
-      <div class="review-item" data-id="${avaliacao.id}">
-        <div class="review-header">
-          <span class="review-user">${avaliacao.usuario}</span>
-          <span class="review-date">${avaliacao.data}</span>
-        </div>
-        <div class="review-location">
-          <strong>Local:</strong> ${avaliacao.local}
-        </div>
-        <div class="review-rating">${avaliacao.avaliacao}</div>
-        <div class="review-text">${avaliacao.texto}</div>
-        <div class="review-actions">
-          <button class="btn-approve" onclick="aprovarAvaliacao(${avaliacao.id})">Aprovar</button>
-          <button class="btn-reject" onclick="rejeitarAvaliacao(${avaliacao.id})">Rejeitar</button>
-        </div>
-      </div>
-    `).join('');
+    try {
+      const comments = await getPendingComments();
+      if (comments.length === 0) {
+        containerAvaliacoes.innerHTML = '<p>Nenhum comentário pendente.</p>';
+        return;
+      }
+
+      containerAvaliacoes.innerHTML = comments.map(comment => {
+        const locationName = comment.location || `Local ${comment.location_id}`;
+        const ratingStars = '⭐'.repeat(comment.rating || 0);
+        const dateFormatted = new Date(comment.date).toLocaleDateString('pt-BR');
+
+        return `
+          <div class="review-item" data-id="${comment.id}">
+            <div class="review-header">
+              <span class="review-user">${comment.user}</span>
+              <span class="review-date">${dateFormatted}</span>
+            </div>
+            <div class="review-location">
+              <strong>Local:</strong> ${locationName}
+            </div>
+            <div class="review-rating">${ratingStars}</div>
+            <div class="review-text">${comment.text}</div>
+            <div class="review-actions">
+              <button class="btn-approve" onclick="aprovarAvaliacao(${comment.id})">Aprovar</button>
+              <button class="btn-reject" onclick="rejeitarAvaliacao(${comment.id})">Rejeitar</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (error) {
+      console.error('Erro ao carregar comentários pendentes:', error);
+      containerAvaliacoes.innerHTML = '<p>Erro ao carregar comentários.</p>';
+    }
   }
 
   /**
    * Aprova uma avaliação
    */
-  function aprovarAvaliacao(id) {
-    console.log(`Avaliação ${id} aprovada`);
-    // Remover da lista
-    const item = document.querySelector(`[data-id="${id}"]`);
-    if (item) {
-      item.remove();
+  async function aprovarAvaliacao(id) {
+    try {
+      const success = await approveComment(id);
+      if (success) {
+        // Remover da lista
+        const item = document.querySelector(`[data-id="${id}"]`);
+        if (item) {
+          item.remove();
+        }
+        alert('Comentário aprovado com sucesso!');
+      } else {
+        alert('Erro ao aprovar comentário.');
+      }
+    } catch (error) {
+      console.error('Erro ao aprovar:', error);
+      alert('Erro ao aprovar comentário.');
     }
-    alert('Avaliação aprovada com sucesso!');
   }
 
   /**
    * Rejeita uma avaliação
    */
-  function rejeitarAvaliacao(id) {
-    console.log(`Avaliação ${id} rejeitada`);
-    // Remover da lista
-    const item = document.querySelector(`[data-id="${id}"]`);
-    if (item) {
-      item.remove();
+  async function rejeitarAvaliacao(id) {
+    try {
+      const success = await rejectComment(id);
+      if (success) {
+        // Remover da lista
+        const item = document.querySelector(`[data-id="${id}"]`);
+        if (item) {
+          item.remove();
+        }
+        alert('Comentário rejeitado.');
+      } else {
+        alert('Erro ao rejeitar comentário.');
+      }
+    } catch (error) {
+      console.error('Erro ao rejeitar:', error);
+      alert('Erro ao rejeitar comentário.');
     }
-    alert('Avaliação rejeitada.');
   }
 
   // Tornar funções globais para onclick

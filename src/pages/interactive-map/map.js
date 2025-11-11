@@ -51,12 +51,20 @@ document.addEventListener('DOMContentLoaded', () => {
   img.src = imgUrl;
 
   // Função para abrir o modal com dados da localização
-  function openLocationModal(locationData, pinLabel) {
+  async function openLocationModal(locationData, pinLabel) {
     const titleElement = document.getElementById(ELEMENT_IDS.locationTitle);
     const descriptionElement = document.getElementById(ELEMENT_IDS.locationDescription);
 
     if (titleElement) titleElement.textContent = locationData?.name || pinLabel;
     if (descriptionElement) descriptionElement.textContent = locationData?.description || 'Descrição não disponível.';
+
+    // Store current location ID for comment submission
+    window.currentLocationId = locationData?.id || null;
+
+    // Load approved comments for this location
+    if (window.currentLocationId) {
+      loadCommentsForLocation(window.currentLocationId);
+    }
 
     const modal = document.getElementById(MODAL_IDS.infoModal);
     modal.style.display = "flex";
@@ -352,9 +360,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
       target.classList.add('active');
       target.classList.remove('enter-right');
+
+      // Load comments if review tab is activated
+      if (target.id === 'review-content' && window.currentLocationId) {
+        loadCommentsForLocation(window.currentLocationId);
+      }
     });
   });
 });
+
+// Função para carregar comentários aprovados para um local
+async function loadCommentsForLocation(locationId) {
+  const commentsList = document.querySelector('.comments-list');
+  if (!commentsList) return;
+
+  commentsList.innerHTML = '<p>Carregando comentários...</p>';
+  try {
+    const comments = await getApprovedCommentsForLocation(locationId);
+    if (comments.length === 0) {
+      commentsList.innerHTML = '<p>Nenhum comentário ainda.</p>';
+    } else {
+      commentsList.innerHTML = comments.map(comment => `
+        <div class="comment-card">
+          <div class="comment-header">
+            <span class="user-name">${comment.user}</span>
+            <span class="comment-date">${new Date(comment.date).toLocaleDateString('pt-BR')}</span>
+          </div>
+          <div class="comment-rating">${'⭐'.repeat(comment.rating || 0)}</div>
+          <p class="comment-text">${comment.text}</p>
+        </div>
+      `).join('');
+    }
+  } catch (error) {
+    console.error('Erro ao carregar comentários:', error);
+    commentsList.innerHTML = '<p>Erro ao carregar comentários.</p>';
+  }
+}
 
 // Controla o estado do botão de adicionar comentário: só habilita quando a aba 'Comentarios' está ativa
 document.addEventListener('DOMContentLoaded', () => {
@@ -432,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle comment form submission
   const commentForm = document.getElementById('comment-form');
   if (commentForm) {
-    commentForm.addEventListener('submit', (e) => {
+    commentForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('user-name').value;
       const rating = ratingInput.value;
@@ -446,28 +487,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const date = new Date().toISOString(); // Use ISO for database compatibility
 
-      // Prepare comment data for future database submission
+      // Prepare comment data for submission
       const commentData = {
-        name,
+        user: name,
         rating: parseInt(rating),
-        comment: commentText,
-        date
+        text: commentText,
+        date: new Date().toISOString(),
+        location_id: window.currentLocationId,
+        status: 'pending'
       };
 
-      // Mock: Add comment to the DOM instead of sending to database
-      const commentsList = document.querySelector('.comments-list');
-      if (commentsList) {
-        const commentCard = document.createElement('div');
-        commentCard.className = 'comment-card';
-        commentCard.innerHTML = `
-          <div class="comment-header">
-            <span class="user-name">${name}</span>
-            <span class="comment-date">${new Date().toLocaleDateString('pt-BR')}</span>
-          </div>
-          <div class="comment-rating">${'⭐'.repeat(rating)}</div>
-          <p class="comment-text">${commentText}</p>
-        `;
-        commentsList.appendChild(commentCard);
+      // Submit comment to API
+      const result = await postComment(commentData);
+      if (result) {
+        alert('Comentário enviado para aprovação!');
+      } else {
+        alert('Erro ao enviar comentário. Tente novamente.');
+        return; // Don't reset form if failed
       }
 
       // Reset form

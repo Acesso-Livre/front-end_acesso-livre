@@ -104,8 +104,85 @@ async function getAccessibilityItemById(itemId) {
   }
 }
 
+// Função para criar um novo comentário
+async function postComment(commentData) {
+  try {
+    // Mock: Store in localStorage instead of API
+    const comments = JSON.parse(localStorage.getItem('pendingComments') || '[]');
+    const newComment = { id: Date.now(), ...commentData };
+    comments.push(newComment);
+    localStorage.setItem('pendingComments', JSON.stringify(comments));
+    return newComment;
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    return null;
+  }
+}
+
+// Função para buscar comentários pendentes
+async function getPendingComments() {
+  try {
+    // Mock: Read from localStorage
+    const comments = JSON.parse(localStorage.getItem('pendingComments') || '[]');
+    return comments.filter(c => c.status === 'pending');
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    return [];
+  }
+}
+
+// Função para aprovar um comentário
+async function approveComment(commentId) {
+  try {
+    // Mock: Update in localStorage
+    const comments = JSON.parse(localStorage.getItem('pendingComments') || '[]');
+    const comment = comments.find(c => c.id == commentId);
+    if (comment) {
+      comment.status = 'approved';
+      localStorage.setItem('pendingComments', JSON.stringify(comments));
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    return false;
+  }
+}
+
+// Função para rejeitar um comentário
+async function rejectComment(commentId) {
+  try {
+    // Mock: Update in localStorage
+    const comments = JSON.parse(localStorage.getItem('pendingComments') || '[]');
+    const comment = comments.find(c => c.id == commentId);
+    if (comment) {
+      comment.status = 'rejected';
+      localStorage.setItem('pendingComments', JSON.stringify(comments));
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    return false;
+  }
+}
+
+// Função para buscar comentários aprovados de um local
+async function getApprovedCommentsForLocation(locationId) {
+  try {
+    // Mock: Read from localStorage
+    const comments = JSON.parse(localStorage.getItem('pendingComments') || '[]');
+    return comments.filter(c => c.status === 'approved' && c.location_id == locationId);
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    return [];
+  }
+}
+
 // Expor funções para o global para testes no console
 window.getLocationById = getLocationById;
 window.getAccessibilityItemById = getAccessibilityItemById;
+window.postComment = postComment;
+window.getApprovedCommentsForLocation = getApprovedCommentsForLocation;
 
 window.onload = fetchData;
