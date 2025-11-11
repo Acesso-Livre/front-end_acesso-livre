@@ -63,4 +63,38 @@ async function getAccessibilityItems() {
   }
 }
 
+async function getLocationById(locationId) {
+  try {
+    // Buscar todas as localizações e encontrar pela ID
+    const allLocations = await fetchData();
+    const location = allLocations.find(loc => loc.id == locationId);
+    return location || null;
+  } catch (error) {
+    console.error("Erro ao buscar localização:", error);
+    return null;
+  }
+}
+
+async function getAccessibilityItemById(itemId) {
+  try {
+    const url = `https://acesso-livre-api.onrender.com/api/locations/accessibility-items/${itemId}`;
+
+    const response = await fetch(url);
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      throw new Error("Erro ao buscar item de acessibilidade: " + response.status);
+    }
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    return null;
+  }
+}
+
+// Expor funções para o global para testes no console
+window.getLocationById = getLocationById;
+window.getAccessibilityItemById = getAccessibilityItemById;
+
 window.onload = fetchData;
