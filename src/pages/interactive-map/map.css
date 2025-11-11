@@ -417,10 +417,6 @@ h1 {
 
 /* Responsividade para telas móveis */
 @media (max-width: 375px) {
-  /* Mapa */
-  #map {
-    height: 150px; /* Ajuste conforme necessário */
-  }
 
   .modal-content {
     padding: 15px;

@@ -13,10 +13,6 @@ async function fetchData(id = null) {
       } else {
         // For all locations
         locationsData = data.locations;
-        console.log("Locations:");
-        locationsData.forEach((location, index) => {
-          console.log(`Index ${index}:`, location);
-        });
         return locationsData;
       }
     } else {
@@ -39,10 +35,6 @@ async function getLocations(skip = 0, limit = 100) {
 
     if (response.ok) {
       const data = await response.json();
-      console.log("Locations with pagination:");
-      data.locations.forEach((location, index) => {
-        console.log(`Index ${index}:`, location);
-      });
       return data.locations;
     } else {
       throw new Error("Erro ao fazer requisição: " + response.status);
@@ -61,10 +53,6 @@ async function getAccessibilityItems() {
 
     if (response.ok) {
       const data = await response.json();
-      console.log("Accessibility items:");
-      data.accessibility_items.forEach((item, index) => {
-        console.log(`Item ${index}:`, item);
-      });
       return data.accessibility_items;
     } else {
       throw new Error("Erro ao fazer requisição: " + response.status);

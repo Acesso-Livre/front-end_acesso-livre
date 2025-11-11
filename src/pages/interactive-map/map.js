@@ -1,8 +1,18 @@
+const MODAL_IDS = {
+  infoModal: 'infoModal',
+  addCommentModal: 'addCommentModal'
+};
+
+const ELEMENT_IDS = {
+  locationTitle: 'location-title',
+  locationDescription: 'location-description'
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   const imgUrl = '../../assets/img/map/mapa-ifba.png'; // ajuste o caminho da imagem
 
   // Garante que o modal comece fechado ao carregar a página
-  const initialModal = document.getElementById('infoModal');
+  const initialModal = document.getElementById(MODAL_IDS.infoModal);
   if (initialModal) initialModal.style.display = 'none';
 
   // Se o usuário veio do botão 'Explorar mapa', limpamos o flag e garantimos
@@ -37,7 +47,37 @@ document.addEventListener('DOMContentLoaded', () => {
   const img = new Image();
   img.src = imgUrl;
 
-  img.onload = () => {
+  // Função para abrir o modal com dados da localização
+  function openLocationModal(locationData, pinLabel) {
+    const titleElement = document.getElementById(ELEMENT_IDS.locationTitle);
+    const descriptionElement = document.getElementById(ELEMENT_IDS.locationDescription);
+
+    if (titleElement) titleElement.textContent = locationData?.name || pinLabel;
+    if (descriptionElement) descriptionElement.textContent = locationData?.description || 'Descrição não disponível.';
+
+    const modal = document.getElementById(MODAL_IDS.infoModal);
+    modal.style.display = "flex";
+    inModal = true;
+
+    try {
+      history.pushState({ modal: true }, '');
+      modalPushed = true;
+    } catch (e) {
+      modalPushed = false;
+    }
+  }
+
+  // Função para criar ícone de pin
+  function makePinIcon() {
+    return L.divIcon({
+      className: 'pin-marker',
+      html: `<div class="dot"></div>`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    });
+  }
+
+  img.onload = async () => {
     const W = img.naturalWidth;
     const H = img.naturalHeight;
     const bounds = [[0, 0], [H, W]];
@@ -63,14 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
     map.setZoom(fillZoom);
     map.setMinZoom(fillZoom);
 
-    // Cria o ícone de pin
-    function makePinIcon() {
-      return L.divIcon({
-        className: 'pin-marker',
-        html: `<div class="dot"></div>`,
-        iconSize: [32, 32],
-        iconAnchor: [16, 16]
-      });
+    // Carrega todos os dados de localização primeiro
+    let allLocations = [];
+    try {
+      allLocations = await fetchData() || [];
+    } catch (error) {
+      console.error('Erro ao carregar dados de localizações:', error);
     }
 
     // Adiciona os pins no mapa
@@ -84,31 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const marker = L.marker([y, x], { icon: makePinIcon() }).addTo(map);
 
       // Ao clicar em um pin → abre modal
-      marker.on('click', async () => {
+      marker.on('click', () => {
         console.log(`Pin clicado:`, p);
-        const locationData = await fetchData(p.id);
-
-        // Update modal content with location data
-        if (locationData) {
-          const titleElement = document.getElementById('location-title');
-          const descriptionElement = document.getElementById('location-description');
-
-          if (titleElement) titleElement.textContent = locationData.name || p.label;
-          if (descriptionElement) descriptionElement.textContent = locationData.description || 'Descrição não disponível.';
-        }
-
-        const modal = document.getElementById("infoModal");
-        modal.style.display = "flex";
-        inModal = true;
-
-        try {
-          // empurra um estado para que o botão voltar do browser possa fechar o modal primeiro
-          history.pushState({ modal: true }, '');
-          modalPushed = true;
-        } catch (e) {
-          // alguns ambientes (file://) podem lançar; ignore
-          modalPushed = false;
-        }
+        const locationData = allLocations.find(loc => loc.id == p.id);
+        openLocationModal(locationData, p.label);
       });
     });
 
@@ -120,8 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const navBack = document.querySelector('.btn.voltar');
     if (navBack) {
       navBack.addEventListener('click', function (e) {
-        const modal = document.getElementById("infoModal");
-        const addModal = document.getElementById("addCommentModal");
+        const modal = document.getElementById(MODAL_IDS.infoModal);
+        const addModal = document.getElementById(MODAL_IDS.addCommentModal);
         if (addModal && addModal.style.display === 'flex') {
           // fecha modal de adicionar comentário e volta para o modal de info
           e.preventDefault();
@@ -146,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Se o usuário usar o botão "voltar" do browser enquanto o modal estiver aberto
     window.addEventListener('popstate', function (event) {
       if (inModal) {
-        const modal = document.getElementById("infoModal");
+        const modal = document.getElementById(MODAL_IDS.infoModal);
         modal.style.display = "none";
         inModal = false;
         modalPushed = false;
@@ -158,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (backBtn) {
       backBtn.addEventListener('click', function () {
         if (inModal) {
-          const modal = document.getElementById("infoModal");
+          const modal = document.getElementById(MODAL_IDS.infoModal);
           modal.style.display = "none";
           inModal = false;
           if (modalPushed) {
@@ -372,19 +389,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // Event listener para abrir o modal de adicionar comentário
   if (commentBtn) {
     commentBtn.addEventListener('click', () => {
-      const infoModal = document.getElementById('infoModal');
-      const addModal = document.getElementById('addCommentModal');
+      const infoModal = document.getElementById(MODAL_IDS.infoModal);
+      const addModal = document.getElementById(MODAL_IDS.addCommentModal);
       if (infoModal) infoModal.style.display = 'none';
       if (addModal) addModal.style.display = 'flex';
     });
   }
 
   // Event listener para fechar o modal de adicionar comentário
-  const addCommentBackBtn = document.querySelector('#addCommentModal .back-btn');
+  const addCommentBackBtn = document.querySelector(`#${MODAL_IDS.addCommentModal} .back-btn`);
   if (addCommentBackBtn) {
     addCommentBackBtn.addEventListener('click', () => {
-      const infoModal = document.getElementById('infoModal');
-      const addModal = document.getElementById('addCommentModal');
+      const infoModal = document.getElementById(MODAL_IDS.infoModal);
+      const addModal = document.getElementById(MODAL_IDS.addCommentModal);
       if (addModal) addModal.style.display = 'none';
       if (infoModal) infoModal.style.display = 'flex';
     });
@@ -459,8 +476,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ratingInput.value = '';
 
       // Close add comment modal and open info modal
-      const addModal = document.getElementById('addCommentModal');
-      const infoModal = document.getElementById('infoModal');
+      const addModal = document.getElementById(MODAL_IDS.addCommentModal);
+      const infoModal = document.getElementById(MODAL_IDS.infoModal);
       if (addModal) addModal.style.display = 'none';
       if (infoModal) infoModal.style.display = 'flex';
 
