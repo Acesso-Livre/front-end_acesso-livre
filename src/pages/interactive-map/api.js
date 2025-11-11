@@ -65,12 +65,23 @@ async function getAccessibilityItems() {
 
 async function getLocationById(locationId) {
   try {
-    // Buscar todas as localizações e encontrar pela ID
-    const allLocations = await fetchData();
-    const location = allLocations.find(loc => loc.id == locationId);
+    // Tentar buscar na API primeiro
+    const allLocations = await getLocations(0, 100);
+    let location = allLocations.find(loc => loc.id == locationId);
+
+    // Se não encontrou na API, usar dados dos pins do map.js
+    if (!location && window.pins) {
+      location = window.pins.find(p => p.id == locationId);
+    }
+
+    console.log('Found location:', location);
     return location || null;
   } catch (error) {
     console.error("Erro ao buscar localização:", error);
+    // Fallback para dados dos pins
+    if (window.pins) {
+      return window.pins.find(p => p.id == locationId) || null;
+    }
     return null;
   }
 }

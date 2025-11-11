@@ -44,6 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
     { label: 'Cores', top: 34.5, left: 48.2, id: 16 }
   ];
 
+  // Expor pins para uso em api.js
+  window.pins = pins;
+
   const img = new Image();
   img.src = imgUrl;
 
