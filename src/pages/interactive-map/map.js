@@ -9,7 +9,7 @@ const ELEMENT_IDS = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  const imgUrl = '../../assets/img/map/mapa-ifba.png'; // ajuste o caminho da imagem
+  const imgUrl = '/src/assets/img/map/mapa-ifba.png'; // ajuste o caminho da imagem
 
   // Garante que o modal comece fechado ao carregar a página
   const initialModal = document.getElementById(MODAL_IDS.infoModal);
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   // Expor pins para uso em api.js
-  window.pins = pins;
+  window.pins = async () => pins;
 
   const img = new Image();
   img.src = imgUrl;
@@ -89,8 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   img.onload = async () => {
+    console.log('Image loaded successfully');
     const W = img.naturalWidth;
     const H = img.naturalHeight;
+    console.log('Image dimensions: W=', W, 'H=', H);
     const bounds = [[0, 0], [H, W]];
 
     const map = L.map('map', {
@@ -102,8 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
       maxBounds: bounds,
       maxBoundsViscosity: 1.0
     });
+    console.log('Map created');
 
     L.imageOverlay(imgUrl, bounds).addTo(map);
+    console.log('Image overlay added');
     map.fitBounds(bounds);
 
     // Calculate zoom to fill the screen
@@ -127,9 +131,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let inModal = false;
     let modalPushed = false; // se true, a abertura do modal empurrou um estado no history
 
+    console.log(`Adding ${pins.length} pins to map`);
     pins.forEach(p => {
       const x = (p.left / 100) * W;
       const y = (p.top / 100) * H;
+      console.log(`Adding pin ${p.label} at [${y}, ${x}]`);
       const marker = L.marker([y, x], { icon: makePinIcon() }).addTo(map);
 
       // Ao clicar em um pin → abre modal
@@ -496,6 +502,11 @@ document.addEventListener('DOMContentLoaded', () => {
         location_id: window.currentLocationId,
         status: 'pending'
       };
+
+
+      window.pins = getAccessibilityItems().then(() => pins);
+
+
 
       // Submit comment to API
       const result = await postComment(commentData);

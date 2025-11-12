@@ -181,6 +181,7 @@ async function getApprovedCommentsForLocation(locationId) {
 
 // Expor funções para o global para testes no console
 window.getLocationById = getLocationById;
+window.getAccessibilityItems = getAccessibilityItems;
 window.getAccessibilityItemById = getAccessibilityItemById;
 window.postComment = postComment;
 window.getApprovedCommentsForLocation = getApprovedCommentsForLocation;
