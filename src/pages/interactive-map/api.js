@@ -65,13 +65,27 @@ async function getAccessibilityItems() {
 
 async function getLocationById(locationId) {
   try {
-    // Tentar buscar na API primeiro
-    const allLocations = await getLocations(0, 100);
-    let location = allLocations.find(loc => loc.id == locationId);
+    let location = null;
 
-    // Se não encontrou na API, usar dados dos pins do map.js
-    if (!location && window.pins) {
-      location = window.pins.find(p => p.id == locationId);
+    // Primeiro tentar dados dos pins (acessibilidade items)
+    if (window.pins) {
+      const pin = window.pins.find(p => p.id == locationId);
+      if (pin) {
+        if (pin.location_id) {
+          // Buscar a localização associada
+          const allLocations = await getLocations(0, 100);
+          location = allLocations.find(loc => loc.id == pin.location_id);
+        } else {
+          // Assumir que o pin tem dados de localização
+          location = pin;
+        }
+      }
+    }
+
+    // Se não encontrou nos pins, tentar na API
+    if (!location) {
+      const allLocations = await getLocations(0, 100);
+      location = allLocations.find(loc => loc.id == locationId);
     }
 
     console.log('Found location:', location);
@@ -80,7 +94,19 @@ async function getLocationById(locationId) {
     console.error("Erro ao buscar localização:", error);
     // Fallback para dados dos pins
     if (window.pins) {
-      return window.pins.find(p => p.id == locationId) || null;
+      const pin = window.pins.find(p => p.id == locationId);
+      if (pin) {
+        if (pin.location_id) {
+          try {
+            const locs = await getLocations(0, 100);
+            return locs.find(loc => loc.id == pin.location_id) || pin;
+          } catch {
+            return pin;
+          }
+        } else {
+          return pin;
+        }
+      }
     }
     return null;
   }

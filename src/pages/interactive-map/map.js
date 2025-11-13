@@ -8,7 +8,10 @@ const ELEMENT_IDS = {
   locationDescription: 'location-description'
 };
 
+console.log('map.js loaded');
+
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOMContentLoaded fired');
   const imgUrl = '/src/assets/img/map/mapa-ifba.png'; // ajuste o caminho da imagem
 
   // Garante que o modal comece fechado ao carregar a página
@@ -25,29 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ignore */
   }
 
-  const pins = [
-    { label: 'Entrada', top: 87, left: 3.7, id: 1 },
-    { label: 'Estacionamento I', top: 75, left: 27, id: 2 },
-    { label: 'Estacionamento II', top: 80.5, left: 72.5, id: 3 },
-    { label: 'Estacionamento III', top: 42, left: 91, id: 4 },
-    { label: 'Campo', top: 66.5, left: 10.3, id: 5 },
-    { label: 'Quadra', top: 20, left: 8.3, id: 6 },
-    { label: 'Quadra de Areia', top: 7.5, left: 17.5, id: 7 },
-    { label: 'Bloco 06', top: 42.5, left: 30, id: 8 },
-    { label: 'Bloco 05', top: 45.8, left: 46.5, id: 9 },
-    { label: 'Bloco 08', top: 20, left: 30, id: 10 },
-    { label: 'Bloco 09', top: 14.8, left: 46, id: 11 },
-    { label: 'Cantina', top: 59, left: 69, id: 12 },
-    { label: 'Auditório', top: 60, left: 54.2, id: 13 },
-    { label: 'Bloco 16', top: 39, left: 78, id: 14 },
-    { label: 'Biblioteca', top: 21.5, left: 84.6, id: 15 },
-    { label: 'Cores', top: 34.5, left: 48.2, id: 16 }
-  ];
-
   // Expor pins para uso em api.js
-  window.pins = async () => pins;
-
+  
   const img = new Image();
+  console.log('Setting image src:', imgUrl);
   img.src = imgUrl;
 
   // Função para abrir o modal com dados da localização
@@ -126,7 +110,16 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Erro ao carregar dados de localizações:', error);
     }
 
-    // Adiciona os pins no mapa
+    // Carrega os itens de acessibilidade para usar como pins
+    let pins = [];
+    try {
+      pins = await getAccessibilityItems() || [];
+      window.pins = pins;
+      } catch (error) {
+        console.error('Erro ao carregar itens de acessibilidade:', error);
+      }
+      
+      // Adiciona os pins no mapa
     // Vamos rastrear o estado do modal para controlar o comportamento do botão "Voltar"
     let inModal = false;
     let modalPushed = false; // se true, a abertura do modal empurrou um estado no history
@@ -135,14 +128,14 @@ document.addEventListener('DOMContentLoaded', () => {
     pins.forEach(p => {
       const x = (p.left / 100) * W;
       const y = (p.top / 100) * H;
-      console.log(`Adding pin ${p.label} at [${y}, ${x}]`);
+      console.log(`Adding pin ${p.label || p.name} at [${y}, ${x}]`);
       const marker = L.marker([y, x], { icon: makePinIcon() }).addTo(map);
 
       // Ao clicar em um pin → abre modal
       marker.on('click', () => {
         console.log(`Pin clicado:`, p);
-        const locationData = allLocations.find(loc => loc.id == p.id);
-        openLocationModal(locationData, p.label);
+        const locationData = allLocations.find(loc => loc.id == p.location_id);
+        openLocationModal(locationData, p.label || p.name || 'Item');
       });
     });
 
@@ -504,7 +497,9 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
 
-      window.pins = getAccessibilityItems().then(() => pins);
+      const accessibilityItems = await getAccessibilityItems();
+      window.pins = accessibilityItems;
+  
 
 
 
