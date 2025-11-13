@@ -24,12 +24,12 @@ async function fetchData(id = null) {
   }
 }
 
-async function getLocations(skip = 0, limit = 100) {
+async function getLocations(skip = 0, limit = 20) {
   try {
     const params = new URLSearchParams();
     params.append('skip', skip.toString());
     params.append('limit', limit.toString());
-    const url = `https://acesso-livre-api.onrender.com/api/locations/?${params.toString()}`;
+    const url = `https://acesso-livre-api.onrender.com/api/locations/?${params}`;
 
     const response = await fetch(url);
 
