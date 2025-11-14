@@ -211,5 +211,5 @@ window.getAccessibilityItems = getAccessibilityItems;
 window.getAccessibilityItemById = getAccessibilityItemById;
 window.postComment = postComment;
 window.getApprovedCommentsForLocation = getApprovedCommentsForLocation;
-
 window.onload = fetchData;
+window.getLocations = getLocations;
