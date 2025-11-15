@@ -45,6 +45,7 @@ async function getLocations(skip = 0, limit = 20) {
   }
 }
 
+//função para buscar todos os itens de acessibilidade
 async function getAccessibilityItems() {
   try {
     const url = "https://acesso-livre-api.onrender.com/api/locations/accessibility-items/";
@@ -112,6 +113,7 @@ async function getLocationById(locationId) {
   }
 }
 
+//função para buscar um item de acessibilidade por ID
 async function getAccessibilityItemById(itemId) {
   try {
     const url = `https://acesso-livre-api.onrender.com/api/locations/accessibility-items/${itemId}`;
@@ -123,6 +125,31 @@ async function getAccessibilityItemById(itemId) {
       return data;
     } else {
       throw new Error("Erro ao buscar item de acessibilidade: " + response.status);
+    }
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    return null;
+  }
+}
+
+// Função para criar um novo item de acessibilidade
+async function createAccessibilityItem(itemData) {
+  try {
+    const url = "https://acesso-livre-api.onrender.com/api/locations/accessibility-items/";
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(itemData)
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      throw new Error("Erro ao criar item de acessibilidade: " + response.status);
     }
   } catch (error) {
     console.error("Erro na requisição:", error);
@@ -209,6 +236,7 @@ async function getApprovedCommentsForLocation(locationId) {
 window.getLocationById = getLocationById;
 window.getAccessibilityItems = getAccessibilityItems;
 window.getAccessibilityItemById = getAccessibilityItemById;
+window.createAccessibilityItem = createAccessibilityItem;
 window.postComment = postComment;
 window.getApprovedCommentsForLocation = getApprovedCommentsForLocation;
 window.onload = fetchData;
