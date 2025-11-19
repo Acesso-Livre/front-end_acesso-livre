@@ -1,34 +1,28 @@
 let locationsData = [];
 
-async function fetchData(id = null) {
+async function fetchData() {
   try {
-    const url = id ? `https://acesso-livre-api.onrender.com/api/locations/${id}` : "https://acesso-livre-api.onrender.com/api/locations";
+    const url = "https://acesso-livre-api.onrender.com/api/locations";
     const response = await fetch(url);
 
     if (response.ok) {
       const data = await response.json();
-      if (id) {
-        // For specific location - return data without logging
-        return data;
-      } else {
-        // For all locations
-        locationsData = data.locations;
-        return locationsData;
-      }
+      locationsData = data.locations;
+      return locationsData;
     } else {
       throw new Error("Erro ao fazer requisição: " + response.status);
     }
   } catch (error) {
     console.error("Erro na requisição:", error);
-    return id ? null : [];
+    return [];
   }
 }
 
 async function getLocations(skip = 0, limit = 20) {
   try {
     const params = new URLSearchParams();
-    params.append('skip', skip.toString());
-    params.append('limit', limit.toString());
+    params.append('skip', skip);
+    params.append('limit', limit);
     const url = `https://acesso-livre-api.onrender.com/api/locations/?${params}`;
 
     const response = await fetch(url);
