@@ -1,6 +1,6 @@
 let locationsData = [];
 
-async function fetchData() {
+async function getAllLocations() {
   try {
     const url = "https://acesso-livre-api.onrender.com/api/locations";
     const response = await fetch(url);
@@ -21,8 +21,8 @@ async function fetchData() {
 async function getLocations(skip = 0, limit = 20) {
   try {
     const params = new URLSearchParams();
-    params.append('skip', skip);
-    params.append('limit', limit);
+    params.append("skip", skip);
+    params.append("limit", limit);
     const url = `https://acesso-livre-api.onrender.com/api/locations/?${params}`;
 
     const response = await fetch(url);
@@ -41,7 +41,8 @@ async function getLocations(skip = 0, limit = 20) {
 
 async function getAccessibilityItems() {
   try {
-    const url = "https://acesso-livre-api.onrender.com/api/locations/accessibility-items/";
+    const url =
+      "https://acesso-livre-api.onrender.com/api/locations/accessibility-items/";
 
     const response = await fetch(url);
 
@@ -63,12 +64,12 @@ async function getLocationById(locationId) {
 
     // Primeiro tentar dados dos pins (acessibilidade items)
     if (window.pins) {
-      const pin = window.pins.find(p => p.id == locationId);
+      const pin = window.pins.find((p) => p.id == locationId);
       if (pin) {
         if (pin.location_id) {
           // Buscar a localização associada
           const allLocations = await getLocations(0, 100);
-          location = allLocations.find(loc => loc.id == pin.location_id);
+          location = allLocations.find((loc) => loc.id == pin.location_id);
         } else {
           // Assumir que o pin tem dados de localização
           location = pin;
@@ -79,21 +80,21 @@ async function getLocationById(locationId) {
     // Se não encontrou nos pins, tentar na API
     if (!location) {
       const allLocations = await getLocations(0, 100);
-      location = allLocations.find(loc => loc.id == locationId);
+      location = allLocations.find((loc) => loc.id == locationId);
     }
 
-    console.log('Found location:', location);
+    console.log("Found location:", location);
     return location || null;
   } catch (error) {
     console.error("Erro ao buscar localização:", error);
     // Fallback para dados dos pins
     if (window.pins) {
-      const pin = window.pins.find(p => p.id == locationId);
+      const pin = window.pins.find((p) => p.id == locationId);
       if (pin) {
         if (pin.location_id) {
           try {
             const locs = await getLocations(0, 100);
-            return locs.find(loc => loc.id == pin.location_id) || pin;
+            return locs.find((loc) => loc.id == pin.location_id) || pin;
           } catch {
             return pin;
           }
@@ -116,7 +117,9 @@ async function getAccessibilityItemById(itemId) {
       const data = await response.json();
       return data;
     } else {
-      throw new Error("Erro ao buscar item de acessibilidade: " + response.status);
+      throw new Error(
+        "Erro ao buscar item de acessibilidade: " + response.status
+      );
     }
   } catch (error) {
     console.error("Erro na requisição:", error);
@@ -128,10 +131,12 @@ async function getAccessibilityItemById(itemId) {
 async function postComment(commentData) {
   try {
     // Mock: Store in localStorage instead of API
-    const comments = JSON.parse(localStorage.getItem('pendingComments') || '[]');
+    const comments = JSON.parse(
+      localStorage.getItem("pendingComments") || "[]"
+    );
     const newComment = { id: Date.now(), ...commentData };
     comments.push(newComment);
-    localStorage.setItem('pendingComments', JSON.stringify(comments));
+    localStorage.setItem("pendingComments", JSON.stringify(comments));
     return newComment;
   } catch (error) {
     console.error("Erro na requisição:", error);
@@ -143,8 +148,10 @@ async function postComment(commentData) {
 async function getPendingComments() {
   try {
     // Mock: Read from localStorage
-    const comments = JSON.parse(localStorage.getItem('pendingComments') || '[]');
-    return comments.filter(c => c.status === 'pending');
+    const comments = JSON.parse(
+      localStorage.getItem("pendingComments") || "[]"
+    );
+    return comments.filter((c) => c.status === "pending");
   } catch (error) {
     console.error("Erro na requisição:", error);
     return [];
@@ -155,11 +162,13 @@ async function getPendingComments() {
 async function approveComment(commentId) {
   try {
     // Mock: Update in localStorage
-    const comments = JSON.parse(localStorage.getItem('pendingComments') || '[]');
-    const comment = comments.find(c => c.id == commentId);
+    const comments = JSON.parse(
+      localStorage.getItem("pendingComments") || "[]"
+    );
+    const comment = comments.find((c) => c.id == commentId);
     if (comment) {
-      comment.status = 'approved';
-      localStorage.setItem('pendingComments', JSON.stringify(comments));
+      comment.status = "approved";
+      localStorage.setItem("pendingComments", JSON.stringify(comments));
       return true;
     }
     return false;
@@ -173,11 +182,13 @@ async function approveComment(commentId) {
 async function rejectComment(commentId) {
   try {
     // Mock: Update in localStorage
-    const comments = JSON.parse(localStorage.getItem('pendingComments') || '[]');
-    const comment = comments.find(c => c.id == commentId);
+    const comments = JSON.parse(
+      localStorage.getItem("pendingComments") || "[]"
+    );
+    const comment = comments.find((c) => c.id == commentId);
     if (comment) {
-      comment.status = 'rejected';
-      localStorage.setItem('pendingComments', JSON.stringify(comments));
+      comment.status = "rejected";
+      localStorage.setItem("pendingComments", JSON.stringify(comments));
       return true;
     }
     return false;
@@ -191,8 +202,12 @@ async function rejectComment(commentId) {
 async function getApprovedCommentsForLocation(locationId) {
   try {
     // Mock: Read from localStorage
-    const comments = JSON.parse(localStorage.getItem('pendingComments') || '[]');
-    return comments.filter(c => c.status === 'approved' && c.location_id == locationId);
+    const comments = JSON.parse(
+      localStorage.getItem("pendingComments") || "[]"
+    );
+    return comments.filter(
+      (c) => c.status === "approved" && c.location_id == locationId
+    );
   } catch (error) {
     console.error("Erro na requisição:", error);
     return [];
@@ -205,5 +220,5 @@ window.getAccessibilityItems = getAccessibilityItems;
 window.getAccessibilityItemById = getAccessibilityItemById;
 window.postComment = postComment;
 window.getApprovedCommentsForLocation = getApprovedCommentsForLocation;
-window.onload = fetchData;
+window.onload = getAllLocations;
 window.getLocations = getLocations;

@@ -1,46 +1,46 @@
 const MODAL_IDS = {
-  infoModal: 'infoModal',
-  addCommentModal: 'addCommentModal'
+  infoModal: "infoModal",
+  addCommentModal: "addCommentModal",
 };
 
 const ELEMENT_IDS = {
-  locationTitle: 'location-title',
-  locationDescription: 'location-description'
+  locationTitle: "location-title",
+  locationDescription: "location-description",
 };
 
-console.log('map.js loaded');
-
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOMContentLoaded fired');
-  const imgUrl = '/src/assets/img/map/mapa-ifba.png'; // ajuste o caminho da imagem
+document.addEventListener("DOMContentLoaded", () => {
+  const imgUrl = "/src/assets/img/map/mapa-ifba.png"; // ajuste o caminho da imagem
 
   // Garante que o modal comece fechado ao carregar a página
   const initialModal = document.getElementById(MODAL_IDS.infoModal);
-  if (initialModal) initialModal.style.display = 'none';
+  if (initialModal) initialModal.style.display = "none";
 
   // Se o usuário veio do botão 'Explorar mapa', limpamos o flag e garantimos
   // que nenhum modal seja aberto automaticamente
   try {
-    if (sessionStorage.getItem('enterFromExplore') === '1') {
-      sessionStorage.removeItem('enterFromExplore');
+    if (sessionStorage.getItem("enterFromExplore") === "1") {
+      sessionStorage.removeItem("enterFromExplore");
     }
   } catch (e) {
     /* ignore */
   }
 
   // Expor pins para uso em api.js
-  
+
   const img = new Image();
-  console.log('Setting image src:', imgUrl);
   img.src = imgUrl;
 
   // Função para abrir o modal com dados da localização
   async function openLocationModal(locationData, pinLabel) {
     const titleElement = document.getElementById(ELEMENT_IDS.locationTitle);
-    const descriptionElement = document.getElementById(ELEMENT_IDS.locationDescription);
+    const descriptionElement = document.getElementById(
+      ELEMENT_IDS.locationDescription
+    );
 
     if (titleElement) titleElement.textContent = locationData?.name || pinLabel;
-    if (descriptionElement) descriptionElement.textContent = locationData?.description || 'Descrição não disponível.';
+    if (descriptionElement)
+      descriptionElement.textContent =
+        locationData?.description || "Descrição não disponível.";
 
     // Store current location ID for comment submission
     window.currentLocationId = locationData?.id || null;
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inModal = true;
 
     try {
-      history.pushState({ modal: true }, '');
+      history.pushState({ modal: true }, "");
       modalPushed = true;
     } catch (e) {
       modalPushed = false;
@@ -65,33 +65,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // Função para criar ícone de pin
   function makePinIcon() {
     return L.divIcon({
-      className: 'pin-marker',
+      className: "pin-marker",
       html: `<div class="dot"></div>`,
       iconSize: [32, 32],
-      iconAnchor: [16, 16]
+      iconAnchor: [16, 16],
     });
   }
 
   img.onload = async () => {
-    console.log('Image loaded successfully');
     const W = img.naturalWidth;
     const H = img.naturalHeight;
-    console.log('Image dimensions: W=', W, 'H=', H);
-    const bounds = [[0, 0], [H, W]];
+    const bounds = [
+      [0, 0],
+      [H, W],
+    ];
 
-    const map = L.map('map', {
+    const map = L.map("map", {
       crs: L.CRS.Simple,
       minZoom: 0,
       maxZoom: 4,
       zoomSnap: 0.25,
       attributionControl: false,
       maxBounds: bounds,
-      maxBoundsViscosity: 1.0
+      maxBoundsViscosity: 1.0,
     });
-    console.log('Map created');
 
     L.imageOverlay(imgUrl, bounds).addTo(map);
-    console.log('Image overlay added');
     map.fitBounds(bounds);
 
     // Calculate zoom to fill the screen
@@ -102,40 +101,30 @@ document.addEventListener('DOMContentLoaded', () => {
     map.setZoom(fillZoom);
     map.setMinZoom(fillZoom);
 
-    // Carrega todos os dados de localização primeiro
-    let allLocations = [];
-    try {
-      allLocations = await fetchData() || [];
-    } catch (error) {
-      console.error('Erro ao carregar dados de localizações:', error);
-    }
-
-    // Carrega os itens de acessibilidade para usar como pins
+    // Carrega todos os dados de localização (que são os pins)
     let pins = [];
     try {
-      pins = await getAccessibilityItems() || [];
+      pins = (await getAllLocations()) || [];
       window.pins = pins;
-      } catch (error) {
-        console.error('Erro ao carregar itens de acessibilidade:', error);
-      }
-      
-      // Adiciona os pins no mapa
+    } catch (error) {
+      console.error("Erro ao carregar dados de localizações:", error);
+    }
+
+    // Adiciona os pins no mapa
     // Vamos rastrear o estado do modal para controlar o comportamento do botão "Voltar"
     let inModal = false;
     let modalPushed = false; // se true, a abertura do modal empurrou um estado no history
 
-    console.log(`Adding ${pins.length} pins to map`);
-    pins.forEach(p => {
-      const x = (p.left / 100) * W;
-      const y = (p.top / 100) * H;
-      console.log(`Adding pin ${p.label || p.name} at [${y}, ${x}]`);
+    pins.forEach((p) => {
+      const top = parseFloat(p.top) || 0;
+      const left = parseFloat(p.left) || 0;
+      const x = (left / 100) * W;
+      const y = (top / 100) * H;
       const marker = L.marker([y, x], { icon: makePinIcon() }).addTo(map);
 
       // Ao clicar em um pin → abre modal
-      marker.on('click', () => {
-        console.log(`Pin clicado:`, p);
-        const locationData = allLocations.find(loc => loc.id == p.location_id);
-        openLocationModal(locationData, p.label || p.name || 'Item');
+      marker.on("click", () => {
+        openLocationModal(p, p.name || "Localização");
       });
     });
 
@@ -144,24 +133,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Intercepta clique no botão voltar na navbar: quando o modal estiver aberto,
     // fecha o modal e previne a navegação; quando o modal estiver fechado, segue para a página principal
-    const navBack = document.querySelector('.btn.voltar');
+    const navBack = document.querySelector(".btn.voltar");
     if (navBack) {
-      navBack.addEventListener('click', function (e) {
+      navBack.addEventListener("click", function (e) {
         const modal = document.getElementById(MODAL_IDS.infoModal);
         const addModal = document.getElementById(MODAL_IDS.addCommentModal);
-        if (addModal && addModal.style.display === 'flex') {
+        if (addModal && addModal.style.display === "flex") {
           // fecha modal de adicionar comentário e volta para o modal de info
           e.preventDefault();
-          addModal.style.display = 'none';
-          if (modal) modal.style.display = 'flex';
+          addModal.style.display = "none";
+          if (modal) modal.style.display = "flex";
           // inModal permanece true, pois estamos voltando para o modal de info
-        } else if (modal && modal.style.display === 'flex') {
+        } else if (modal && modal.style.display === "flex") {
           // fecha modal em vez de navegar
           e.preventDefault();
-          modal.style.display = 'none';
+          modal.style.display = "none";
           inModal = false;
           if (modalPushed) {
-            try { history.back(); } catch (err) { /* ignore */ }
+            try {
+              history.back();
+            } catch (err) {
+              /* ignore */
+            }
             modalPushed = false;
           }
         } else {
@@ -171,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Se o usuário usar o botão "voltar" do browser enquanto o modal estiver aberto
-    window.addEventListener('popstate', function (event) {
+    window.addEventListener("popstate", function (event) {
       if (inModal) {
         const modal = document.getElementById(MODAL_IDS.infoModal);
         modal.style.display = "none";
@@ -181,27 +174,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Botão interno "Voltar" do modal: primeiro fecha o modal; se já estiver no mapa, volta para a página principal
-    const backBtn = document.querySelector('.back-btn');
+    const backBtn = document.querySelector(".back-btn");
     if (backBtn) {
-      backBtn.addEventListener('click', function () {
+      backBtn.addEventListener("click", function () {
         if (inModal) {
           const modal = document.getElementById(MODAL_IDS.infoModal);
           modal.style.display = "none";
           inModal = false;
           if (modalPushed) {
-            try { history.back(); } catch (e) { /* ignore */ }
+            try {
+              history.back();
+            } catch (e) {
+              /* ignore */
+            }
             modalPushed = false;
           }
         } else {
           // já está no mapa: volta para a página principal
-          window.location.href = '../../index.html';
+          window.location.href = "../../index.html";
         }
       });
     }
 
     // Recalibra o mapa ao redimensionar a janela
     let resizeTimer = null;
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       const center = map.getCenter();
       const zoom = map.getZoom();
       if (resizeTimer) clearTimeout(resizeTimer);
@@ -213,8 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   img.onerror = () => {
-    console.error('Erro ao carregar a imagem do mapa:', imgUrl);
-    alert('Erro ao carregar a imagem do mapa. Verifique o caminho.');
+    console.error("Erro ao carregar a imagem do mapa:", imgUrl);
+    alert("Erro ao carregar a imagem do mapa. Verifique o caminho.");
   };
 });
 
@@ -235,8 +232,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateCarousel() {
       track.style.transform = `translateX(-${currentIndex * 100}%)`;
-      if (prevBtn) prevBtn.style.display = currentIndex === 0 ? "none" : "block";
-      if (nextBtn) nextBtn.style.display = currentIndex === cards.length - 1 ? "none" : "block";
+      if (prevBtn)
+        prevBtn.style.display = currentIndex === 0 ? "none" : "block";
+      if (nextBtn)
+        nextBtn.style.display =
+          currentIndex === cards.length - 1 ? "none" : "block";
     }
 
     if (nextBtn) {
@@ -266,21 +266,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function initSwiperIfAvailable() {
-    const swiperEl = document.querySelector('.swiper');
+    const swiperEl = document.querySelector(".swiper");
     if (!swiperEl) return false;
 
     function createSwiper() {
-      if (typeof Swiper === 'undefined') return false;
+      if (typeof Swiper === "undefined") return false;
       // eslint-disable-next-line no-unused-vars
-      const swiper = new Swiper('.swiper', {
+      const swiper = new Swiper(".swiper", {
         slidesPerView: 1,
         spaceBetween: 8,
         navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
         },
         pagination: {
-          el: '.swiper-pagination',
+          el: ".swiper-pagination",
           clickable: true,
         },
         loop: false,
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (createSwiper()) return true;
 
     // Se a lib ainda não carregou (map.js foi incluído antes do Swiper), aguarda o load
-    window.addEventListener('load', () => {
+    window.addEventListener("load", () => {
       createSwiper();
     });
 
@@ -307,61 +307,64 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", function () {
   const tabs = document.querySelectorAll(".tab-btn");
   const tabContents = document.querySelectorAll(".tab-pane");
-  const tabWrapper = document.querySelector('.tab-content');
+  const tabWrapper = document.querySelector(".tab-content");
 
   // Inicializa o layout: posiciona os painéis e mostra somente o primeiro
   if (tabWrapper) {
-    tabWrapper.style.position = tabWrapper.style.position || 'relative';
-    tabWrapper.style.overflow = tabWrapper.style.overflow || 'hidden';
+    tabWrapper.style.position = tabWrapper.style.position || "relative";
+    tabWrapper.style.overflow = tabWrapper.style.overflow || "hidden";
   }
 
   tabContents.forEach((content, index) => {
     // garante as classes iniciais
     if (index === 0) {
-      content.classList.add('active');
-      content.classList.remove('enter-right', 'exit-left');
+      content.classList.add("active");
+      content.classList.remove("enter-right", "exit-left");
     } else {
-      content.classList.remove('active');
-      content.classList.add('enter-right');
+      content.classList.remove("active");
+      content.classList.add("enter-right");
     }
   });
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', function () {
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", function () {
       // Atualiza a aba ativa visual
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
+      tabs.forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
 
-      const current = document.querySelector('.tab-pane.active');
-      const target = document.querySelector(`#${tab.id.replace('tab', 'content')}`);
+      const current = document.querySelector(".tab-pane.active");
+      const target = document.querySelector(
+        `#${tab.id.replace("tab", "content")}`
+      );
       if (!target || current === target) return;
 
       // Anima o painel atual para a esquerda
       if (current) {
-        current.classList.remove('active');
+        current.classList.remove("active");
         // força reflow para garantir que a transição ocorra
-        current.classList.add('exit-left');
+        current.classList.add("exit-left");
         const onEnd = (e) => {
-          if (e.propertyName && (e.propertyName.indexOf('transform') === -1)) return;
-          current.classList.remove('exit-left');
-          current.removeEventListener('transitionend', onEnd);
+          if (e.propertyName && e.propertyName.indexOf("transform") === -1)
+            return;
+          current.classList.remove("exit-left");
+          current.removeEventListener("transitionend", onEnd);
         };
-        current.addEventListener('transitionend', onEnd);
+        current.addEventListener("transitionend", onEnd);
       }
 
       // Prepara o painel alvo vindo da direita
-      target.classList.remove('exit-left');
-      target.classList.add('enter-right');
+      target.classList.remove("exit-left");
+      target.classList.add("enter-right");
 
       // Força repaint antes de ativar (para garantir animação)
       // eslint-disable-next-line no-unused-expressions
       target.offsetWidth;
 
-      target.classList.add('active');
-      target.classList.remove('enter-right');
+      target.classList.add("active");
+      target.classList.remove("enter-right");
 
       // Load comments if review tab is activated
-      if (target.id === 'review-content' && window.currentLocationId) {
+      if (target.id === "review-content" && window.currentLocationId) {
         loadCommentsForLocation(window.currentLocationId);
       }
     });
@@ -370,60 +373,71 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Função para carregar comentários aprovados para um local
 async function loadCommentsForLocation(locationId) {
-  const commentsList = document.querySelector('.comments-list');
+  const commentsList = document.querySelector(".comments-list");
   if (!commentsList) return;
 
-  commentsList.innerHTML = '<p>Carregando comentários...</p>';
+  commentsList.innerHTML = "<p>Carregando comentários...</p>";
   try {
     const comments = await getApprovedCommentsForLocation(locationId);
     if (comments.length === 0) {
-      commentsList.innerHTML = '<p>Nenhum comentário ainda.</p>';
+      commentsList.innerHTML = "<p>Nenhum comentário ainda.</p>";
     } else {
-      commentsList.innerHTML = comments.map(comment => `
+      commentsList.innerHTML = comments
+        .map(
+          (comment) => `
         <div class="comment-card">
           <div class="comment-header">
             <span class="user-name">${comment.user}</span>
-            <span class="comment-date">${new Date(comment.date).toLocaleDateString('pt-BR')}</span>
+            <span class="comment-date">${new Date(
+              comment.date
+            ).toLocaleDateString("pt-BR")}</span>
           </div>
-          <div class="comment-rating">${'⭐'.repeat(comment.rating || 0)}</div>
+          <div class="comment-rating">${"⭐".repeat(comment.rating || 0)}</div>
           <p class="comment-text">${comment.text}</p>
         </div>
-      `).join('');
+      `
+        )
+        .join("");
     }
   } catch (error) {
-    console.error('Erro ao carregar comentários:', error);
-    commentsList.innerHTML = '<p>Erro ao carregar comentários.</p>';
+    console.error("Erro ao carregar comentários:", error);
+    commentsList.innerHTML = "<p>Erro ao carregar comentários.</p>";
   }
 }
 
 // Controla o estado do botão de adicionar comentário: só habilita quando a aba 'Comentarios' está ativa
-document.addEventListener('DOMContentLoaded', () => {
-  const commentBtn = document.querySelector('.comment-btn');
-  const reviewTab = document.getElementById('review-tab');
+document.addEventListener("DOMContentLoaded", () => {
+  const commentBtn = document.querySelector(".comment-btn");
+  const reviewTab = document.getElementById("review-tab");
 
   function setCommentButton(enabled) {
     if (!commentBtn) return;
     // Se o usuário pediu que o botão suma, usamos a classe 'hidden' para removê-lo do fluxo
     if (enabled) {
-      commentBtn.classList.remove('hidden');
-      commentBtn.classList.remove('disabled');
+      commentBtn.classList.remove("hidden");
+      commentBtn.classList.remove("disabled");
       commentBtn.disabled = false;
     } else {
-      commentBtn.classList.add('hidden');
-      commentBtn.classList.add('disabled');
+      commentBtn.classList.add("hidden");
+      commentBtn.classList.add("disabled");
       commentBtn.disabled = true;
     }
   }
 
   // estado inicial: somente habilitado se a aba 'review' já estiver ativa
-  setCommentButton(document.querySelector('#review-content')?.classList.contains('active'));
+  setCommentButton(
+    document.querySelector("#review-content")?.classList.contains("active")
+  );
 
   // Quando o usuário clica em uma aba, o código já troca as classes; escutamos cliques nas abas para atualizar o botão
-  const tabs = document.querySelectorAll('.tab-btn');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      setTimeout(() => { // aguarda micro-tick para garantir que a troca de classes já tenha ocorrido
-        const isReviewActive = document.querySelector('#review-content')?.classList.contains('active');
+  const tabs = document.querySelectorAll(".tab-btn");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      setTimeout(() => {
+        // aguarda micro-tick para garantir que a troca de classes já tenha ocorrido
+        const isReviewActive = document
+          .querySelector("#review-content")
+          ?.classList.contains("active");
         setCommentButton(!!isReviewActive);
       }, 0);
     });
@@ -431,56 +445,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event listener para abrir o modal de adicionar comentário
   if (commentBtn) {
-    commentBtn.addEventListener('click', () => {
+    commentBtn.addEventListener("click", () => {
       const infoModal = document.getElementById(MODAL_IDS.infoModal);
       const addModal = document.getElementById(MODAL_IDS.addCommentModal);
-      if (infoModal) infoModal.style.display = 'none';
-      if (addModal) addModal.style.display = 'flex';
+      if (infoModal) infoModal.style.display = "none";
+      if (addModal) addModal.style.display = "flex";
     });
   }
 
   // Event listener para fechar o modal de adicionar comentário
-  const addCommentBackBtn = document.querySelector(`#${MODAL_IDS.addCommentModal} .back-btn`);
+  const addCommentBackBtn = document.querySelector(
+    `#${MODAL_IDS.addCommentModal} .back-btn`
+  );
   if (addCommentBackBtn) {
-    addCommentBackBtn.addEventListener('click', () => {
+    addCommentBackBtn.addEventListener("click", () => {
       const infoModal = document.getElementById(MODAL_IDS.infoModal);
       const addModal = document.getElementById(MODAL_IDS.addCommentModal);
-      if (addModal) addModal.style.display = 'none';
-      if (infoModal) infoModal.style.display = 'flex';
+      if (addModal) addModal.style.display = "none";
+      if (infoModal) infoModal.style.display = "flex";
     });
   }
 
   // Star rating functionality
-  const stars = document.querySelectorAll('.star');
-  const ratingInput = document.getElementById('rating');
-  stars.forEach(star => {
-    star.addEventListener('click', () => {
-      const value = star.getAttribute('data-value');
+  const stars = document.querySelectorAll(".star");
+  const ratingInput = document.getElementById("rating");
+  stars.forEach((star) => {
+    star.addEventListener("click", () => {
+      const value = star.getAttribute("data-value");
       ratingInput.value = value;
-      stars.forEach(s => {
-        if (s.getAttribute('data-value') <= value) {
-          s.classList.add('active');
-          s.textContent = '★';
+      stars.forEach((s) => {
+        if (s.getAttribute("data-value") <= value) {
+          s.classList.add("active");
+          s.textContent = "★";
         } else {
-          s.classList.remove('active');
-          s.textContent = '☆';
+          s.classList.remove("active");
+          s.textContent = "☆";
         }
       });
     });
   });
 
   // Handle comment form submission
-  const commentForm = document.getElementById('comment-form');
+  const commentForm = document.getElementById("comment-form");
   if (commentForm) {
-    commentForm.addEventListener('submit', async (e) => {
+    commentForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const name = document.getElementById('user-name').value;
+      const name = document.getElementById("user-name").value;
       const rating = ratingInput.value;
-      const commentText = document.getElementById('comment-text').value;
+      const commentText = document.getElementById("comment-text").value;
 
       // Check if rating is mandatory
-      if (!rating || rating === '') {
-        alert('Por favor, selecione uma avaliação com estrelas.');
+      if (!rating || rating === "") {
+        alert("Por favor, selecione uma avaliação com estrelas.");
         return;
       }
 
@@ -493,41 +509,37 @@ document.addEventListener('DOMContentLoaded', () => {
         text: commentText,
         date: new Date().toISOString(),
         location_id: window.currentLocationId,
-        status: 'pending'
+        status: "pending",
       };
-
 
       const accessibilityItems = await getAccessibilityItems();
       window.pins = accessibilityItems;
-  
-
-
 
       // Submit comment to API
       const result = await postComment(commentData);
       if (result) {
-        alert('Comentário enviado para aprovação!');
+        alert("Comentário enviado para aprovação!");
       } else {
-        alert('Erro ao enviar comentário. Tente novamente.');
+        alert("Erro ao enviar comentário. Tente novamente.");
         return; // Don't reset form if failed
       }
 
       // Reset form
       commentForm.reset();
-      stars.forEach(s => {
-        s.classList.remove('active');
-        s.textContent = '☆';
+      stars.forEach((s) => {
+        s.classList.remove("active");
+        s.textContent = "☆";
       });
-      ratingInput.value = '';
+      ratingInput.value = "";
 
       // Close add comment modal and open info modal
       const addModal = document.getElementById(MODAL_IDS.addCommentModal);
       const infoModal = document.getElementById(MODAL_IDS.infoModal);
-      if (addModal) addModal.style.display = 'none';
-      if (infoModal) infoModal.style.display = 'flex';
+      if (addModal) addModal.style.display = "none";
+      if (infoModal) infoModal.style.display = "flex";
 
       // Switch to review tab
-      const reviewTab = document.getElementById('review-tab');
+      const reviewTab = document.getElementById("review-tab");
       if (reviewTab) reviewTab.click();
     });
   }
