@@ -1,11 +1,13 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html {
   font-size: 100%;
+  overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 a {
@@ -13,25 +15,25 @@ a {
 }
 
 :root {
-    --color-white: #ffffff;
-    --color-black: #000000;
-    --color-yellow: #ffb300;
-    --primary-color: #0056d2;
-    --secondary-color: #0a84ff;
-    --text-color: #111111;
-    --bg-color: rgb(0, 0, 201);
-    --bg-color-gradient: rgb(0, 110, 255);
-    --bg-buttom: #003366;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-yellow: #ffb300;
+  --primary-color: #0056d2;
+  --secondary-color: #0a84ff;
+  --text-color: #111111;
+  --bg-color: rgb(0, 0, 201);
+  --bg-color-gradient: rgb(0, 110, 255);
+  --bg-buttom: #003366;
 
-    --font-family-heading: "Comme", sans-serif;
-    --font-family-base: "Albert Sans", sans-serif;
+  --font-family-heading: "Comme", sans-serif;
+  --font-family-base: "Albert Sans", sans-serif;
 
-    --font-size-h1: 2rem;
-    --font-size-h2: 1.5rem;
-    --font-size-h3: 1.2rem;
-    --font-size-h4: 1rem;
-    --font-size-text: 0.9rem;
+  --font-size-h1: 2rem;
+  --font-size-h2: 1.5rem;
+  --font-size-h3: 1.2rem;
+  --font-size-h4: 1rem;
+  --font-size-text: 0.9rem;
 
-    --font-weight-bold: 700;
-    --font-weight-regular: 200;
+  --font-weight-bold: 700;
+  --font-weight-regular: 200;
 }

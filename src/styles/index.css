@@ -4,6 +4,9 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    overflow-x: hidden;
+    overscroll-behavior: none;
+    overflow-y: auto;
 }
 
 main {
@@ -110,6 +113,7 @@ main {
     flex-direction: column;
     margin-top: 50px;
 }
+
 .comentario-nome {
     color: var(--text-color);
     font-size: var(--font-size-h4);
