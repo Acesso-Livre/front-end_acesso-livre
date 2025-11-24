@@ -14,10 +14,7 @@
   <link rel="stylesheet" href="../../styles/global.css">
   <link rel="stylesheet" href="map.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/swiper@8/swiper-bundle.min.css"
-  />
+  <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
 </head>
 
 <header class="navbar">
@@ -28,37 +25,37 @@
 <div id="map"></div>
 
 <div id="infoModal" class="modal">
-    <div class="modal-content">
-      <div id="modal-body">
-        <!-- Carrossel de Imagens -->
-        <div class="swiper">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <div class="project-img">
-                <img src="/src/assets/img/map/section-map/foto-local.jpeg" alt="Foto 01">
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="project-img">
-                <img src="/src/assets/img/map/section-map/foto-local-2.jpeg" alt="Foto 02">
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="project-img">
-                <img src="/src/assets/img/map/section-map/foto-local-3.jpeg" alt="Foto 03">
-              </div>
+  <div class="modal-content">
+    <div id="modal-body">
+      <!-- Carrossel de Imagens -->
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="project-img">
+              <img src="/src/assets/img/map/section-map/foto-local.jpeg" alt="Foto 01">
             </div>
           </div>
-        
+          <div class="swiper-slide">
+            <div class="project-img">
+              <img src="/src/assets/img/map/section-map/foto-local-2.jpeg" alt="Foto 02">
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="project-img">
+              <img src="/src/assets/img/map/section-map/foto-local-3.jpeg" alt="Foto 03">
+            </div>
+          </div>
+        </div>
+
         <div class="swiper-button-next"></div>
         <div class="swiper-button-prev"></div>
         <div class="swiper-pagination"></div>
-    </div>
+      </div>
 
 
-        <!-- Informações -->
-        <section class="info-section">
-        <h1 id="location-title">Rampa</h1>
+      <!-- Informações -->
+      <section class="info-section">
+        <h1 id="location-title"></h1>
         <div class="rating">
           <span>Nota: </span>
           <div class="stars">⭐⭐⭐⭐⭐</div>
@@ -76,11 +73,9 @@
           <div class="tab-pane active" id="info-content">
             <h3>Informações de Acessibilidade</h3>
             <ul>
-              <li>Possui pisos táteis</li>
-              <li>Possui corrimões</li>
+              <li></li>
+              <li></li>
             </ul>
-            <h3>Horários de Serviço</h3>
-            <p>Não Disponível</p>
           </div>
 
           <div class="tab-pane" id="review-content">
@@ -115,7 +110,7 @@
 
           <div class="tab-pane" id="description-content">
             <h3>Descrição do Local</h3>
-            <p id="location-description">Este local possui uma rampa acessível, com boas condições de uso para cadeirantes e outras deficiências.</p>
+            <p id="location-description"></p>
           </div>
         </div>
 
@@ -124,46 +119,44 @@
           <button class="comment-btn">Adicionar Comentário</button>
         </div>
       </section>
-      </div>
     </div>
   </div>
+</div>
 
-  <!-- Modal para Adicionar Comentário -->
-  <div id="addCommentModal" class="modal">
-    <div class="modal-content">
-      <div id="add-comment-body">
-        <h2>Adicionar Comentário</h2>
-        <form id="comment-form">
-          <label for="user-name">Nome:</label>
-          <input type="text" id="user-name" placeholder="Seu nome" required>
+<!-- Modal para Adicionar Comentário -->
+<div id="addCommentModal" class="modal">
+  <div class="modal-content">
+    <div id="add-comment-body">
+      <h2>Adicionar Comentário</h2>
+      <form id="comment-form">
+        <label for="user-name">Nome:</label>
+        <input type="text" id="user-name" placeholder="Seu nome" required>
 
-          <label for="rating">Avaliação:</label>
-          <div class="star-rating">
-            <span class="star" data-value="1">☆</span>
-            <span class="star" data-value="2">☆</span>
-            <span class="star" data-value="3">☆</span>
-            <span class="star" data-value="4">☆</span>
-            <span class="star" data-value="5">☆</span>
-          </div>
-          <input type="hidden" id="rating" name="rating" required>
+        <label for="rating">Avaliação:</label>
+        <div class="star-rating">
+          <span class="star" data-value="1">☆</span>
+          <span class="star" data-value="2">☆</span>
+          <span class="star" data-value="3">☆</span>
+          <span class="star" data-value="4">☆</span>
+          <span class="star" data-value="5">☆</span>
+        </div>
+        <input type="hidden" id="rating" name="rating" required>
 
-          <label for="comment-text">Comentário:</label>
-          <textarea id="comment-text" placeholder="Digite seu comentário" required></textarea>
-
-          <button type="submit" class="submit-btn">Enviar</button>
-        </form>
-      </div>
+        <label for="comment-text">Comentário:</label>
+        <textarea id="comment-text" placeholder="Digite seu comentário" required></textarea>
+        <button type="submit" class="submit-btn">Enviar</button>
+      </form>
     </div>
   </div>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="api_map.js"></script>
 <script src="map.js"></script>
 <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
-<script src="script.js"></script>
 <script>
   // Test function for getLocations
-  window.testGetLocations = async function(skip = 0, limit = 10) {
+  window.testGetLocations = async function (skip = 0, limit = 10) {
     console.log(`Testing getLocations with skip=${skip}, limit=${limit}`);
     const result = await getLocations(skip, limit);
     console.log('Result:', result);
@@ -172,13 +165,13 @@
 
 
   // Function to log all accessibility items
-  window.logAllPins = async function() {
+  window.logAllPins = async function () {
     const items = await getAccessibilityItems();
     console.log('Accessibility Items:', items);
   };
 
   // Test function for getAccessibilityItems
-  window.testGetAccessibilityItems = async function() {
+  window.testGetAccessibilityItems = async function () {
     console.log('Testing getAccessibilityItems');
     const result = await getAccessibilityItems();
     console.log('Result:', result);

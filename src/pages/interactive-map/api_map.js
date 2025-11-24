@@ -4,16 +4,15 @@ async function getAllLocations() {
   try {
     const url = "https://acesso-livre-api.onrender.com/api/locations";
     const response = await fetch(url);
-
     if (response.ok) {
       const data = await response.json();
-      locationsData = data.locations;
+      locationsData = data.locations || [];
       return locationsData;
     } else {
       throw new Error("Erro ao fazer requisição: " + response.status);
     }
   } catch (error) {
-    console.error("Erro na requisição:", error);
+    console.error("Erro na requisição getAllLocations:", error);
     return [];
   }
 }
@@ -24,85 +23,48 @@ async function getLocations(skip = 0, limit = 20) {
     params.append("skip", skip);
     params.append("limit", limit);
     const url = `https://acesso-livre-api.onrender.com/api/locations/?${params}`;
-
     const response = await fetch(url);
-
     if (response.ok) {
       const data = await response.json();
-      return data.locations;
+      return data.locations || [];
     } else {
       throw new Error("Erro ao fazer requisição: " + response.status);
     }
   } catch (error) {
-    console.error("Erro na requisição:", error);
+    console.error("Erro na requisição getLocations:", error);
     return [];
   }
 }
 
 async function getAccessibilityItems() {
   try {
-    const url =
-      "https://acesso-livre-api.onrender.com/api/locations/accessibility-items/";
-
+    const url = "https://acesso-livre-api.onrender.com/api/locations/accessibility-items/";
     const response = await fetch(url);
-
     if (response.ok) {
       const data = await response.json();
-      return data.accessibility_items;
+      return data.accessibility_items || [];
     } else {
       throw new Error("Erro ao fazer requisição: " + response.status);
     }
   } catch (error) {
-    console.error("Erro na requisição:", error);
+    console.error("Erro na requisição getAccessibilityItems:", error);
     return [];
   }
 }
 
 async function getLocationById(locationId) {
   try {
-    let location = null;
-
-    // Primeiro tentar dados dos pins (acessibilidade items)
-    if (window.pins) {
-      const pin = window.pins.find((p) => p.id == locationId);
-      if (pin) {
-        if (pin.location_id) {
-          // Buscar a localização associada
-          const allLocations = await getLocations(0, 100);
-          location = allLocations.find((loc) => loc.id == pin.location_id);
-        } else {
-          // Assumir que o pin tem dados de localização
-          location = pin;
-        }
-      }
+    // Tenta pelo cache de locationsData (se já carregado)
+    if (locationsData && locationsData.length > 0) {
+      const found = locationsData.find((l) => l.id == locationId);
+      if (found) return found;
     }
 
-    // Se não encontrou nos pins, tentar na API
-    if (!location) {
-      const allLocations = await getLocations(0, 100);
-      location = allLocations.find((loc) => loc.id == locationId);
-    }
-
-    console.log("Found location:", location);
-    return location || null;
+    // Caso não esteja no cache, buscar lista (limit maior)
+    const all = await getLocations(0, 100);
+    return all.find((l) => l.id == locationId) || null;
   } catch (error) {
-    console.error("Erro ao buscar localização:", error);
-    // Fallback para dados dos pins
-    if (window.pins) {
-      const pin = window.pins.find((p) => p.id == locationId);
-      if (pin) {
-        if (pin.location_id) {
-          try {
-            const locs = await getLocations(0, 100);
-            return locs.find((loc) => loc.id == pin.location_id) || pin;
-          } catch {
-            return pin;
-          }
-        } else {
-          return pin;
-        }
-      }
-    }
+    console.error("Erro ao buscar localização getLocationById:", error);
     return null;
   }
 }
@@ -110,115 +72,116 @@ async function getLocationById(locationId) {
 async function getAccessibilityItemById(itemId) {
   try {
     const url = `https://acesso-livre-api.onrender.com/api/locations/accessibility-items/${itemId}`;
-
     const response = await fetch(url);
-
     if (response.ok) {
-      const data = await response.json();
-      return data;
+      return await response.json();
     } else {
-      throw new Error(
-        "Erro ao buscar item de acessibilidade: " + response.status
-      );
+      throw new Error("Erro ao buscar item de acessibilidade: " + response.status);
     }
   } catch (error) {
-    console.error("Erro na requisição:", error);
+    console.error("Erro na requisição getAccessibilityItemById:", error);
     return null;
   }
 }
 
-// Função para criar um novo comentário
 async function postComment(commentData) {
   try {
-    // Mock: Store in localStorage instead of API
-    const comments = JSON.parse(
-      localStorage.getItem("pendingComments") || "[]"
-    );
-    const newComment = { id: Date.now(), ...commentData };
-    comments.push(newComment);
-    localStorage.setItem("pendingComments", JSON.stringify(comments));
-    return newComment;
+    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(commentData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao enviar comentário");
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error("Erro na requisição:", error);
+    console.error("Erro postComment:", error);
     return null;
   }
 }
 
-// Função para buscar comentários pendentes
+// Buscar comentários pendentes (admin)
 async function getPendingComments() {
   try {
-    // Mock: Read from localStorage
-    const comments = JSON.parse(
-      localStorage.getItem("pendingComments") || "[]"
-    );
-    return comments.filter((c) => c.status === "pending");
+    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments/pending`);
+    if (!response.ok) throw new Error("Erro ao buscar pendentes");
+    return await response.json();
   } catch (error) {
-    console.error("Erro na requisição:", error);
+    console.error("Erro getPendingComments:", error);
     return [];
   }
 }
 
-// Função para aprovar um comentário
+// Aprovar comentário
 async function approveComment(commentId) {
   try {
-    // Mock: Update in localStorage
-    const comments = JSON.parse(
-      localStorage.getItem("pendingComments") || "[]"
-    );
-    const comment = comments.find((c) => c.id == commentId);
-    if (comment) {
-      comment.status = "approved";
-      localStorage.setItem("pendingComments", JSON.stringify(comments));
-      return true;
-    }
-    return false;
+    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments/${commentId}/approve`, {
+      method: "PUT",
+    });
+    return response.ok;
   } catch (error) {
-    console.error("Erro na requisição:", error);
+    console.error("Erro approveComment:", error);
     return false;
   }
 }
 
-// Função para rejeitar um comentário
+// Rejeitar comentário
 async function rejectComment(commentId) {
   try {
-    // Mock: Update in localStorage
-    const comments = JSON.parse(
-      localStorage.getItem("pendingComments") || "[]"
-    );
-    const comment = comments.find((c) => c.id == commentId);
-    if (comment) {
-      comment.status = "rejected";
-      localStorage.setItem("pendingComments", JSON.stringify(comments));
-      return true;
-    }
-    return false;
+    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments/${commentId}/reject`, {
+      method: "PUT",
+    });
+    return response.ok;
   } catch (error) {
-    console.error("Erro na requisição:", error);
+    console.error("Erro rejectComment:", error);
     return false;
   }
 }
 
-// Função para buscar comentários aprovados de um local
+// Buscar SOMENTE comentários aprovados de um local
 async function getApprovedCommentsForLocation(locationId) {
   try {
-    // Mock: Read from localStorage
-    const comments = JSON.parse(
-      localStorage.getItem("pendingComments") || "[]"
-    );
-    return comments.filter(
-      (c) => c.status === "approved" && c.location_id == locationId
-    );
+    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments/${locationId}/comments`);
+
+    if (!response.ok) throw new Error("Erro buscar comentários aprovados");
+
+    const data = await response.json();
+
+    return data.comments || [];
   } catch (error) {
-    console.error("Erro na requisição:", error);
+    console.error("Erro getApprovedCommentsForLocation:", error);
     return [];
   }
 }
 
-// Expor funções para o global para testes no console
-window.getLocationById = getLocationById;
-window.getAccessibilityItems = getAccessibilityItems;
-window.getAccessibilityItemById = getAccessibilityItemById;
-window.postComment = postComment;
-window.getApprovedCommentsForLocation = getApprovedCommentsForLocation;
-window.onload = getAllLocations;
-window.getLocations = getLocations;
+// Buscar TODOS os comentários de um local (pendente, aprovado, rejeitado)
+async function getCommentsByLocationId(locationId) {
+  try {
+    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments/${locationId}/comments`);
+    if (!response.ok) throw new Error("Erro ao buscar comentários");
+    const data = await response.json();
+    return data.comments || [];
+  } catch (error) {
+    console.error("Erro getCommentsByLocationId:", error);
+    return [];
+  }
+}
+
+// Export para map.js usar
+window.api = {
+  getAllLocations,
+  getLocations,
+  getAccessibilityItems,
+  getLocationById,
+  getAccessibilityItemById,
+  postComment,
+  getPendingComments,
+  approveComment,
+  rejectComment,
+  getApprovedCommentsForLocation,
+  getCommentsByLocationId,
+};
+

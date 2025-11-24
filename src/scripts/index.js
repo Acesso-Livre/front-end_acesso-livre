@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ===== TRANSFORMA LOCAL EM LINK ===== // 
+// ===== TRANSFORMA LOCAL EM LINK ===== //
 document.querySelectorAll('.comentario-local').forEach(function(el) {
     if (el.tagName === 'DIV') {
         const local = el.textContent.trim();
