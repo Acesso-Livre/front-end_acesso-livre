@@ -38,7 +38,8 @@ async function getLocations(skip = 0, limit = 20) {
 
 async function getAccessibilityItems() {
   try {
-    const url = "https://acesso-livre-api.onrender.com/api/locations/accessibility-items/";
+    const url =
+      "https://acesso-livre-api.onrender.com/api/locations/accessibility-items/";
     const response = await fetch(url);
     if (response.ok) {
       const data = await response.json();
@@ -76,7 +77,9 @@ async function getAccessibilityItemById(itemId) {
     if (response.ok) {
       return await response.json();
     } else {
-      throw new Error("Erro ao buscar item de acessibilidade: " + response.status);
+      throw new Error(
+        "Erro ao buscar item de acessibilidade: " + response.status
+      );
     }
   } catch (error) {
     console.error("Erro na requisição getAccessibilityItemById:", error);
@@ -86,11 +89,14 @@ async function getAccessibilityItemById(itemId) {
 
 async function postComment(commentData) {
   try {
-    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(commentData),
-    });
+    const response = await fetch(
+      `https://acesso-livre-api.onrender.com/api/comments`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(commentData),
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Erro ao enviar comentário");
@@ -106,7 +112,9 @@ async function postComment(commentData) {
 // Buscar comentários pendentes (admin)
 async function getPendingComments() {
   try {
-    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments/pending`);
+    const response = await fetch(
+      `https://acesso-livre-api.onrender.com/api/comments/pending`
+    );
     if (!response.ok) throw new Error("Erro ao buscar pendentes");
     return await response.json();
   } catch (error) {
@@ -118,9 +126,12 @@ async function getPendingComments() {
 // Aprovar comentário
 async function approveComment(commentId) {
   try {
-    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments/${commentId}/approve`, {
-      method: "PUT",
-    });
+    const response = await fetch(
+      `https://acesso-livre-api.onrender.com/api/comments/${commentId}/approve`,
+      {
+        method: "PUT",
+      }
+    );
     return response.ok;
   } catch (error) {
     console.error("Erro approveComment:", error);
@@ -131,9 +142,12 @@ async function approveComment(commentId) {
 // Rejeitar comentário
 async function rejectComment(commentId) {
   try {
-    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments/${commentId}/reject`, {
-      method: "PUT",
-    });
+    const response = await fetch(
+      `https://acesso-livre-api.onrender.com/api/comments/${commentId}/reject`,
+      {
+        method: "PUT",
+      }
+    );
     return response.ok;
   } catch (error) {
     console.error("Erro rejectComment:", error);
@@ -144,7 +158,9 @@ async function rejectComment(commentId) {
 // Buscar SOMENTE comentários aprovados de um local
 async function getApprovedCommentsForLocation(locationId) {
   try {
-    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments/${locationId}/comments`);
+    const response = await fetch(
+      `https://acesso-livre-api.onrender.com/api/comments/${locationId}/comments`
+    );
 
     if (!response.ok) throw new Error("Erro buscar comentários aprovados");
 
@@ -160,12 +176,29 @@ async function getApprovedCommentsForLocation(locationId) {
 // Buscar TODOS os comentários de um local (pendente, aprovado, rejeitado)
 async function getCommentsByLocationId(locationId) {
   try {
-    const response = await fetch(`https://acesso-livre-api.onrender.com/api/comments/${locationId}/comments`);
+    const response = await fetch(
+      `https://acesso-livre-api.onrender.com/api/comments/${locationId}/comments`
+    );
     if (!response.ok) throw new Error("Erro ao buscar comentários");
     const data = await response.json();
     return data.comments || [];
   } catch (error) {
     console.error("Erro getCommentsByLocationId:", error);
+    return [];
+  }
+}
+
+// Buscar comentários recentes para página inicial
+async function fetchRecentComments() {
+  try {
+    const response = await fetch(
+      `https://acesso-livre-api.onrender.com/api/comments/recent`
+    );
+    if (!response.ok) throw new Error("Erro ao buscar comentários recentes");
+    const data = await response.json();
+    return data.comments || [];
+  } catch (error) {
+    console.error("Erro fetchRecentComments:", error);
     return [];
   }
 }
@@ -183,5 +216,5 @@ window.api = {
   rejectComment,
   getApprovedCommentsForLocation,
   getCommentsByLocationId,
+  fetchRecentComments,
 };
-

@@ -1,83 +1,53 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pagina Inicial - Acesso Livre</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Comme:wght@100..900&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Comme:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/global.css">
-    <link rel="stylesheet" href="styles/index.css">
-</head>
+      href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Comme:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comme:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/global.css" />
+    <link rel="stylesheet" href="styles/index.css" />
+  </head>
 
-<body>
+  <body>
     <main>
-        <section class="blue-block-main">
-            <div class="section-text">
-                <h1>Mapa de Acessibilidade</h1>
-                <p>Encontre e avalie os meios de Acessibilidade do IFBA Campus Eunápolis</p>
-            </div>
-            <a href="pages/interactive-map/index.html" class="explorar-mapa-btn">Explorar mapa</a>
-        </section>
+      <section class="blue-block-main">
+        <div class="section-text">
+          <h1>Mapa de Acessibilidade</h1>
+          <p>
+            Encontre e avalie os meios de Acessibilidade do IFBA Campus
+            Eunápolis
+          </p>
+        </div>
+        <a href="pages/interactive-map/index.html" class="explorar-mapa-btn"
+          >Explorar mapa</a
+        >
+      </section>
 
-        <section class="page-comentarios">
-            <div class="title-comentarios">
-                <p>Avaliações recentes</p>
-            </div>
-
-            <a href="#biblioteca">
-                <div class="comentario-usuario">
-                    <div class="title">
-                        <div class="comentario-local">Biblioteca</div>
-                        <div class="comentario-nota">Nota: 1/5</div>
-                    </div>
-                    <div class="text">
-                        <div class="comentario-nome">Usuário 1</div>
-                        <div class="comentario-texto">Ótimo mapa, muito útil!</div>
-                    </div>
-                </div>
-            </a>
-
-            <a href="#auditorio">
-                <div class="comentario-usuario">
-                    <div class="title">
-                        <div class="comentario-local">Auditório</div>
-                        <div class="comentario-nota">Nota: 2/5</div>
-                    </div>
-                    <div class="text">
-                        <div class="comentario-nome">Usuário 2</div>
-                        <div class="comentario-texto">Bom acesso, mas pode melhorar.</div>
-                    </div>
-                </div>
-            </a>
-
-            <a href="#refeitorio">
-                <div class="comentario-usuario">
-                    <div class="title">
-                        <div class="comentario-local">Refeitório</div>
-                        <div class="comentario-nota">Nota: 3/5</div>
-                    </div>
-                    <div class="text">
-                        <div class="comentario-nome">Usuário 3</div>
-                        <div class="comentario-texto">Acessível, mas falta sinalização.</div>
-                    </div>
-                </div>
-            </a>
-        </section>
+      <section class="page-comentarios" id="page-comentarios-section">
+        <div class="title-comentarios">
+          <p>Avaliações recentes</p>
+        </div>
+      </section>
     </main>
 
+    <script src="pages/interactive-map/api_map.js"></script>
     <script src="scripts/global.js"></script>
     <script src="scripts/index.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            loadComponent("header", "body-start");
-            loadComponent("footer", "body-end");
-        });
+      document.addEventListener("DOMContentLoaded", () => {
+        loadComponent("header", "body-start");
+        loadComponent("footer", "body-end");
+      });
     </script>
-</body>
+  </body>
 </html>
