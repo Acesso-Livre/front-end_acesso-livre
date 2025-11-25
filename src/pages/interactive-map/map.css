@@ -175,10 +175,34 @@ h1 {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  gap: 12px;
 }
 
 .stars {
-  font-size: 18px;
+  display: flex;
+  gap: 0px;
+  align-items: center;
+}
+
+.star-icon {
+  width: 20px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.star-icon.filled::before {
+  content: '★';
+  color: #FFD700;
+}
+
+.star-icon.empty::before {
+  content: '☆';
+  color: #FFD700;
 }
 
 .tabs {
@@ -309,8 +333,17 @@ h1 {
 }
 
 .comment-rating {
-  font-size: 16px;
+  display: flex;
+  gap: 0px;
+  align-items: center;
   margin-bottom: 10px;
+}
+
+.comment-rating .star-icon {
+  width: 16px;
+  height: 18px;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 .comment-text {
@@ -390,22 +423,32 @@ h1 {
   background-color: #e0e0e0;
 }
 
-/* Star Rating Styles */
+/* Star Rating Styles - Para seleção de rating */
 .star-rating {
   display: flex;
-  gap: 5px;
+  gap: 6px;
+  align-items: center;
 }
 
 .star {
-  font-size: 30px;
-  color: #ddd;
+  width: 28px;
+  height: 28px;
+  display: inline-block;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: transform 0.2s;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23CCCCCC" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>');
 }
 
-.star:hover,
+.star:hover {
+  transform: scale(1.15);
+}
+
 .star.active {
-  color: #ffd700;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFD700"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>');
 }
 
 /* Responsividade para telas móveis */

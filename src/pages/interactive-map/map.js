@@ -89,6 +89,16 @@ document.addEventListener("DOMContentLoaded", () => {
           "<p>Este local ainda não possui comentários.</p>";
       } else {
         commentsData.comments.forEach((c) => {
+          // Gerar estrelas para cada comentário
+          let commentStars = "";
+          for (let i = 1; i <= 5; i++) {
+            if (i <= c.rating) {
+              commentStars += '<span class="star-icon filled"></span>';
+            } else {
+              commentStars += '<span class="star-icon empty"></span>';
+            }
+          }
+
           commentsList.innerHTML += `
                 <div class="comment-card">
                     <div class="comment-header">
@@ -97,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
                           c.created_at
                         ).toLocaleDateString("pt-BR")}</span>
                     </div>
-                    <div class="comment-rating">${"⭐".repeat(c.rating)}</div>
+                    <div class="comment-rating">${commentStars}</div>
                     <p class="comment-text">${c.comment}</p>
                 </div>
                 `;
@@ -117,7 +127,17 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       let avgRating = count > 0 ? totalRating / count : 0;
       let rating = Math.round(avgRating);
-      starsEl.innerHTML = "⭐".repeat(rating) + "☆".repeat(5 - rating);
+
+      // Gerar estrelas customizadas
+      let starsHTML = "";
+      for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+          starsHTML += '<span class="star-icon filled"></span>';
+        } else {
+          starsHTML += '<span class="star-icon empty"></span>';
+        }
+      }
+      starsEl.innerHTML = starsHTML;
 
       // =========================
       // 3. IMAGENS (SWIPER) - Agora das imagens dos comentários
