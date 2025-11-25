@@ -38,6 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Abre modal com dados (somente apresentação)
   async function openLocationModal(locationData) {
     try {
+      // Definir o ID do local atual para uso no formulário de comentário
+      window.currentLocationId = locationData.id;
+
       // Usar os dados já carregados de locationData (evita requisição duplicada)
       const details = locationData;
 
@@ -447,10 +450,10 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
         const commentData = {
-          user: name,
+          user_name: name,
           rating: parseInt(rating),
-          text: commentText,
-          date: new Date().toISOString(),
+          comment: commentText,
+          created_at: new Date().toISOString(),
           location_id: window.currentLocationId,
           status: "pending",
         };

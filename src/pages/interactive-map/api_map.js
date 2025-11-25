@@ -89,12 +89,18 @@ async function getAccessibilityItemById(itemId) {
 
 async function postComment(commentData) {
   try {
+    const formData = new FormData();
+    formData.append('user_name', commentData.user_name);
+    formData.append('rating', commentData.rating);
+    formData.append('comment', commentData.comment);
+    formData.append('location_id', commentData.location_id);
+    formData.append('status', commentData.status);
+
     const response = await fetch(
       `https://acesso-livre-api.onrender.com/api/comments`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(commentData),
+        body: formData,
       }
     );
 
