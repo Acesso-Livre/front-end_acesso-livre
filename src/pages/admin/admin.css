@@ -259,6 +259,91 @@
   gap: 15px;
 }
 
+/* ==========================
+   Estilo minimalista - Lista de Avaliações (azul e branco)
+   ========================== */
+.comments-container {
+  max-width: 1000px;
+  margin: 28px auto;
+  padding: 20px;
+}
+
+.comment-card-admin {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 6px 18px rgba(3, 46, 94, 0.06);
+  border: 1px solid rgba(15, 76, 148, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment-card-admin .top-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.comment-card-admin .top-info strong {
+  color: #063261;
+  font-size: 16px;
+}
+
+.comment-card-admin .comment-text {
+  color: #1f3350;
+  line-height: 1.5;
+  font-size: 15px;
+  margin: 4px 0;
+}
+
+.comment-card-admin .comment-img {
+  max-width: 140px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(3,46,94,0.06);
+  margin-top: 6px;
+}
+
+.comment-card-admin .actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.approve-btn, .reject-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.approve-btn {
+  background: linear-gradient(90deg, #1e6fbf 0%, #2b9af3 100%);
+  color: #fff;
+}
+
+.approve-btn:hover { filter: brightness(0.95); }
+
+.reject-btn {
+  background: #ffffff;
+  color: #063261;
+  border: 1px solid #e6f0ff;
+}
+
+.reject-btn:hover { background: #f5fbff; }
+
+@media (max-width: 700px) {
+  .comments-container { padding: 12px; }
+  .comment-card-admin { padding: 12px; }
+  .comment-card-admin .top-info strong { font-size: 15px; }
+}
+
 .review-item {
   border: 1px solid #ddd;
   border-radius: 8px;
