@@ -1,6 +1,13 @@
+/* Estilo para o rodapé */
 footer {
-    background: var(--bg-color);
-    color: var(--color-white);
-    text-align: center;
-    padding: 20px 20px;
+  position: fixed;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+  background-color: #0a2a66;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  z-index: 100;
 }
