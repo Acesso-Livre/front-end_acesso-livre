@@ -26,7 +26,7 @@ async function loadPendingComments() {
 
       <p class="comment-text">${comment.comment}</p>
 
-      ${comment.image_url ? `<img src="${comment.image_url}" class="comment-img">` : ""}
+      ${comment.images && comment.images.length > 0 ? comment.images.map(url => `<img src="${url}" class="comment-img">`).join('') : ""}
 
       <div class="actions">
         <button class="approve-btn" onclick="approve(${comment.id})">Aprovar</button>
