@@ -402,36 +402,38 @@ html>body>.login-container {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro */
-  display: none; /* Inicialmente oculto */
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
+  display: none; /* Inicialmente escondido */
   justify-content: center;
   align-items: center;
 }
 
 .image-modal-content {
   position: relative;
-  width: 60%; /* Tamanho ajustável */
-  max-width: 600px; /* Máximo de 600px */
-  max-height: 600px; /* Máximo de 600px */
-  background-color: white;
+  width: 500px; /* Tamanho fixo do modal */
+  height: 400px; /* Tamanho fixo do modal */
+  background: #2f2f2f;
   padding: 20px;
-  box-sizing: border-box;
-  text-align: center;
+  overflow: hidden; /* Esconde qualquer conteúdo que ultrapasse os limites */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .close-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 30px;
-  color: #000;
+  color: #fff;
+  font-size: 20px;
   cursor: pointer;
 }
 
 .modal-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Ajusta a imagem para caber no container sem distorção */
+  width: 100%; /* A imagem ocupará toda a largura disponível */
+  height: auto; /* A altura será ajustada automaticamente para manter a proporção */
+  max-height: 100%; /* Garante que a altura não ultrapasse o limite do modal */
+  object-fit: contain; /* Faz a imagem se ajustar ao tamanho do modal sem distorção */
 }
 
 @media (max-width: 700px) {
