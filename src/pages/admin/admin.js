@@ -71,16 +71,67 @@ async function reject(id) {
 }
 
 function viewPhotos(commentId, images) {
-  // Atualiza o src da imagem no modal
-  const modalImage = document.getElementById("modalImage");
-  modalImage.src = images; // Define a URL da imagem no modal
+  // Atualiza o conteúdo do modal com as imagens dos comentários
+  const swiperWrapper = document.querySelector('.swiper-wrapper');
+  swiperWrapper.innerHTML = ''; // Limpa o swiper antes de adicionar as novas imagens
+
+  // Certifique-se de que 'images' é um array de URLs (se for string, converta em array)
+  const imageUrls = Array.isArray(images) ? images : images.split(',');
+
+  // Adiciona cada imagem ao swiper
+  if (imageUrls.length > 0) {
+    imageUrls.forEach(url => {
+      const swiperSlide = document.createElement('div');
+      swiperSlide.classList.add('swiper-slide');
+
+      const imgElement = document.createElement('img');
+      imgElement.src = url;
+      imgElement.alt = `Imagem do comentário`;
+
+      swiperSlide.appendChild(imgElement);
+      swiperWrapper.appendChild(swiperSlide);
+    });
+  } else {
+    // Caso não haja imagens, exibe uma mensagem
+    swiperWrapper.innerHTML = `
+      <div class="swiper-slide">
+        <div class="project-img">
+          <p>Sem imagens disponíveis</p>
+        </div>
+      </div>`;
+  }
 
   // Exibe o modal
   const imageModal = document.getElementById("imageModal");
   imageModal.style.display = "flex"; // Exibe o modal
 
-  // Fechar o modal ao clicar no botão "X"
-  document.getElementById("closeModal").addEventListener("click", function () {
-    imageModal.style.display = "none"; // Esconde o modal
+  // Recarregar o carrossel do Swiper
+  if (window.swiperInstance) {
+    window.swiperInstance.destroy(); // Destrói a instância anterior do Swiper
+  }
+  window.swiperInstance = new Swiper(".swiper", {
+    loop: true, // Habilita o loop no swiper
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    autoplay: false,
+    touchStartPreventDefault: true, // Impede o comportamento de arraste
+    allowTouchMove: true, // Permite o movimento de deslizar dentro do swiper
   });
 }
+
+// Evento de fechar o modal globalmente
+document.getElementById("closeModal").addEventListener("click", function () {
+  const imageModal = document.getElementById("imageModal");
+  imageModal.style.display = "none"; // Esconde o modal
+
+  // Destrói a instância do Swiper para evitar o arraste após o fechamento do modal
+  if (window.swiperInstance) {
+    window.swiperInstance.destroy(true, true); // Destrói a instância do swiper
+  }
+});

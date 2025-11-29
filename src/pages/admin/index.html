@@ -14,6 +14,7 @@
   <!-- Estilos globais e específicos -->
   <link rel="stylesheet" href="../../styles/global.css">
   <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
 </head>
 
 <body>
@@ -83,17 +84,32 @@
     </main>
   </div>
 
-  <div id="imageModal" class="image-modal" style="display: none;">
-    <div class="image-modal-content">
-      <span id="closeModal" class="close-btn">&times;</span>
-      <img id="modalImage" class="modal-image" src="" alt="Imagem Comentário">
+  <!-- Modal de Imagem -->
+<div id="imageModal" class="image-modal" style="display: none;">
+  <div class="image-modal-content">
+    <span id="closeModal" class="close-btn">&times;</span>
+
+    <!-- Swiper Container -->
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        <!-- Os slides de imagens serão inseridos dinamicamente aqui -->
+      </div>
+
+      <!-- Botões de navegação -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+
+      <!-- Paginação -->
+      <div class="swiper-pagination"></div>
     </div>
   </div>
+</div>
 
   <script src="auth.js"></script>
   <script src="api_auth.js"></script>
   <script src="api_admin.js"></script>
   <script src="admin.js"></script>
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
 </body>
 
