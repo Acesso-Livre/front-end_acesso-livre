@@ -28,6 +28,11 @@ async function loadPendingComments() {
     const card = document.createElement("div");
     card.className = "comment-card-admin";
 
+    // Verificar se o comentário tem imagens
+    const photosButton = comment.images
+      ? `<button class="photos-btn" onclick="togglePhotos(${comment.id})">Fotos</button>`
+      : "";
+
     card.innerHTML = `
       <div class="top-info">
         <strong>${comment.user_name}</strong> — ⭐ ${comment.rating}
@@ -35,11 +40,10 @@ async function loadPendingComments() {
 
       <p class="comment-text">${comment.comment}</p>
 
-      ${
-        comment.image_url
-          ? `<img src="${comment.image_url}" class="comment-img">`
-          : ""
-      }
+      <!-- A imagem inicialmente estará oculta -->
+      <div id="comment-images-${comment.id}" class="comment-images" style="display: none;">
+        <img src="${comment.images}" class="comment-img">
+      </div>
 
       <div class="actions">
         <button class="approve-btn" onclick="approve(${
@@ -48,11 +52,23 @@ async function loadPendingComments() {
         <button class="reject-btn" onclick="reject(${
           comment.id
         })">Rejeitar</button>
+        ${photosButton} <!-- Botão de Fotos condicional -->
       </div>
     `;
 
     container.appendChild(card);
   });
+}
+
+function togglePhotos(commentId) {
+  const imagesContainer = document.getElementById(`comment-images-${commentId}`);
+
+  // Alternar a visibilidade da imagem
+  if (imagesContainer.style.display === "none") {
+    imagesContainer.style.display = "block";
+  } else {
+    imagesContainer.style.display = "none";
+  }
 }
 
 async function approve(id) {
@@ -63,4 +79,8 @@ async function approve(id) {
 async function reject(id) {
   await adminApi.rejectComment(id);
   loadPendingComments();
+}
+function viewPhotos(commentId) {
+  // Ação que será executada ao clicar no botão "Fotos"
+  alert(`Visualizar fotos para o comentário com ID: ${commentId}`);
 }
