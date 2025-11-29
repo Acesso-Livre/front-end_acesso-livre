@@ -30,8 +30,8 @@ async function loadPendingComments() {
 
     // Verificar se o comentário tem imagens
     const photosButton = comment.images
-      ? `<button class="photos-btn" onclick="togglePhotos(${comment.id})">Fotos</button>`
-      : "";
+  ? `<button class="photos-btn" onclick="viewPhotos(${comment.id}, '${comment.images}')">Fotos</button>`
+  : "";
 
     card.innerHTML = `
       <div class="top-info">
@@ -60,17 +60,6 @@ async function loadPendingComments() {
   });
 }
 
-function togglePhotos(commentId) {
-  const imagesContainer = document.getElementById(`comment-images-${commentId}`);
-
-  // Alternar a visibilidade da imagem
-  if (imagesContainer.style.display === "none") {
-    imagesContainer.style.display = "block";
-  } else {
-    imagesContainer.style.display = "none";
-  }
-}
-
 async function approve(id) {
   await adminApi.approveComment(id);
   loadPendingComments();
@@ -80,7 +69,18 @@ async function reject(id) {
   await adminApi.rejectComment(id);
   loadPendingComments();
 }
-function viewPhotos(commentId) {
-  // Ação que será executada ao clicar no botão "Fotos"
-  alert(`Visualizar fotos para o comentário com ID: ${commentId}`);
+
+function viewPhotos(commentId, images) {
+  // Atualiza o src da imagem no modal
+  const modalImage = document.getElementById("modalImage");
+  modalImage.src = images; // Define a URL da imagem no modal
+
+  // Exibe o modal
+  const imageModal = document.getElementById("imageModal");
+  imageModal.style.display = "flex"; // Exibe o modal
+
+  // Fechar o modal ao clicar no botão "X"
+  document.getElementById("closeModal").addEventListener("click", function () {
+    imageModal.style.display = "none"; // Esconde o modal
+  });
 }
