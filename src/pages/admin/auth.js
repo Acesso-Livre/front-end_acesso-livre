@@ -1,36 +1,81 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const authToken = sessionStorage.getItem('authToken');
+document.addEventListener("DOMContentLoaded", async function () {
+  const authToken = sessionStorage.getItem("authToken");
 
   if (authToken) {
-    document.getElementById('login-section').style.display = 'none';
-    document.getElementById('admin-dashboard').style.display = 'block';
+    // Validar o token antes de exibir o dashboard
+    const tokenValidation = await authApi.checkToken();
+
+    if (tokenValidation.valid) {
+      // Token válido, exibir dashboard
+      const loginSection = document.getElementById("login-section");
+      const dashboard = document.getElementById("admin-dashboard");
+
+      if (loginSection && dashboard) {
+        loginSection.style.display = "none";
+        dashboard.style.display = "block";
+        // Carregar comentários quando já está logado
+        await loadPendingComments();
+      } else {
+        console.error("Elementos não encontrados!");
+      }
+    } else {
+      // Token inválido ou expirado, remover e voltar ao login
+      sessionStorage.removeItem("authToken");
+      document.getElementById("login-section").style.display = "block";
+      document.getElementById("admin-dashboard").style.display = "none";
+      document.getElementById("login-error").style.display = "block";
+      document.getElementById("login-error").textContent =
+        "Sua sessão expirou. Faça login novamente.";
+    }
   } else {
-    document.getElementById('login-section').style.display = 'block';
-    document.getElementById('admin-dashboard').style.display = 'none';
+    // Sem token, exibir login
+    document.getElementById("login-section").style.display = "block";
+    document.getElementById("admin-dashboard").style.display = "none";
   }
 });
 
-document.getElementById('login-form').addEventListener('submit', async function (e) {
-  e.preventDefault(); 
+document
+  .getElementById("login-form")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-  const email = document.getElementById('admin-email').value;
-  const password = document.getElementById('admin-password').value;
+    const email = document.getElementById("admin-email").value;
+    const password = document.getElementById("admin-password").value;
+    const errorElement = document.getElementById("login-error");
 
-  const response = await authApi.login(email, password);
+    // Limpar mensagem de erro anterior
+    errorElement.style.display = "none";
+    errorElement.textContent = "Usuário ou senha incorreta. Tente novamente.";
 
-  if (response.access_token) {
-    sessionStorage.setItem('authToken', response.access_token);
+    const response = await authApi.login(email, password);
 
-    document.getElementById('login-section').style.display = 'none';
-    document.getElementById('admin-dashboard').style.display = 'block';
-  } else {
-    document.getElementById('login-error').style.display = 'block';
-  }
-});
+    if (response && response.access_token) {
+      // Token válido, redirecionar para dashboard
+      const loginSection = document.getElementById("login-section");
+      const dashboard = document.getElementById("admin-dashboard");
 
-document.getElementById('logout-btn').addEventListener('click', function () {
-  sessionStorage.removeItem('authToken');
+      if (loginSection && dashboard) {
+        loginSection.style.display = "none";
+        dashboard.style.display = "block";
+      } else {
+        console.error("ERRO: Elementos não encontrados!");
+      }
 
-  document.getElementById('login-section').style.display = 'block';
-  document.getElementById('admin-dashboard').style.display = 'none';
+      // Limpar campos do formulário
+      document.getElementById("admin-email").value = "";
+      document.getElementById("admin-password").value = "";
+
+      // Carregar comentários após login bem-sucedido
+      await loadPendingComments();
+    } else {
+      // Erro no login
+      errorElement.style.display = "block";
+    }
+  });
+
+document.getElementById("logout-btn").addEventListener("click", function () {
+  sessionStorage.removeItem("authToken");
+
+  document.getElementById("login-section").style.display = "block";
+  document.getElementById("admin-dashboard").style.display = "none";
 });

@@ -1,4 +1,13 @@
-document.addEventListener("DOMContentLoaded", loadPendingComments);
+// Função para carregar comentários com validação
+async function loadAndDisplayComments() {
+  const tokenValidation = await authApi.checkToken();
+
+  if (tokenValidation.valid) {
+    loadPendingComments();
+  } else {
+    console.log("Token inválido, não carregando comentários");
+  }
+}
 
 async function loadPendingComments() {
   const container = document.getElementById("reviews-list");
@@ -15,7 +24,7 @@ async function loadPendingComments() {
 
   container.innerHTML = "";
 
-  comments.comments.forEach(comment => {
+  comments.comments.forEach((comment) => {
     const card = document.createElement("div");
     card.className = "comment-card-admin";
 
@@ -26,11 +35,19 @@ async function loadPendingComments() {
 
       <p class="comment-text">${comment.comment}</p>
 
-      ${comment.images && comment.images.length > 0 ? comment.images.map(url => `<img src="${url}" class="comment-img">`).join('') : ""}
+      ${
+        comment.image_url
+          ? `<img src="${comment.image_url}" class="comment-img">`
+          : ""
+      }
 
       <div class="actions">
-        <button class="approve-btn" onclick="approve(${comment.id})">Aprovar</button>
-        <button class="reject-btn" onclick="reject(${comment.id})">Rejeitar</button>
+        <button class="approve-btn" onclick="approve(${
+          comment.id
+        })">Aprovar</button>
+        <button class="reject-btn" onclick="reject(${
+          comment.id
+        })">Rejeitar</button>
       </div>
     `;
 
