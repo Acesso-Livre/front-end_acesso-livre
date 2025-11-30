@@ -37,24 +37,7 @@
         <button type="submit" class="login-btn">Entrar</button>
       </form>
       <div id="login-error" class="error-message" style="display: none;">Usuário ou senha incorreta. Tente novamente.</div>
-      <a href="#" id="forgot-password-link" class="register-link">Esqueceu a senha?</a>
-    </div>
-  </div>
-
-  <!-- Modal de Recuperação de Senha -->
-  <div id="forgotPasswordModal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" id="close-forgot-modal">&times;</span>
-      <h2>Recuperar Senha</h2>
-      <form id="forgot-password-form">
-        <div class="input-group">
-          <label for="forgot-email">Email</label>
-          <input type="email" id="forgot-email" placeholder="Digite seu email cadastrado" required>
-        </div>
-        <button type="submit" class="login-btn">Enviar</button>
-      </form>
-      <div id="forgot-error" class="error-message" style="display: none;"></div>
-      <div id="forgot-success" class="success-message" style="display: none;">Instruções enviadas para o email!</div>
+      <button id="forgot-password-link" class="register-link" type="button">Esqueceu a senha?</button>
     </div>
   </div>
 
@@ -105,10 +88,32 @@
   </div>
 </div>
 
+<!-- Modal de Recuperação de Senha -->
+<div id="forgotPasswordModal" class="forgot-modal">
+  <div class="forgot-modal-content">
+    <span id="close-forgot-modal" class="close-btn">&times;</span>
+
+    <h2>Recuperar Senha</h2>
+
+    <form id="forgot-password-form">
+      <div class="input-group">
+        <label for="forgot-email">Email</label>
+        <input type="email" id="forgot-email" placeholder="Digite seu email cadastrado" required>
+      </div>
+
+      <button type="submit" class="login-btn">Enviar</button>
+    </form>
+
+    <div id="forgot-error" class="error-message" style="display:none;"></div>
+    <div id="forgot-success" class="success-message" style="display:none;">Instruções enviadas para o email!</div>
+  </div>
+</div>
+
   <script src="auth.js"></script>
   <script src="api_auth.js"></script>
   <script src="api_admin.js"></script>
   <script src="admin.js"></script>
+  <script src="forgot-password.js"></script>
   <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
 </body>

@@ -64,6 +64,7 @@ document
       // Limpar campos do formulário
       document.getElementById("admin-email").value = "";
       document.getElementById("admin-password").value = "";
+      document.getElementById("forgot-email").value = "";
 
       // Carregar comentários após login bem-sucedido
       await loadPendingComments();
