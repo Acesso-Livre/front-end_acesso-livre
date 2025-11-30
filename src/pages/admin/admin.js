@@ -31,7 +31,6 @@ async function loadPendingComments() {
   const result = await adminApi.getPendingComments();
   console.log("API retornou:", result);
 
-  // Agora pegamos CORRETAMENTE a lista
   const list = Array.isArray(result.comments) ? result.comments : [];
 
   if (list.length === 0) {
@@ -56,9 +55,9 @@ async function loadPendingComments() {
       <p class="comment-text">${comment.comment}</p>
 
       <div class="actions">
-        <button class="approve-btn" onclick="approve(${comment.id})">Aprovar</button>
-        <button class="reject-btn" onclick="reject(${comment.id})">Rejeitar</button>
-        ${hasImages ? `<button class="photos-btn" onclick="viewPhotos(${comment.id}, '${images}')">Fotos</button>` : ""}
+        <button class="btn-approve" onclick="approve(${comment.id})">Aprovar</button>
+        <button class="btn-reject" onclick="reject(${comment.id})">Rejeitar</button>
+        ${hasImages ? `<button class="btn-photos" onclick="viewPhotos('${images}')">Fotos</button>` : ""}
       </div>
     `;
 
@@ -80,10 +79,13 @@ async function reject(id) {
 }
 
 // ==========================
-// MODAL DE FOTOS
+// MODAL DE FOTOS COM SWIPER
 // ==========================
-function viewPhotos(commentId, images) {
-  const swiperWrapper = document.querySelector(".swiper-wrapper");
+function viewPhotos(images) {
+  const modal = document.getElementById("photoModal");
+  const swiperWrapper = document.getElementById("swiperWrapper");
+
+  // Limpar antes de adicionar novas fotos
   swiperWrapper.innerHTML = "";
 
   const imageArray = Array.isArray(images) ? images : images.split(",");
@@ -91,29 +93,37 @@ function viewPhotos(commentId, images) {
   imageArray.forEach((url) => {
     const slide = document.createElement("div");
     slide.className = "swiper-slide";
-    slide.innerHTML = `<img src="${url}" alt="Imagem do comentário" />`;
+    slide.innerHTML = `<img src="${url}" alt="Imagem do comentário"/>`;
     swiperWrapper.appendChild(slide);
   });
 
-  document.getElementById("imageModal").style.display = "flex";
+  modal.style.display = "flex";
 
-  if (window.swiperInstance) window.swiperInstance.destroy();
+  // Destruir instância anterior (se existir) para evitar bug
+  if (window.swiperInstance) {
+    window.swiperInstance.destroy(true, true);
+  }
 
+  // Criar Swiper
   window.swiperInstance = new Swiper(".swiper", {
     loop: true,
-    navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev",
-    },
     pagination: {
       el: ".swiper-pagination",
-      clickable: true,
+      clickable: true
     },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev"
+    }
   });
 }
 
 // Fechar modal
 document.getElementById("closeModal").addEventListener("click", () => {
-  document.getElementById("imageModal").style.display = "none";
-  if (window.swiperInstance) window.swiperInstance.destroy();
+  document.getElementById("photoModal").style.display = "none";
+
+  if (window.swiperInstance) {
+    window.swiperInstance.destroy(true, true);
+    window.swiperInstance = null;
+  }
 });
