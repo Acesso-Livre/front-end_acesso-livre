@@ -445,6 +445,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const name = document.getElementById("user-name").value;
         const rating = ratingInput.value;
         const commentText = document.getElementById("comment-text").value;
+        const imgInput = document.getElementById("imgInput");
+
         if (!rating || rating === "") {
           alert("Por favor, selecione uma avaliação com estrelas.");
           return;
@@ -456,6 +458,7 @@ document.addEventListener("DOMContentLoaded", () => {
           created_at: new Date().toISOString(),
           location_id: window.currentLocationId,
           status: "pending",
+          images: imgInput && imgInput.files.length > 0 ? imgInput.files[0] : null
         };
 
         // NÃO sobrescrever window.pins — apenas chamar a API para enviar comentário

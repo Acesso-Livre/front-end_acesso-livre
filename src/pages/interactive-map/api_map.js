@@ -96,6 +96,12 @@ async function postComment(commentData) {
     formData.append('location_id', commentData.location_id);
     formData.append('status', commentData.status);
 
+    // 🔥 Enviar imagem JPEG
+    if (commentData.images) {
+      formData.append("images", commentData.images); 
+      // se quiser múltiplas imagens: loop adicionando cada uma
+    }
+
     const response = await fetch(
       `https://acesso-livre-api.onrender.com/api/comments`,
       {
