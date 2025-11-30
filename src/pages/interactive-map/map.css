@@ -298,6 +298,41 @@ h1 {
   display: none !important;
 }
 
+#image-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centraliza o botão */
+  margin-top: 10px;
+  border: 1px solid #ccc; /* borda para destacar a área */
+  border-radius: 15px;
+  padding: 15px;
+}
+
+#btn-add-image {
+  padding: 12px 25px; /* altura maior e largura moderada */
+  cursor: pointer;
+  border: 1px solid #000;
+  background: #f1f1f1;
+}
+
+#file-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+  width: 90%;
+}
+
+#file-list li {
+  border: 1px solid #ccc;   /* borda */
+  padding: 6px;
+  margin-bottom: 6px;
+  font-size: 14px;          /* nome menor */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 /* Estilos para comentários */
 .comments-list {
   display: flex;

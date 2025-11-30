@@ -437,6 +437,55 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
+let selectedImages = [];
+
+const imgInput = document.getElementById("comment-image");
+const fileList = document.getElementById("file-list");
+const btnAddImage = document.getElementById("btn-add-image");
+
+btnAddImage.addEventListener("click", () => {
+  imgInput.click();
+});
+
+imgInput.addEventListener("change", () => {
+  for (const file of imgInput.files) {
+    selectedImages.push(file);
+  }
+
+  imgInput.value = "";
+  renderFileList();
+});
+
+function renderFileList() {
+  fileList.innerHTML = "";
+
+  selectedImages.forEach((file, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span>${file.name}</span>
+      <button data-index="${index}"
+              style="
+                background:red;
+                color:white;
+                border:none;
+                padding:2px 6px;
+                border-radius:4px;
+                cursor:pointer;
+              ">X</button>
+    `;
+
+    fileList.appendChild(li);
+  });
+
+  document.querySelectorAll("#file-list button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const i = btn.getAttribute("data-index");
+      selectedImages.splice(i, 1);
+      renderFileList();
+    });
+  });
+}
+
     // submit form de comentário
     const commentForm = document.getElementById("comment-form");
     if (commentForm) {

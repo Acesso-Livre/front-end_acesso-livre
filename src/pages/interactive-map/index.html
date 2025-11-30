@@ -143,7 +143,11 @@
 
         <label for="comment-text">Comentário:</label>
         <textarea id="comment-text" placeholder="Digite seu comentário" required></textarea>
-        <input type="file" id="imgInput" accept="image/jpeg" />
+        <div id="image-box">
+          <button id="btn-add-image" type="button">Adicionar imagem</button>
+          <input type="file" id="comment-image" multiple style="display:none">
+          <ul id="file-list"></ul>
+        </div>
         <button type="submit" class="submit-btn">Enviar</button>
       </form>
     </div>
