@@ -1,164 +1,4 @@
-.login-container {
-  position: fixed;
-  /* ocupa toda a viewport e fica sobreposto */
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  /* primary centering using grid */
-  display: grid;
-  place-items: center;
-  /* centra totalmente no eixo X e Y */
-  /* fallback centering for any overriding rules (e.g., transformed parents) */
-  justify-items: center;
-  align-items: center;
-  /* fallback with flex to be extra robust */
-  align-content: center;
-  height: 100vh;
-  width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  font-family: 'Albert Sans', sans-serif;
-  z-index: 1;
-  padding: 20px;
-  /* garante espaçamento em telas pequenas */
-  margin: 0;
-}
-
-/* Adicionar classe para ocultar quando necessário */
-.login-container[style*="display: none"],
-#login-section[style*="display: none"] {
-  display: none !important;
-}
-
-/* Remove margem padrão do body para garantir centralização precisa */
-html,
-body {
-  margin: 0;
-  height: 100%;
-}
-
-.login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 420px;
-  box-sizing: border-box;
-  text-align: center;
-  margin: 0 auto;
-}
-
-/* Strong override in case global styles interfere with positioning */
-.login-container,
-.login-container * {
-  -webkit-transform: none !important;
-  transform: none !important;
-}
-
-/* Extra specific fallback forcing centering when some ancestor applies transforms */
-body>.login-container,
-html>body>.login-container {
-  position: fixed !important;
-  left: 0 !important;
-  top: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  padding: 24px !important;
-}
-
-.login-header h1 {
-  margin: 0 0 10px 0;
-  color: #333;
-  font-size: 28px;
-  font-weight: 700;
-}
-
-.login-header p {
-  margin: 0 0 30px 0;
-  color: #666;
-  font-size: 16px;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.input-group {
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.input-group label {
-  display: block;
-  margin-bottom: 5px;
-  color: #333;
-  font-weight: 500;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 12px 15px;
-  border: 2px solid #e1e5e9;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
-  box-sizing: border-box;
-}
-
-.input-group input:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.login-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 12px 30px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  margin-top: 10px;
-}
-
-.login-btn:hover {
-  transform: translateY(-2px);
-}
-
-.error-message {
-  color: #e74c3c;
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-.success-message {
-  color: #28a745;
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-.register-link {
-  display: block;
-  margin-top: 20px;
-  color: #667eea;
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.3s ease;
-}
-
-.register-link:hover {
-  color: #764ba2;
-  text-decoration: underline;
-}
-
-/* Estilos da Página Administrativa */
+/* ADMIN HEADER ============================================= */
 
 .admin-header {
   display: flex;
@@ -218,26 +58,7 @@ html>body>.login-container {
   background: #c82333;
 }
 
-.forgot-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: none;
-
-  /* ESSENCIAL */
-  z-index: 9999 !important;
-}
-
-.forgot-modal-content {
-  background: #fff;
-  padding: 25px;
-  border-radius: 10px;
-  max-width: 400px;
-  margin: auto;
-}
+/* ADMIN CONTENT ============================================ */
 
 .admin-container {
   max-width: 1200px;
@@ -274,7 +95,8 @@ html>body>.login-container {
   background-color: #0056b3;
 }
 
-/* Grade de Estatísticas */
+/* STATS GRID =============================================== */
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -282,7 +104,6 @@ html>body>.login-container {
   margin-top: 20px;
 }
 
-/* Cartão de Estatística */
 .stat-card {
   padding: 20px;
   border: 1px solid #ddd;
@@ -304,7 +125,8 @@ html>body>.login-container {
   margin: 10px 0 0 0;
 }
 
-/* Ações Rápidas */
+/* AÇÕES RÁPIDAS ============================================ */
+
 .quick-actions {
   display: flex;
   gap: 10px;
@@ -316,25 +138,8 @@ html>body>.login-container {
   margin: 0;
 }
 
-/* Container de Avaliações */
-.reviews-container {
-  margin-top: 20px;
-}
+/* AVALIAÇÕES =============================================== */
 
-.reviews-container h2 {
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.reviews-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-/* ==========================
-   Estilo minimalista - Lista de Avaliações (azul e branco)
-   ========================== */
 .comments-container {
   max-width: 1000px;
   margin: 28px auto;
@@ -416,29 +221,37 @@ html>body>.login-container {
   background: #f5fbff;
 }
 
-/* Estilo do Modal */
+/* MODAL DE IMAGEM ========================================== */
+
 .image-modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
-  display: none; /* Inicialmente escondido */
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
   justify-content: center;
   align-items: center;
 }
 
 .image-modal-content {
   position: relative;
-  width: 500px; /* Tamanho fixo do modal */
-  height: 400px; /* Tamanho fixo do modal */
+  width: 500px;
+  height: 400px;
   background: #2f2f2f;
   padding: 20px;
-  overflow: hidden; /* Esconde qualquer conteúdo que ultrapasse os limites */
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.modal-image {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .close-btn {
@@ -450,105 +263,8 @@ html>body>.login-container {
   cursor: pointer;
 }
 
-.modal-image {
-  width: 100%; /* A imagem ocupará toda a largura disponível */
-  height: auto; /* A altura será ajustada automaticamente para manter a proporção */
-  max-height: 100%; /* Garante que a altura não ultrapasse o limite do modal */
-  object-fit: contain; /* Faz a imagem se ajustar ao tamanho do modal sem distorção */
-}
+/* MODAL PADRÃO ============================================= */
 
-@media (max-width: 700px) {
-  .comments-container {
-    padding: 12px;
-  }
-
-  .comment-card-admin {
-    padding: 12px;
-  }
-
-  .comment-card-admin .top-info strong {
-    font-size: 15px;
-  }
-}
-
-.review-item {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.review-user {
-  font-weight: bold;
-  color: #333;
-}
-
-.review-date {
-  color: #666;
-  font-size: 14px;
-}
-
-.review-rating {
-  margin: 10px 0;
-  color: #f39c12;
-}
-
-.review-location {
-  margin: 10px 0;
-  font-size: 14px;
-  color: #666;
-}
-
-.review-text {
-  margin: 10px 0;
-  line-height: 1.5;
-  color: #555;
-}
-
-.review-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.btn-approve,
-.btn-reject {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-}
-
-.btn-approve {
-  background-color: #28a745;
-  color: white;
-}
-
-.btn-approve:hover {
-  background-color: #218838;
-}
-
-.btn-reject {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-reject:hover {
-  background-color: #c82333;
-}
-
-/* Estilos dos Modais */
 .modal {
   display: none;
   position: fixed;
@@ -572,50 +288,16 @@ html>body>.login-container {
   position: relative;
 }
 
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 28px;
-  font-weight: bold;
-  color: #aaa;
-  cursor: pointer;
-}
-
-.close-btn:hover {
-  color: #000;
-}
-
 .modal-content h2 {
   margin-top: 0;
 }
 
-form label {
-  display: block;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-form input,
-form textarea {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-form button {
-  margin-top: 20px;
-  padding: 10px 20px;
+.btn-approve {
   background-color: #28a745;
   color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
-form button:hover {
-  background-color: #218838;
+.btn-reject {
+  background-color: #dc3545;
+  color: white;
 }

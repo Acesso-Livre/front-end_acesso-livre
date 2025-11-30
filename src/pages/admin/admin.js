@@ -1,58 +1,64 @@
-// Função para carregar comentários com validação
-async function loadAndDisplayComments() {
-  const tokenValidation = await authApi.checkToken();
+// ==========================
+// PROTEÇÃO DE ROTA
+// ==========================
+document.addEventListener("DOMContentLoaded", () => {
+  const token = sessionStorage.getItem("authToken");
 
-  if (tokenValidation.valid) {
-    loadPendingComments();
-  } else {
-    console.log("Token inválido, não carregando comentários");
+  if (!token) {
+    console.warn("Sem token → redirecionando ao login");
+    window.location.href = "../auth/index.html";
+    return;
   }
-}
 
+  loadPendingComments();
+});
+
+// ==========================
+// BOTÃO DE LOGOUT
+// ==========================
+document.getElementById("logout-btn").addEventListener("click", () => {
+  sessionStorage.removeItem("authToken");
+  window.location.href = "../auth/index.html";
+});
+
+// ==========================
+// BUSCAR COMENTÁRIOS PENDENTES
+// ==========================
 async function loadPendingComments() {
   const container = document.getElementById("reviews-list");
   container.innerHTML = "<p>Carregando comentários...</p>";
 
-  const comments = await adminApi.getPendingComments();
+  const result = await adminApi.getPendingComments();
+  console.log("API retornou:", result);
 
-  console.log("Comentários pendentes:", comments);
+  // Agora pegamos CORRETAMENTE a lista
+  const list = Array.isArray(result.comments) ? result.comments : [];
 
-  if (comments.comments.length === 0) {
+  if (list.length === 0) {
     container.innerHTML = "<p>Nenhum comentário pendente ✨</p>";
     return;
   }
 
   container.innerHTML = "";
 
-  comments.comments.forEach((comment) => {
+  list.forEach((comment) => {
     const card = document.createElement("div");
     card.className = "comment-card-admin";
 
-    // Verificar se o comentário tem imagens
-    const photosButton = comment.images
-  ? `<button class="photos-btn" onclick="viewPhotos(${comment.id}, '${comment.images}')">Fotos</button>`
-  : "";
+    const images = comment.images || "";
+    const hasImages = images.length > 0;
 
     card.innerHTML = `
       <div class="top-info">
-        <strong>${comment.user_name}</strong> — ⭐ ${comment.rating}
+        <strong>${comment.user_name ?? "Usuário"}</strong> — ⭐ ${comment.rating ?? ""}
       </div>
 
       <p class="comment-text">${comment.comment}</p>
 
-      <!-- A imagem inicialmente estará oculta -->
-      <div id="comment-images-${comment.id}" class="comment-images" style="display: none;">
-        <img src="${comment.images}" class="comment-img">
-      </div>
-
       <div class="actions">
-        <button class="approve-btn" onclick="approve(${
-          comment.id
-        })">Aprovar</button>
-        <button class="reject-btn" onclick="reject(${
-          comment.id
-        })">Rejeitar</button>
-        ${photosButton} <!-- Botão de Fotos condicional -->
+        <button class="approve-btn" onclick="approve(${comment.id})">Aprovar</button>
+        <button class="reject-btn" onclick="reject(${comment.id})">Rejeitar</button>
+        ${hasImages ? `<button class="photos-btn" onclick="viewPhotos(${comment.id}, '${images}')">Fotos</button>` : ""}
       </div>
     `;
 
@@ -60,6 +66,9 @@ async function loadPendingComments() {
   });
 }
 
+// ==========================
+// APROVAR / REJEITAR
+// ==========================
 async function approve(id) {
   await adminApi.approveComment(id);
   loadPendingComments();
@@ -70,47 +79,28 @@ async function reject(id) {
   loadPendingComments();
 }
 
+// ==========================
+// MODAL DE FOTOS
+// ==========================
 function viewPhotos(commentId, images) {
-  // Atualiza o conteúdo do modal com as imagens dos comentários
-  const swiperWrapper = document.querySelector('.swiper-wrapper');
-  swiperWrapper.innerHTML = ''; // Limpa o swiper antes de adicionar as novas imagens
+  const swiperWrapper = document.querySelector(".swiper-wrapper");
+  swiperWrapper.innerHTML = "";
 
-  // Certifique-se de que 'images' é um array de URLs (se for string, converta em array)
-  const imageUrls = Array.isArray(images) ? images : images.split(',');
+  const imageArray = Array.isArray(images) ? images : images.split(",");
 
-  // Adiciona cada imagem ao swiper
-  if (imageUrls.length > 0) {
-    imageUrls.forEach(url => {
-      const swiperSlide = document.createElement('div');
-      swiperSlide.classList.add('swiper-slide');
+  imageArray.forEach((url) => {
+    const slide = document.createElement("div");
+    slide.className = "swiper-slide";
+    slide.innerHTML = `<img src="${url}" alt="Imagem do comentário" />`;
+    swiperWrapper.appendChild(slide);
+  });
 
-      const imgElement = document.createElement('img');
-      imgElement.src = url;
-      imgElement.alt = `Imagem do comentário`;
+  document.getElementById("imageModal").style.display = "flex";
 
-      swiperSlide.appendChild(imgElement);
-      swiperWrapper.appendChild(swiperSlide);
-    });
-  } else {
-    // Caso não haja imagens, exibe uma mensagem
-    swiperWrapper.innerHTML = `
-      <div class="swiper-slide">
-        <div class="project-img">
-          <p>Sem imagens disponíveis</p>
-        </div>
-      </div>`;
-  }
+  if (window.swiperInstance) window.swiperInstance.destroy();
 
-  // Exibe o modal
-  const imageModal = document.getElementById("imageModal");
-  imageModal.style.display = "flex"; // Exibe o modal
-
-  // Recarregar o carrossel do Swiper
-  if (window.swiperInstance) {
-    window.swiperInstance.destroy(); // Destrói a instância anterior do Swiper
-  }
   window.swiperInstance = new Swiper(".swiper", {
-    loop: true, // Habilita o loop no swiper
+    loop: true,
     navigation: {
       nextEl: ".swiper-button-next",
       prevEl: ".swiper-button-prev",
@@ -119,19 +109,11 @@ function viewPhotos(commentId, images) {
       el: ".swiper-pagination",
       clickable: true,
     },
-    autoplay: false,
-    touchStartPreventDefault: true, // Impede o comportamento de arraste
-    allowTouchMove: true, // Permite o movimento de deslizar dentro do swiper
   });
 }
 
-// Evento de fechar o modal globalmente
-document.getElementById("closeModal").addEventListener("click", function () {
-  const imageModal = document.getElementById("imageModal");
-  imageModal.style.display = "none"; // Esconde o modal
-
-  // Destrói a instância do Swiper para evitar o arraste após o fechamento do modal
-  if (window.swiperInstance) {
-    window.swiperInstance.destroy(true, true); // Destrói a instância do swiper
-  }
+// Fechar modal
+document.getElementById("closeModal").addEventListener("click", () => {
+  document.getElementById("imageModal").style.display = "none";
+  if (window.swiperInstance) window.swiperInstance.destroy();
 });

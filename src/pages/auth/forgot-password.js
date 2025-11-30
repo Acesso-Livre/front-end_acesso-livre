@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Botão "Esqueceu a senha?"
   forgotPasswordLink.addEventListener("click", function (e) {
   e.preventDefault();
-  e.stopPropagation();     // 🔥 impede submit acidental
+  e.stopPropagation();
   openForgotPasswordModal();
 });
 

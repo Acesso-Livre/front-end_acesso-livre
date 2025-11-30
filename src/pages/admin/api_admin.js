@@ -1,3 +1,4 @@
+const ADMIN_API_BASE_URL = "https://acesso-livre-api.onrender.com/api"
 
 const adminApi = {
   // Buscar comentários pendentes
