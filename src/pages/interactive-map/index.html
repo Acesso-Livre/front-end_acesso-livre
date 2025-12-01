@@ -157,15 +157,6 @@
   </div>
 </div>
 
-<div id="legendaModal">
-  <div class="modal-content">
-    <span class="close-legenda">&times;</span>
-    <h2>Legenda</h2>
-
-    <ul id="legenda-list" class="legenda-list"></ul>
-  </div>
-</div>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="api_map.js"></script>
 <script src="map.js"></script>
@@ -194,43 +185,5 @@
     return result;
   };
 </script>
-
-<script>
-  const btnLegenda = document.getElementById("btnLegenda");
-  const legendaModal = document.getElementById("legendaModal");
-  const closeLegenda = document.querySelector(".close-legenda");
-  const legendaList = document.getElementById("legenda-list");
-
-  // abrir / fechar
-  btnLegenda.onclick = () => legendaModal.style.display = "block";
-  closeLegenda.onclick = () => legendaModal.style.display = "none";
-
-  window.onclick = (event) => {
-    if (event.target === legendaModal) legendaModal.style.display = "none";
-  };
-
-  // carregar legenda automaticamente
-  async function loadLegenda() {
-    const items = await api.getAccessibilityItems();
-
-    legendaList.innerHTML = ""; // limpar antes
-
-    items.forEach(item => {
-      const li = document.createElement("li");
-
-      li.innerHTML = `
-        <img src="${item.icon_url}" alt="${item.name}">
-        <span>${item.name}</span>
-      `;
-
-      legendaList.appendChild(li);
-    });
-  }
-
-  // chama ao carregar página
-  loadLegenda();
-</script>
-
 </body>
-
 </html>
