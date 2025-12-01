@@ -83,6 +83,64 @@ body {
   transform: scale(1.15);
 }
 
+#legendaModal {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 300px;
+  height: 600px;
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  display: none;
+  z-index: 9999;
+  overflow-y: auto;
+}
+
+.legenda-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+.legenda-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px;
+}
+
+.legenda-list img {
+  width: 24px;
+  height: 24px;
+}
+
+.close-legenda {
+  float: right;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#btnLegenda {
+  position: fixed;    /* fixa na tela */
+  bottom: 20px;       /* distância do canto inferior */
+  right: 20px;        /* distância da lateral direita */
+  z-index: 10000;     /* acima do mapa */
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#btnLegenda:hover {
+  background-color: #0056b3;
+}
+
+
 /* Popup do Leaflet (opcional) */
 .leaflet-popup-content-wrapper {
   font-size: 14px;
