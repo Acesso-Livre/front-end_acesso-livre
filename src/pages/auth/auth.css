@@ -49,6 +49,11 @@ body {
   box-sizing: border-box;
 }
 
+.login-card h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
 .logo {
   width: 150px;
   margin-bottom: 20px;
@@ -94,23 +99,19 @@ html > body > .login-container {
 .input-group {
   margin-bottom: 20px;
   text-align: left;
-}
-
-.input-group label {
-  display: block;
-  margin-bottom: 5px;
-  color: #333;
-  font-weight: 500;
+  width: 450px;
 }
 
 .input-group input {
   width: 100%;
+  height: 70px;
   padding: 12px 15px;
   border: 2px solid #e1e5e9;
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.3s ease;
   box-sizing: border-box;
+  border: 1px solid #4c4444;
 }
 
 .input-group input:focus {
@@ -121,6 +122,7 @@ html > body > .login-container {
 .login-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  height: 70px;
   border: none;
   padding: 12px 30px;
   border-radius: 8px;
@@ -129,6 +131,7 @@ html > body > .login-container {
   cursor: pointer;
   transition: transform 0.2s ease;
   margin-top: 10px;
+  border: 1px solid #4c4444;
 }
 
 .login-btn:hover {
