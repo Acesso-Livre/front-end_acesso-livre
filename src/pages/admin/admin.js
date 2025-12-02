@@ -99,7 +99,7 @@ function viewPhotos(images) {
     imageArray.forEach((url) => {
       const slide = document.createElement("div");
       slide.className = "swiper-slide";
-      slide.innerHTML = `<img src="${url}" alt="Imagem do comentário"/>`;
+      slide.innerHTML = `<img src="${url}" alt=""/>`;
       swiperWrapper.appendChild(slide);
     });
 
