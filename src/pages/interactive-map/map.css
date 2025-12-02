@@ -83,6 +83,58 @@ body {
   transform: scale(1.15);
 }
 
+.btn-map-custom {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #007bff; /* azul */
+  color: white; /* cor da interrogação */
+  border: none;
+  font-size: 28px; /* tamanho da interrogação */
+  font-weight: bold;
+  text-align: center;
+  line-height: 50px; /* centraliza verticalmente */
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  transition: background-color 0.2s;
+}
+
+.btn-map-custom:hover {
+  background-color: #0056b3; /* tom mais escuro ao passar o mouse */
+}
+
+#btnModal {
+  position: absolute;
+  bottom: 20px; /* um pouco acima do botão */
+  right: 10px;
+  width: 190px;      /* menor largura */
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  padding: 15px;
+  display: none;     /* inicial escondido */
+  z-index: 1000;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  height: 350px;
+}
+
+#btnModal h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  text-align: center;
+}
+
+#btnModal .close-modal {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 
 /* Popup do Leaflet (opcional) */
 .leaflet-popup-content-wrapper {

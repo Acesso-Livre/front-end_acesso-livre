@@ -287,6 +287,38 @@ function detectTypeFromName(name) {
     // Renderiza os pins usando a API (apenas aqui)
     await renderPinsOnMap(map, W, H);
 
+    // --- AQUI: adicionar botão redondo ---
+    const BotaoCustom = L.Control.extend({
+      onAdd: function(map) {
+        const btn = L.DomUtil.create('button', 'btn-map-custom');
+        btn.innerHTML = '?'; // ícone ou texto
+        btn.title = "Botão"; 
+
+        // Impede que o clique arraste o mapa
+        L.DomEvent.disableClickPropagation(btn);
+        return btn;
+      }
+    });
+    map.addControl(new BotaoCustom({ position: 'bottomright' }));
+
+    // --- AQUI: lógica de clique para mostrar e fechar modal ---
+    const btnModal = document.getElementById('btnModal');
+    const btnMap = document.querySelector('.btn-map-custom');
+
+    // Ao clicar no botão do mapa
+    L.DomEvent.on(btnMap, 'click', function(e) {
+      this.style.display = 'none';       // desaparece o botão
+      btnModal.style.display = 'block';  // mostra o modal
+    });
+
+    // Fecha o modal ao clicar em qualquer lugar do mapa
+    map.on('click', () => {
+      if (btnModal.style.display === 'block') {
+        btnModal.style.display = 'none';  // esconde o modal
+        btnMap.style.display = 'block';   // reaparece o botão
+      }
+    });
+
     // resize handling
     let resizeTimer = null;
     window.addEventListener("resize", () => {
