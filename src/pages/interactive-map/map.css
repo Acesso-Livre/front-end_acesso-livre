@@ -59,29 +59,78 @@ body {
 }
 
 /* Estilo dos pins */
-.pin-marker {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform-origin: center;
-  transition: 0.12s ease;
-  cursor: pointer;
-}
-
 .pin-marker .dot {
-  width: 30px;
-  height: 30px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  background: #ff3b3b;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.pin-marker:hover {
-  transform: scale(1.15);
+/* Estacionamentos → Azul */
+.pin-estacionamento .dot {
+  background: #00a2ff;
+  border: 2px solid #005a99;
 }
+
+/* Blocos → Amarelo */
+.pin-bloco .dot {
+  background: #ffcc00;
+  border: 2px solid #b38f00;
+}
+
+/* Campo → Verde */
+.pin-campo .dot {
+  background: #00cc44;
+  border: 2px solid #008833;
+}
+
+/* Quadra → Laranja */
+.pin-quadra .dot {
+  background: #ff7a00;
+  border: 2px solid #b35500;
+}
+
+/* Quadra de areia → Bege */
+.pin-quadra-areia .dot {
+  background: #e6d5a4;
+  border: 2px solid #b69f6d;
+}
+
+/* Biblioteca → Roxo */
+.pin-biblioteca .dot {
+  background: #9b5de5;
+  border: 2px solid #6b3c9e;
+}
+
+/* Cantina → Rosa */
+.pin-cantina .dot {
+  background: #ff4f81;
+  border: 2px solid #b32452;
+}
+
+/* Auditório → Vermelho */
+.pin-auditorio .dot {
+  background: #ff3b30;
+  border: 2px solid #b32022;
+}
+
+/* Cores → Ciano */
+.pin-cores .dot {
+  background: #3de0c5;
+  border: 2px solid #289e8d;
+}
+
+/* Entrada → Branco */
+.pin-entrada .dot {
+  background: #ffffff;
+  border: 2px solid #999999;
+}
+
+/* Default caso algum tipo venha errado */
+.pin-default .dot {
+  background: #666;
+  border: 2px solid #333;
+}
+
 
 /* Popup do Leaflet (opcional) */
 .leaflet-popup-content-wrapper {

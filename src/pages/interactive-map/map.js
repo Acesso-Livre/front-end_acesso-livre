@@ -26,14 +26,30 @@ document.addEventListener("DOMContentLoaded", () => {
   let modalPushed = false;
 
   // Função para criar ícone de pin
-  function makePinIcon() {
-    return L.divIcon({
-      className: "pin-marker",
-      html: `<div class="dot"></div>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-    });
-  }
+  function makePinIcon(tipo) {
+  // Mapear tipos para números de pins
+  const iconMap = {
+    estacionamento: "pin-1.png",
+    bloco: "pin-2.png",
+    campo: "pin-3.png",
+    quadra: "pin-5.png",
+    quadra_areia: "pin-6.png",
+    biblioteca: "pin-7.png",
+    cantina: "pin-8.png",
+    auditorio: "pin-9.png",
+    cores: "pin-10.png",
+    entrada: "pin-11.png",
+    default: "pin-11.png",
+  };
+
+  return L.icon({
+    iconUrl: `../../assets/img/map/${iconMap[tipo] || iconMap.default}`,
+    iconSize: [45, 45],
+    iconAnchor: [22, 45],
+    popupAnchor: [0, -45],
+  });
+}
+
 
   // Abre modal com dados (somente apresentação)
   async function openLocationModal(locationData) {
@@ -193,6 +209,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // =====================================
+// FUNÇÃO PARA DETECTAR O TIPO PELO NAME
+// =====================================
+function detectTypeFromName(name) {
+  const n = name.toLowerCase();
+
+  if (n.includes("estacionamento")) return "estacionamento";
+  if (n.includes("bloco")) return "bloco";
+  if (n.includes("quadra de areia")) return "quadra_areia";
+  if (n.includes("quadra")) return "quadra";
+  if (n.includes("campo")) return "campo";
+  if (n.includes("cantina")) return "cantina";
+  if (n.includes("biblioteca")) return "biblioteca";
+  if (n.includes("audit")) return "auditorio";
+  if (n.includes("cores")) return "cores";
+  if (n.includes("entrada")) return "entrada";
+
+  return "default";
+}
+
   // Render de pins (chama window.api.getAllLocations)
   async function renderPinsOnMap(map, W, H) {
     // Busca locations via API
@@ -200,12 +236,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // Salva no global para outras partes que precisarem (não sobrescrever)
     window.pins = pins || [];
 
+    console.log("PINS RECEBIDOS:", pins);
+
     pins.forEach((p) => {
-      const top = parseFloat(p.top) || 0;
-      const left = parseFloat(p.left) || 0;
-      const x = (left / 100) * W;
-      const y = (top / 100) * H;
-      const marker = L.marker([y, x], { icon: makePinIcon() }).addTo(map);
+    const tipo = detectTypeFromName(p.name);  // ← USAR AQUI
+
+    const top = parseFloat(p.top) || 0;
+    const left = parseFloat(p.left) || 0;
+    const x = (left / 100) * W;
+    const y = (top / 100) * H;
+
+    const marker = L.marker([y, x], {
+      icon: makePinIcon(tipo)  // ← AQUI AGORA FUNCIONA
+    }).addTo(map);
 
       marker.on("click", async () => {
         console.log("Pin clicado:", p.id);
@@ -217,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
-
+  
   img.onload = async () => {
     const W = img.naturalWidth;
     const H = img.naturalHeight;
@@ -260,6 +303,20 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 100);
     });
   };
+
+  const pinTypes = {
+  estacionamento: "pin-estacionamento",
+  bloco: "pin-bloco",
+  campo: "pin-campo",
+  quadra: "pin-quadra",
+  quadra_areia: "pin-quadra-areia",
+  biblioteca: "pin-biblioteca",
+  cantina: "pin-cantina",
+  auditorio: "pin-auditorio",
+  cores: "pin-cores",
+  entrada: "pin-entrada",
+  default: "pin-default"
+};
 
   img.onerror = () => {
     console.error("Erro ao carregar a imagem do mapa:", imgUrl);
