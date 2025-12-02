@@ -26,14 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let modalPushed = false;
 
   // Função para criar ícone de pin
-  function makePinIcon() {
-    return L.divIcon({
-      className: "pin-marker",
-      html: `<div class="dot"></div>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-    });
-  }
+  function makePinIcon(color = "#FF0000") { // cor padrão vermelha
+  return L.divIcon({
+    className: "pin-marker",
+    html: `<div class="dot" style="background-color: ${color};"></div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+  });
+}
 
 
   // Abre modal com dados (somente apresentação)
@@ -231,18 +231,30 @@ function detectTypeFromName(name) {
     const x = (left / 100) * W;
     const y = (top / 100) * H;
 
-    const marker = L.marker([y, x], { icon: makePinIcon() }).addTo(map);
+    const corMap = {
+    estacionamento: "#FF0000",
+    bloco: "#00FF00",
+    campo: "#0000FF",
+    quadra: "#FFFF00",
+    quadra_areia: "#FFA500",
+    biblioteca: "#800080",
+    cantina: "#00FFFF",
+    auditorio: "#FFC0CB",
+    cores: "#808080",
+    entrada: "#000000",
+    default: "#000000"
+  };
 
+  const color = corMap[tipo] || corMap.default;
 
-      marker.on("click", async () => {
-        console.log("Pin clicado:", p.id);
-        // Pega a localização (caso precise dados adicionais)
-        const location = await window.api.getLocationById(p.id);
-        // Busca comentários direto da API endpoint (opcional, loadCommentsForLocation também fará)
-        // const comments = await window.api.getCommentsByLocationId(location.id);
-        openLocationModal(location || p, p.name || "Localização");
-      });
+  const marker = L.marker([y, x], { icon: makePinIcon(color) }).addTo(map);
+
+    marker.on("click", async () => {
+      console.log("Pin clicado:", p.id);
+      const location = await window.api.getLocationById(p.id);
+      openLocationModal(location || p, p.name || "Localização");
     });
+  });
   }
   
   img.onload = async () => {
