@@ -135,6 +135,44 @@ body {
   cursor: pointer;
 }
 
+.modal-small {
+  display: none; /* inicialmente escondido */
+  position: absolute;
+  bottom: 80px; /* acima do botão */
+  right: 20px;
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  z-index: 1000;
+  width: 180px;
+  font-size: 14px;
+}
+
+.modal-content-small h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.modal-small ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-small li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.modal-small li img {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
 
 /* Popup do Leaflet (opcional) */
 .leaflet-popup-content-wrapper {
