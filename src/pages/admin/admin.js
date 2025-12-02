@@ -26,7 +26,7 @@ document.getElementById("logout-btn").addEventListener("click", () => {
 // ==========================
 async function loadPendingComments() {
   const container = document.getElementById("reviews-list");
-  container.innerHTML = "<p>Carregando comentários...</p>";
+  container.innerHTML = '<div class="loading-container"><div class="loading-spinner"></div></div>';
 
   const result = await adminApi.getPendingComments();
   console.log("API retornou:", result);
@@ -85,37 +85,42 @@ function viewPhotos(images) {
   const modal = document.getElementById("photoModal");
   const swiperWrapper = document.getElementById("swiperWrapper");
 
-  // Limpar antes de adicionar novas fotos
-  swiperWrapper.innerHTML = "";
+  // Mostrar modal com spinner
+  swiperWrapper.innerHTML = '<div class="loading-container" id="loadingSpinner-foto"><div class="loading-spinner"></div></div>';
+  modal.style.display = "flex";
 
   const imageArray = Array.isArray(images) ? images : images.split(",");
 
-  imageArray.forEach((url) => {
-    const slide = document.createElement("div");
-    slide.className = "swiper-slide";
-    slide.innerHTML = `<img src="${url}" alt="Imagem do comentário"/>`;
-    swiperWrapper.appendChild(slide);
-  });
+  // Simular carregamento
+  setTimeout(() => {
+    // Limpar spinner e adicionar fotos
+    swiperWrapper.innerHTML = "";
 
-  modal.style.display = "flex";
+    imageArray.forEach((url) => {
+      const slide = document.createElement("div");
+      slide.className = "swiper-slide";
+      slide.innerHTML = `<img src="${url}" alt="Imagem do comentário"/>`;
+      swiperWrapper.appendChild(slide);
+    });
 
-  // Destruir instância anterior (se existir) para evitar bug
-  if (window.swiperInstance) {
-    window.swiperInstance.destroy(true, true);
-  }
-
-  // Criar Swiper
-  window.swiperInstance = new Swiper(".swiper", {
-    loop: true,
-    pagination: {
-      el: ".swiper-pagination",
-      clickable: true
-    },
-    navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev"
+    // Destruir instância anterior (se existir) para evitar bug
+    if (window.swiperInstance) {
+      window.swiperInstance.destroy(true, true);
     }
-  });
+
+    // Criar Swiper
+    window.swiperInstance = new Swiper(".swiper", {
+      loop: true,
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev"
+      }
+    });
+  }, 1000); // 1 segundo
 }
 
 // Fechar modal
