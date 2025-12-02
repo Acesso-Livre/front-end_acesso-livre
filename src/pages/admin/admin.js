@@ -49,7 +49,7 @@ async function loadPendingComments() {
 
     card.innerHTML = `
       <div class="top-info">
-        <strong>${comment.user_name ?? "Usuário"}</strong> — ⭐ ${comment.rating ?? ""}
+        <strong>${comment.user_name ?? "Usuário"}</strong> — ${comment.rating ?? ""} ⭐
       </div>
 
       <p class="comment-text">${comment.comment}</p>
