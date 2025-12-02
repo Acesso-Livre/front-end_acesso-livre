@@ -26,29 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let modalPushed = false;
 
   // Função para criar ícone de pin
-  function makePinIcon(tipo) {
-  // Mapear tipos para números de pins
-  const iconMap = {
-    estacionamento: "pin-1.png",
-    bloco: "pin-2.png",
-    campo: "pin-3.png",
-    quadra: "pin-5.png",
-    quadra_areia: "pin-6.png",
-    biblioteca: "pin-7.png",
-    cantina: "pin-8.png",
-    auditorio: "pin-9.png",
-    cores: "pin-10.png",
-    entrada: "pin-11.png",
-    default: "pin-11.png",
-  };
-
-  return L.icon({
-    iconUrl: `../../assets/img/map/${iconMap[tipo] || iconMap.default}`,
-    iconSize: [45, 45],
-    iconAnchor: [22, 45],
-    popupAnchor: [0, -45],
-  });
-}
+  function makePinIcon() {
+    return L.divIcon({
+      className: "pin-marker",
+      html: `<div class="dot"></div>`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+    });
+  }
 
 
   // Abre modal com dados (somente apresentação)
@@ -246,9 +231,8 @@ function detectTypeFromName(name) {
     const x = (left / 100) * W;
     const y = (top / 100) * H;
 
-    const marker = L.marker([y, x], {
-      icon: makePinIcon(tipo)  // ← AQUI AGORA FUNCIONA
-    }).addTo(map);
+    const marker = L.marker([y, x], { icon: makePinIcon() }).addTo(map);
+
 
       marker.on("click", async () => {
         console.log("Pin clicado:", p.id);
