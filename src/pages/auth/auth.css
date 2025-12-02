@@ -1,22 +1,28 @@
 /* LOGIN E AUTENTICAÇÃO ======================================= */
 
+.right-side {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 70%;
+  height: 100vh;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  z-index: 0;
+}
+
 .login-container {
   position: fixed;
   left: 0;
   top: 0;
-  right: 0;
-  bottom: 0;
-  display: grid;
-  place-items: center;
-  justify-items: center;
-  align-items: center;
-  align-content: center;
+  width: 30%;
   height: 100vh;
-  width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(21, 101, 205);
   font-family: 'Albert Sans', sans-serif;
   z-index: 1;
-  padding: 20px;
+  padding: 0px;
   margin: 0;
 }
 
@@ -32,15 +38,20 @@ body {
 }
 
 .login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
-  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  margin: 0 auto;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.logo {
+  width: 150px;
+  margin-bottom: 20px;
 }
 
 .login-container,
@@ -148,6 +159,23 @@ html > body > .login-container {
 .register-link:hover {
   color: #764ba2;
   text-decoration: underline;
+}
+
+.forgot-password-btn {
+  background: transparent;
+  color: #667eea;
+  border: 1px solid #667eea;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.forgot-password-btn:hover {
+  background: #667eea;
+  color: white;
 }
 
 /* MODAL – ESQUECEU A SENHA ================================= */

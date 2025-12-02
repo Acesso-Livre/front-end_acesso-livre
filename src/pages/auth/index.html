@@ -17,21 +17,22 @@
 </head>
 
 <body>
+  <!-- RIGHT SIDE BACKGROUND -->
+  <div class="right-side"></div>
+
   <!-- LOGIN -->
   <section class="login-container">
     <div class="login-card">
-      <h1>Acesso Administrativo</h1>
-      <p>Digite suas credenciais para continuar</p>
+      <img src="../../assets/img/global/logo-acesso-livre.png" alt="Logo Acesso Livre" class="logo">
+      <h1>Login</h1>
 
       <form id="login-form" class="login-form">
         <div class="input-group">
-          <label for="admin-email">Email</label>
-          <input type="email" id="admin-email" required />
+          <input type="email" id="admin-email" placeholder="escreva seu email" required />
         </div>
 
         <div class="input-group">
-          <label for="admin-password">Senha</label>
-          <input type="password" id="admin-password" required />
+          <input type="password" id="admin-password" placeholder="escreva sua senha" required />
         </div>
 
         <button type="submit" class="login-btn">Entrar</button>
@@ -41,7 +42,7 @@
         Usuário ou senha incorreta.
       </p>
 
-      <button id="forgot-password-link" class="register-link" type="button">
+      <button id="forgot-password-link" class="forgot-password-btn" type="button">
         Esqueceu a senha?
       </button>
     </div>
