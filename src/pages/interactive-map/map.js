@@ -26,7 +26,20 @@ document.addEventListener("DOMContentLoaded", () => {
   let modalPushed = false;
 
   // Função para criar ícone de pin
-  function makePinIcon(color = "#FF0000") { // cor padrão vermelha
+  function makePinIcon(color = "#FF0000", tipo = "default") {
+    // cor padrão vermelha
+    // Para estacionamento, usa ícone customizado
+    if (tipo === "estacionamento") {
+      return L.divIcon({
+        className: "pin-marker pin-estacionamento",
+        html: `<div class="dot" style="background-color: ${color};">
+                 <img src="/src/assets/img/map/estacionamento.png" alt="Estacionamento" class="pin-icon">
+               </div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      });
+    }
+
     return L.divIcon({
       className: "pin-marker",
       html: `<div class="dot" style="background-color: ${color};"></div>`,
@@ -34,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
       iconAnchor: [16, 16],
     });
   }
-
 
   // Abre modal com dados (somente apresentação)
   async function openLocationModal(locationData) {
@@ -105,7 +117,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // A. Renderizar Lista de Comentários
         commentsList.innerHTML = "";
         if (comments.length === 0) {
-          commentsList.innerHTML = "<p>Este local ainda não possui comentários.</p>";
+          commentsList.innerHTML =
+            "<p>Este local ainda não possui comentários.</p>";
         } else {
           comments.forEach((c) => {
             // Gerar estrelas para cada comentário
@@ -123,8 +136,8 @@ document.addEventListener("DOMContentLoaded", () => {
                       <div class="comment-header">
                           <span class="user-name">${c.user_name}</span>
                           <span class="comment-date">${new Date(
-              c.created_at || c.date // Fallback para c.date se created_at não existir
-            ).toLocaleDateString("pt-BR")}</span>
+                            c.created_at || c.date // Fallback para c.date se created_at não existir
+                          ).toLocaleDateString("pt-BR")}</span>
                       </div>
                       <div class="comment-rating">${commentStars}</div>
                       <p class="comment-text">${c.comment}</p>
@@ -161,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
         comments.forEach((c) => {
           if (c.images && Array.isArray(c.images)) {
             allImages = allImages.concat(c.images);
-          } else if (c.images && typeof c.images === 'string') {
+          } else if (c.images && typeof c.images === "string") {
             // Caso venha como string única (depende da API)
             allImages.push(c.images);
           }
@@ -203,7 +216,6 @@ document.addEventListener("DOMContentLoaded", () => {
             el: ".swiper-pagination",
           },
         });
-
       } catch (error) {
         console.error("Erro ao carregar dados do local:", error);
         commentsList.innerHTML = "<p>Erro ao carregar comentários.</p>";
@@ -248,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("PINS RECEBIDOS:", pins);
 
     pins.forEach((p) => {
-      const tipo = detectTypeFromName(p.name);  // ← USAR AQUI
+      const tipo = detectTypeFromName(p.name); // ← USAR AQUI
 
       const top = parseFloat(p.top) || 0;
       const left = parseFloat(p.left) || 0;
@@ -266,12 +278,14 @@ document.addEventListener("DOMContentLoaded", () => {
         auditorio: "#FFC0CB",
         cores: "#808080",
         entrada: "#000000",
-        default: "#000000"
+        default: "#000000",
       };
 
       const color = corMap[tipo] || corMap.default;
 
-      const marker = L.marker([y, x], { icon: makePinIcon(color) }).addTo(map);
+      const marker = L.marker([y, x], { icon: makePinIcon(color, tipo) }).addTo(
+        map
+      );
 
       marker.on("click", async () => {
         // Usar os dados do pin diretamente (p), pois já contêm a descrição retornada pelo getAllLocations
@@ -322,32 +336,32 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- AQUI: adicionar botão redondo ---
     const BotaoCustom = L.Control.extend({
       onAdd: function (map) {
-        const btn = L.DomUtil.create('button', 'btn-map-custom');
-        btn.innerHTML = '?'; // ícone ou texto
+        const btn = L.DomUtil.create("button", "btn-map-custom");
+        btn.innerHTML = "?"; // ícone ou texto
         btn.title = "Botão";
 
         // Impede que o clique arraste o mapa
         L.DomEvent.disableClickPropagation(btn);
         return btn;
-      }
+      },
     });
-    map.addControl(new BotaoCustom({ position: 'bottomright' }));
+    map.addControl(new BotaoCustom({ position: "bottomright" }));
 
     // --- AQUI: lógica de clique para mostrar e fechar modal ---
-    const btnModal = document.getElementById('btnModal');
-    const btnMap = document.querySelector('.btn-map-custom');
+    const btnModal = document.getElementById("btnModal");
+    const btnMap = document.querySelector(".btn-map-custom");
 
     // Ao clicar no botão do mapa
-    L.DomEvent.on(btnMap, 'click', function (e) {
-      this.style.display = 'none';       // desaparece o botão
-      btnModal.style.display = 'block';  // mostra o modal
+    L.DomEvent.on(btnMap, "click", function (e) {
+      this.style.display = "none"; // desaparece o botão
+      btnModal.style.display = "block"; // mostra o modal
     });
 
     // Fecha o modal ao clicar em qualquer lugar do mapa
-    map.on('click', () => {
-      if (btnModal.style.display === 'block') {
-        btnModal.style.display = 'none';  // esconde o modal
-        btnMap.style.display = 'block';   // reaparece o botão
+    map.on("click", () => {
+      if (btnModal.style.display === "block") {
+        btnModal.style.display = "none"; // esconde o modal
+        btnMap.style.display = "block"; // reaparece o botão
       }
     });
 
@@ -375,7 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
     auditorio: "pin-auditorio",
     cores: "pin-cores",
     entrada: "pin-entrada",
-    default: "pin-default"
+    default: "pin-default",
   };
 
   img.onerror = () => {
@@ -464,8 +478,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="comment-header">
               <span class="user-name">${comment.user_name}</span>
               <span class="comment-date">${new Date(
-              comment.date
-            ).toLocaleDateString("pt-BR")}</span>
+                comment.date
+              ).toLocaleDateString("pt-BR")}</span>
             </div>
             <div class="comment-rating">${"⭐".repeat(
               comment.rating || 0
@@ -594,7 +608,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fileList.appendChild(li);
       });
 
-      document.querySelectorAll("#file-list button").forEach(btn => {
+      document.querySelectorAll("#file-list button").forEach((btn) => {
         btn.addEventListener("click", () => {
           const i = btn.getAttribute("data-index");
           selectedImages.splice(i, 1);
@@ -624,7 +638,7 @@ document.addEventListener("DOMContentLoaded", () => {
           created_at: new Date().toISOString(),
           location_id: window.currentLocationId,
           status: "pending",
-          images: selectedImages // Passar o array de arquivos selecionados
+          images: selectedImages, // Passar o array de arquivos selecionados
         };
 
         // NÃO sobrescrever window.pins — apenas chamar a API para enviar comentário
