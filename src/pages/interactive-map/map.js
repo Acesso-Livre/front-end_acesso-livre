@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let totalRating = 0;
         let count = 0;
         comments.forEach((c) => {
-          if (c.rating && c.rating > 0) {
+          if (c.rating > 0) {
             totalRating += c.rating;
             count++;
           }
