@@ -148,6 +148,9 @@
   <div id="addCommentModal" class="modal">
     <div id="add-comment-body">
       <h2>Adicionar Comentário</h2>
+      <div id="comment-loader" class="comment-loader-overlay" style="display: none;">
+        <span class="loader"></span> <p>Enviando comentário...</p>
+      </div>
       <form id="comment-form">
         <label for="user-name">Nome:</label>
         <input type="text" id="user-name" placeholder="Seu nome" required>
@@ -175,6 +178,15 @@
           <button type="submit" class="submit-btn">Enviar</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div id="successModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content success-box">
+      <div class="success-icon">✅</div>
+      <h3>Obrigado!</h3>
+      <p>Seu comentário foi enviado e será exibido se for aprovado pela equipe.</p>
+      <p class="hint">(Clique fora para fechar)</p>
     </div>
   </div>
 

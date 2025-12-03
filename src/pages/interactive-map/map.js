@@ -643,11 +643,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // NÃO sobrescrever window.pins — apenas chamar a API para enviar comentário
         const result = await window.api.postComment(commentData);
-        if (result) {
-          alert("Comentário enviado para aprovação!");
+
+       if (result) {
+          // 🚀 NOVO CÓDIGO DO MODAL DE SUCESSO COMEÇA AQUI
+          
+          const successModal = document.getElementById("successModal");
+          if (successModal) {
+            // 1. Mostra o modal
+            successModal.style.display = "flex";
+
+            // 2. Define o evento para fechar ao clicar fora
+            successModal.onclick = function(event) {
+              if (event.target === successModal) {
+                successModal.style.display = "none";
+              }
+            };
+          }
+
+          // -----------------------------------------------------------
         } else {
-          alert("Erro ao enviar comentário. Tente novamente.");
-          return;
+           alert("Erro ao enviar comentário. Tente novamente.");
+           return;
         }
 
         // reset visual do form
