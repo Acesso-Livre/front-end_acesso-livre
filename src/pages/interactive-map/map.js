@@ -61,8 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const modal = document.getElementById("infoModal");
       if (modal) modal.style.display = "block"; // Exibir modal imediatamente
 
-      const titleEl = document.querySelector("#location-title");
-      const descEl = document.querySelector("#location-description");
+      const tituloLocal = document.querySelector("#location-title");
+      const descricaoLocal = document.querySelector("#location-description");
       const starsEl = document.querySelector(".stars");
       const swiperWrapper = document.querySelector(".swiper-wrapper");
       const infoList = document.querySelector("#info-content ul");
@@ -73,8 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // =========================
       // 1. TÍTULO E DESCRIÇÃO
       // =========================
-      titleEl.textContent = details.name || "Sem nome";
-      descEl.textContent = details.description || "Sem descrição";
+      tituloLocal.textContent = details.name || "Sem nome";
+      descricaoLocal.textContent = details.description || "Sem descrição";
 
       // =========================
       // 4. ITENS DE ACESSIBILIDADE
