@@ -2,7 +2,7 @@ let locationsData = [];
 
 async function getAllLocations() {
   try {
-    const url = "https://acesso-livre-api.onrender.com/api/locations";
+    const url = "https://acesso-livre-api.onrender.com/api/locations/";
     const response = await fetch(url);
     if (response.ok) {
       const data = await response.json();
@@ -97,9 +97,13 @@ async function postComment(commentData) {
     formData.append('status', commentData.status);
 
     // 🔥 Enviar imagem JPEG
-    if (commentData.images) {
-      formData.append("images", commentData.images); 
-      // se quiser múltiplas imagens: loop adicionando cada uma
+    // 🔥 Enviar imagens
+    if (commentData.images && Array.isArray(commentData.images)) {
+      commentData.images.forEach((file) => {
+        formData.append("images", file);
+      });
+    } else if (commentData.images) {
+      formData.append("images", commentData.images);
     }
 
     const response = await fetch(

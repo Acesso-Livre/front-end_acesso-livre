@@ -1,128 +1,279 @@
 body {
-    font-family: var(--font-family-heading);
-    background: var(--color-white);
+    font-family: var(--font-family-base);
+    background: var(--bg-color);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    overflow-x: hidden;
-    overscroll-behavior: none;
-    overflow-y: auto;
+    color: var(--text-color);
+    /* Removed overflow constraints to ensure all content is visible */
 }
 
 main {
     display: flex;
     flex-direction: column;
+    flex: 1;
 }
 
+/* Hero Section */
 .blue-block-main {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 60px;
     width: 100%;
-    height: 40vh;
-    background: linear-gradient(180deg, var(--bg-color), var(--bg-color-gradient));
+    min-height: 50vh;
+    /* Reduced from 70vh */
+    padding: 100px 20px 40px;
+    /* Reduced padding */
+    background: linear-gradient(135deg, #0041a3 0%, #0066ff 50%, #0052cc 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 15s ease infinite;
     color: var(--color-white);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: 0;
+    /* Removed margin so it sits at the top */
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Enhanced decorative background pattern */
+.blue-block-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(10, 132, 255, 0.3) 0%, transparent 30%);
+    pointer-events: none;
+}
+
+/* Accessibility icon pattern overlay */
+.blue-block-main::after {
+    content: '♿';
+    position: absolute;
+    font-size: 300px;
+    color: rgba(255, 255, 255, 0.03);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    pointer-events: none;
+    user-select: none;
 }
 
 .section-text {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 10vh;
-    text-align: center;
+    max-width: 800px;
+    z-index: 1;
+    margin-bottom: 30px;
+    /* Reduced margin */
+}
+
+.section-text h1 {
+    font-family: var(--font-family-heading);
+    font-size: clamp(2rem, 5vw, 3rem);
+    /* Slightly reduced max size */
+    font-weight: var(--font-weight-bold);
+    margin-bottom: 12px;
+    line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section-text p {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    opacity: 0.9;
+    max-width: 600px;
+    line-height: 1.5;
 }
 
 .explorar-mapa-btn {
-    position: absolute;
-    margin-top: 32vh;
-    padding: 14px 6%;
-    border-radius: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    /* Slightly reduced padding */
+    border-radius: 50px;
+    /* Pill shape */
     border: none;
-    background: var(--bg-buttom);
-    color: var(--color-white);
+    background: var(--color-white);
+    color: var(--primary-color);
+    font-family: var(--font-family-heading);
     font-size: var(--font-size-h3);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: 0.2s;
+    font-weight: var(--font-weight-bold);
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
     cursor: pointer;
-    z-index: 0;
+    z-index: 1;
+    text-decoration: none;
 }
 
-.explorar-mapa-btn:hover {
-    background: #1e90ff;
-    transform: scale(1.02);
+.explorar-mapa-btn:hover,
+.explorar-mapa-btn:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    background: var(--color-white);
+    color: var(--secondary-color);
+    outline: 3px solid rgba(255, 255, 255, 0.5);
 }
 
+.explorar-mapa-btn:active {
+    transform: translateY(0);
+}
+
+/* Comments Section */
 .page-comentarios {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    background: var(--color-white);
-    padding: 24px 0;
-    margin-top: 10vh;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+    /* Balanced padding for mobile */
+    background: var(--bg-color);
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .title-comentarios {
     width: 100%;
     text-align: center;
-    font-size: var(--font-size-h2);
-    font-weight: var(--font-weight-bold);
+    margin-bottom: 30px;
+    /* Reduced margin */
 }
 
+.title-comentarios p {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-color);
+    position: relative;
+    display: inline-block;
+}
+
+.title-comentarios p::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: var(--primary-color);
+    margin: 8px auto 0;
+    border-radius: 2px;
+}
+
+/* Grid Layout for Comments */
+#page-comentarios-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    /* Reduced min width for mobile */
+    gap: 20px;
+    /* Reduced gap */
+    width: 100%;
+}
+
+/* Comment Card */
 .comentario-usuario {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding: 10px 12px;
-    background: var(--color-white);
-    width: 350px;  /* Aumentando a largura */
-    height: 250px; /* Aumentando a altura */
-    border-radius: 18px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10), 0 1.5px 4px rgba(0, 0, 139, 0.08);
-    transition: 0.2s;
+    padding: 24px;
+    background: var(--bg-card);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    height: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+a:has(.comentario-usuario) {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
 .comentario-usuario:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 139, 0.13), 0 2px 8px rgba(0, 0, 139, 0.10);
-    transform: scale(1.05); /* Ajustei o scale para dar mais destaque no hover */
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
 }
 
 .title {
     display: flex;
-    flex-direction: column;
-    margin-top: 24px;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    gap: 12px;
 }
 
 .comentario-local {
+    font-family: var(--font-family-heading);
     font-weight: var(--font-weight-bold);
-    color: var(--bg-buttom);
-    font-size: var(--font-size-h3);
-    transition: 0.2s;
+    color: var(--primary-color);
+    font-size: var(--font-size-h4);
+    line-height: 1.3;
 }
 
 .comentario-nota {
-    color: var(--color-yellow);
+    display: inline-flex;
+    align-items: center;
+    background: #fff8e1;
+    color: #b7791f;
+    padding: 4px 8px;
+    border-radius: 12px;
     font-weight: var(--font-weight-bold);
-    font-size: var(--font-size-h4);
+    font-size: 0.875rem;
+    white-space: nowrap;
 }
 
 .text {
     display: flex;
     flex-direction: column;
-    margin-top: 50px;
+    flex: 1;
 }
 
 .comentario-nome {
-    color: var(--text-color);
-    font-size: var(--font-size-h3); /* Aumentei o tamanho da fonte */
-    font-weight: var(--font-weight-regular);
-    font-style: italic;
+    color: var(--text-light);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.comentario-nome::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: #e5e7eb;
+    border-radius: 50%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E");
 }
 
 .comentario-texto {
     color: var(--text-color);
-    font-size: var(--font-size-h5); /* Aumentei o tamanho da fonte do texto */
+    font-size: var(--font-size-text);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }

@@ -1,10 +1,20 @@
 // ===== CARREGAR COMENTÁRIOS RECENTES =====
 async function loadRecentComments() {
   try {
-    const comments = await window.api.fetchRecentComments();
     const section = document.getElementById("page-comentarios-section");
-
     if (!section) return;
+
+    // Mostrar loader
+    section.innerHTML = `
+      <div class="loader-container">
+        <span class="loader"></span>
+      </div>
+    `;
+
+    const comments = await window.api.fetchRecentComments();
+
+    // Limpar loader
+    section.innerHTML = "";
 
     // Se não houver comentários, exibir mensagem
     if (!comments || comments.length === 0) {
