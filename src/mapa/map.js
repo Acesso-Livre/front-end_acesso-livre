@@ -3,6 +3,8 @@
    Usa window.api.* para dados.
 */
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const MODAL_IDS = {
   infoModal: "infoModal",
   addCommentModal: "addCommentModal",
@@ -13,7 +15,7 @@ const ELEMENT_IDS = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  const imgUrl = "/src/assets/img/map/mapa-ifba.png";
+  const imgUrl = "/assets/img/map/mapa-ifba.png";
   const img = new Image();
   // img.src = imgUrl; // Atribuído após definição dos handlers para evitar race conditions
 
@@ -109,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         // Busca comentários uma única vez
         const commentsResponse = await fetch(
-          `https://acesso-livre-api.onrender.com/api/comments/${locationData.id}/comments`
+          `${API_BASE_URL}/comments/${locationData.id}/comments`
         );
         const commentsData = await commentsResponse.json();
         const comments = commentsData.comments || [];

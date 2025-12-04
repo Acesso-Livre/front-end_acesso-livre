@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa IFBA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Comme:wght@100..900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comme:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/global.css">
+    <link rel="stylesheet" href="/mapa/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+</head>
+
+<body>
+    <header class="navbar">
+        <a href="/" class="btn voltar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            <span>Voltar</span>
+        </a>
+    </header>
+
+    <div id="map"></div>
+    <div id="map-loader">
+        <span class="loader"></span>
+        <p>Carregando mapa...</p>
+    </div>
+
+    <div id="btnModal" class="modal-small">
+        <div class="modal-content-small">
+            <h4>Legenda dos Pins</h4>
+            <ul id="pinsLegendList">
+                <!-- JS vai preencher -->
+            </ul>
+        </div>
+    </div>
+
+    <button id="btnLegenda" class="btn legenda">Legenda</button>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <div id="modal-body">
+                <!-- Carrossel de Imagens -->
+                <div class="swiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="project-img">
+                                <img src="/assets/img/map/section-map/foto-local.jpeg" alt="Foto 01">
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="project-img">
+                                <img src="/assets/img/map/section-map/foto-local-2.jpeg" alt="Foto 02">
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="project-img">
+                                <img src="/assets/img/map/section-map/foto-local-3.jpeg" alt="Foto 03">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+
+
+                <!-- Informações -->
+                <section class="info-section">
+                    <h1 id="location-title"></h1>
+                    <div class="rating">
+                        <span>Nota: </span>
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                    </div>
+
+                    <!-- Abas: Informações, Avaliações, Descrição -->
+                    <div class="tabs">
+                        <button class="tab-btn active" id="info-tab">Informações</button>
+                        <button class="tab-btn" id="review-tab">Comentários</button>
+                        <button class="tab-btn" id="description-tab">Descrição</button>
+                    </div>
+
+                    <!-- Conteúdo das Abas -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="info-content">
+                            <h3>Informações de Acessibilidade</h3>
+                            <ul>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                        </div>
+
+                        <div class="tab-pane" id="review-content">
+                            <h3>Comentários</h3>
+                            <div class="comments-list">
+                                <div class="comment-card">
+                                    <div class="comment-header">
+                                        <span class="user-name">João Silva</span>
+                                        <span class="comment-date">2023-10-01</span>
+                                    </div>
+                                    <div class="comment-rating">⭐⭐⭐⭐⭐</div>
+                                    <p class="comment-text">Excelente rampa, muito acessível!</p>
+                                </div>
+                                <div class="comment-card">
+                                    <div class="comment-header">
+                                        <span class="user-name">Maria Oliveira</span>
+                                        <span class="comment-date">2023-10-02</span>
+                                    </div>
+                                    <div class="comment-rating">⭐⭐⭐⭐</div>
+                                    <p class="comment-text">Boa estrutura, mas poderia ser melhor sinalizada.</p>
+                                </div>
+                                <div class="comment-card">
+                                    <div class="comment-header">
+                                        <span class="user-name">Carlos Santos</span>
+                                        <span class="comment-date">2023-10-03</span>
+                                    </div>
+                                    <div class="comment-rating">⭐⭐⭐⭐⭐</div>
+                                    <p class="comment-text">Muito útil para pessoas com mobilidade reduzida.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="description-content">
+                            <h3>Descrição do Local</h3>
+                            <p id="location-description"></p>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="action-buttons">
+                        <button class="comment-btn">Adicionar Comentário</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Adicionar Comentário -->
+    <div id="addCommentModal" class="modal">
+        <div id="add-comment-body">
+            <h2>Adicionar Comentário</h2>
+            <form id="comment-form">
+                <label for="user-name">Nome:</label>
+                <input type="text" id="user-name" placeholder="Seu nome" required>
+
+                <label for="rating">Avaliação:</label>
+                <div class="star-rating">
+                    <span class="star" data-value="1">☆</span>
+                    <span class="star" data-value="2">☆</span>
+                    <span class="star" data-value="3">☆</span>
+                    <span class="star" data-value="4">☆</span>
+                    <span class="star" data-value="5">☆</span>
+                </div>
+                <input type="hidden" id="rating" name="rating" required>
+
+                <label for="comment-text">Comentário:</label>
+                <textarea id="comment-text" placeholder="Digite seu comentário" required></textarea>
+                <div id="image-box">
+                    <button id="btn-add-image" type="button">Adicionar imagem</button>
+                    <input type="file" id="comment-image" multiple style="display:none">
+                    <ul id="file-list"></ul>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+                    <button type="button" class="submit-btn back-btn"
+                        style="background-color: #ccc; color: #333;">Cancelar</button>
+                    <button type="submit" class="submit-btn">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+    <script type="module" src="./main.js"></script>
+</body>
+
+</html>
