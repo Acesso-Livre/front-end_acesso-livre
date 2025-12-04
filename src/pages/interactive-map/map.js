@@ -759,11 +759,11 @@ document.addEventListener("DOMContentLoaded", () => {
           } 
           // 4. FALLBACK: Se nenhum modal visível (você está no Mapa), volte para a página anterior
           else {
-              console.log("Ação: Mapa visível. Chamando history.back() para voltar à página principal.");
+              console.log("Ação: Mapa visível. Redirecionando para a página principal.");
               try {
-                  history.back(); // Volta para a URL anterior (sua página principal)
+                  window.location.href = "../../index.html"; // Redireciona para a página principal
               } catch (err) {
-                  console.error("Erro ao tentar history.back:", err);
+                  console.error("Erro ao redirecionar:", err);
               }
           }
       });
