@@ -555,38 +555,65 @@ h1 {
 /* ESTILOS PARA O MODAL DE SUCESSO SEPARADO (#successModal) */
 /* =========================================== */
 
-/* Camada que cobre toda a tela e centraliza o conteúdo */
+/* 1. Camada Overlay (#successModal.modal-overlay) */
+/* Responsável por cobrir a tela, centralizar o conteúdo e fornecer o fundo escuro. */
 #successModal.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Fundo escuro/transparente */
+    background: rgba(0, 0, 0, 0.6); /* Fundo escuro semi-transparente */
     z-index: 9999; /* Acima de todos os outros elementos */
     
-    /* Centralização horizontal e vertical */
-    display: none; /* Inicia escondido, o JS define como 'flex' */
-    justify-content: center;
-    align-items: center;
-    animation: fadeIn 0.3s ease;
+    /* Centralização usando Flexbox */
+    display: none; /* Inicia escondido */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    
+    /* 🔑 Adicionando a animação de entrada */
+    animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* Caixa de Conteúdo (O "quadrado" central) */
+/* 2. Caixa de Conteúdo (.modal-content.success-box) */
+/* Define a aparência e o tamanho do "quadrado" que contém a mensagem. */
 .modal-content.success-box {
     background: white;
     padding: 30px;
     border-radius: 12px;
     text-align: center;
-    max-width: 350px; /* Formato pequeno/quadrado */
-    width: 90%;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    
+    /* A chave para o tamanho pequeno e quadrado */
+    max-width: 350px; /* Define o tamanho máximo */
+    width: 90%; /* Garante boa visualização em telas pequenas */
+    height: 228px;
+    
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3); /* Sombra para destacar */
+    
+    /* Garante que o conteúdo interno (ícone, título, etc.) esteja em coluna */
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
 }
 
+/* 3. Estilização dos Elementos Internos */
 .success-icon {
-    font-size: 40px;
+    font-size: 48px; /* Ícone de check */
     margin-bottom: 15px;
-    color: #28a745; /* Verde */
+    color: #28a745; /* Verde de sucesso */
+}
+
+.success-box h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.success-box p {
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
 }
 
 .hint {
@@ -595,10 +622,78 @@ h1 {
     margin-top: 15px;
 }
 
-/* Efeito de Animação */
+/* Efeito de Animação (A definição está correta) */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+/* 1. Camada Overlay (#loadingModal.modal-overlay) */
+/* Garante que o modal cubra toda a tela e bloqueie cliques. */
+#loadingModal.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Fundo semi-transparente semelhante ao modal de sucesso */
+    background: rgba(0, 0, 0, 0.6); 
+    z-index: 9998; /* Alto, para aparecer acima do InfoModal */
+    
+    /* Centralização usando Flexbox */
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+}
+
+/* 2. Conteúdo do Modal de Carregamento (.loader-content) */
+/* Agora com o mesmo estilo do .modal-content.success-box */
+.loader-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    
+    /* Tamanho idêntico ao modal de sucesso */
+    max-width: 350px; 
+    width: 90%; 
+    /* ❌ REMOVIDA: height: 228px; */
+    height: auto; /* Deixa a altura se ajustar ao conteúdo */
+    min-height: 150px; /* Opcional: Garante uma altura mínima para parecer uma caixa */
+    
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
+    
+    /* 🔑 CENTRALIZAÇÃO VERTICAL: */
+    display: flex;
+    flex-direction: column; /* Coloca os itens um abaixo do outro (eixo principal) */
+    align-items: center;    /* Centraliza os itens horizontalmente (eixo cruzado) */
+    
+    /* 🔑 NOVO: Centraliza o conteúdo (spinner + texto) verticalmente dentro da caixa */
+    justify-content: center; 
+}
+
+.loader-content p {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* 3. Estilo do Spinner (O Círculo Girando) */
+.spinner {
+    /* O spinner substitui o ícone de 'check' visualmente */
+    margin-bottom: 15px; 
+    
+    border: 4px solid #f3f3f3; /* Cor clara do fundo */
+    border-top: 4px solid #3498db; /* Cor do carregamento (Azul) */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite; 
+}
+
+/* 4. Definição da Animação de Rotação (Mantenha esta definição) */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Estilos para comentários */

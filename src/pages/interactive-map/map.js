@@ -625,20 +625,36 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // submit form de comentário
+// submit form de comentário
     const commentForm = document.getElementById("comment-form");
+    // Referência aos modais de controle
+    const loadingModal = document.getElementById("loadingModal"); 
+    
     if (commentForm) {
       commentForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const name = document.getElementById("user-name").value;
-        const rating = ratingInput.value;
+        // Variáveis assumidas do escopo superior
+        const rating = ratingInput.value; 
         const commentText = document.getElementById("comment-text").value;
-        const imgInput = document.getElementById("imgInput");
 
+        // Obtendo referências importantes
+        const adicionarModal = document.getElementById(MODAL_IDS.addCommentModal);
+        const infoModal = document.getElementById(MODAL_IDS.infoModal);
+        
         if (!rating || rating === "") {
           alert("Por favor, selecione uma avaliação com estrelas.");
           return;
         }
+
+        // 1. PASSO: FECHA O MODAL DE ADIÇÃO E GARANTE QUE O INFO MODAL FIQUE VISÍVEL
+        // Isso garante que o usuário permaneça na tela de informações
+        if (adicionarModal) adicionarModal.style.display = "none";
+        if (infoModal) infoModal.style.display = "flex"; 
+
+        // 2. PASSO: MOSTRA O MODAL DE LOADING (BLOQUEIA A TELA)
+        if (loadingModal) loadingModal.style.display = "flex"; 
+
         const commentData = {
           user_name: name,
           rating: parseInt(rating),
@@ -646,51 +662,66 @@ document.addEventListener("DOMContentLoaded", () => {
           created_at: new Date().toISOString(),
           location_id: window.currentLocationId,
           status: "pending",
-          images: selectedImages, // Passar o array de arquivos selecionados
+          // Variável assumida do escopo superior
+          images: selectedImages, 
         };
 
-        // NÃO sobrescrever window.pins — apenas chamar a API para enviar comentário
-        const result = await window.api.postComment(commentData);
+        let result = null;
+        try {
+          // 3. PASSO: CHAMA A API E AGUARDA
+          result = await window.api.postComment(commentData);
+        } catch (error) {
+          console.error("Erro ao enviar comentário:", error);
+          result = false; 
+        } finally {
+          // 4. PASSO: ESCONDE O LOADING APÓS O PROCESSAMENTO (SEMPRE É EXECUTADO)
+          if (loadingModal) loadingModal.style.display = "none";
+        }
 
-       if (result) {
-          // 🚀 NOVO CÓDIGO DO MODAL DE SUCESSO COMEÇA AQUI
-          
+        // 5. PASSO: PROCESSAMENTO DO RESULTADO
+        if (result) {
+          // 5.1 SUCESSO: MOSTRA MODAL DE SUCESSO E LIMPA
           const successModal = document.getElementById("successModal");
           if (successModal) {
-            // 1. Mostra o modal
             successModal.style.display = "flex";
-
-            // 2. Define o evento para fechar ao clicar fora
+            // Lógica para fechar ao clicar fora (mantida)
             successModal.onclick = function(event) {
               if (event.target === successModal) {
                 successModal.style.display = "none";
               }
             };
+            // Lógica para fechar com botão (se houver)
+            const closeBtn = successModal.querySelector('.close-btn'); 
+            if (closeBtn) {
+                closeBtn.onclick = function() {
+                  successModal.style.display = "none";
+                };
+            }
           }
-
-          // -----------------------------------------------------------
+            
+          // Limpa o formulário e variáveis visuais
+          commentForm.reset();
+          stars.forEach((s) => { s.classList.remove("active"); s.textContent = "☆"; });
+          ratingInput.value = "";
+          selectedImages = []; 
+          if (typeof renderFileList === 'function') { renderFileList(); }
+            
+          // Aciona a aba de reviews
+          const reviewTab = document.getElementById("review-tab");
+          if (reviewTab) reviewTab.click();
+            
         } else {
+          // 5.2 FALHA: ALERTA E REABRE O MODAL DE ENVIO DE COMENTÁRIO
            alert("Erro ao enviar comentário. Tente novamente.");
+           if (adicionarModal) adicionarModal.style.display = "flex"; 
+           
+           // Se o AddModal reabriu, o InfoModal deve ser fechado para evitar sobreposição
+           if (adicionarModal.style.display === "flex" && infoModal) {
+              infoModal.style.display = "none";
+           }
+
            return;
         }
-
-        // reset visual do form
-        commentForm.reset();
-        stars.forEach((s) => {
-          s.classList.remove("active");
-          s.textContent = "☆";
-        });
-        ratingInput.value = "";
-
-        // fecha addCommentModal e reabre infoModal
-        const addModal = document.getElementById(MODAL_IDS.addCommentModal);
-        const infoModal = document.getElementById(MODAL_IDS.infoModal);
-        if (addModal) addModal.style.display = "none";
-        if (infoModal) infoModal.style.display = "flex";
-
-        // aciona a aba de reviews para o usuário ver (loadCommentsForLocation será chamado quando a aba ficar ativa)
-        const reviewTab = document.getElementById("review-tab");
-        if (reviewTab) reviewTab.click();
       });
     }
   })();
