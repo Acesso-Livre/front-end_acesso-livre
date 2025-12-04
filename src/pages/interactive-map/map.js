@@ -12,6 +12,14 @@ const ELEMENT_IDS = {
   locationDescription: "location-description",
 };
 
+function isModalVisible(element) {
+    if (!element) return false;
+    // Pega o estilo final aplicado (flex, block, etc.)
+    const style = window.getComputedStyle(element); 
+    // Verifica se o 'display' não é 'none'
+    return style.display !== 'none'; 
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const imgUrl = "/src/assets/img/map/mapa-ifba.png";
   const img = new Image();
@@ -690,27 +698,44 @@ document.addEventListener("DOMContentLoaded", () => {
   // Back button navbar behavior
   const navBack = document.querySelector(".btn.voltar");
   if (navBack) {
-    navBack.addEventListener("click", function (e) {
-      const modal = document.getElementById(MODAL_IDS.infoModal);
-      const addModal = document.getElementById(MODAL_IDS.addCommentModal);
-      if (addModal && addModal.style.display === "flex") {
-        e.preventDefault();
-        addModal.style.display = "none";
-        if (modal) modal.style.display = "flex";
-      } else if (modal && modal.style.display === "flex") {
-        e.preventDefault();
-        modal.style.display = "none";
-        inModal = false;
-        if (modalPushed) {
-          try {
-            history.back();
-          } catch (err) {
-            /* ignore */
+      navBack.addEventListener("click", function (e) {
+          // Previne a ação padrão (que poderia ser navegar para uma URL se for um link)
+          e.preventDefault(); 
+          
+          const infoModal = document.getElementById(MODAL_IDS.infoModal);
+          const addCommentModal = document.getElementById(MODAL_IDS.addCommentModal);
+          // Assumindo que o ID do modal de sucesso é 'successModal'
+          const successModal = document.getElementById("successModal"); 
+
+          // 1. PRIORIDADE: Fechar Modal de Sucesso (se aberto)
+          if (isModalVisible(successModal)) {
+              console.log("Ação: Fechando SuccessModal, voltando para o Mapa.");
+              successModal.style.display = "none";
+              // Garante que o infoModal (que estava por baixo) também esteja fechado
+              if (infoModal) infoModal.style.display = "none";
+              if (addCommentModal) addCommentModal.style.display = "none";
           }
-          modalPushed = false;
-        }
-      }
-    });
+          // 2. PRÓXIMO: Se estiver no Modal de Adicionar Comentário, volta para o Modal de Informação
+          else if (isModalVisible(addCommentModal)) {
+              console.log("Ação: Fechando AddCommentModal, reabrindo InfoModal.");
+              addCommentModal.style.display = "none";
+              if (infoModal) infoModal.style.display = "flex"; // Reabre o infoModal
+          } 
+          // 3. ÚLTIMO MODAL: Se estiver no Modal de Informação, fecha para voltar ao Mapa
+          else if (isModalVisible(infoModal)) {
+              console.log("Ação: Fechando InfoModal, voltando para o Mapa.");
+              infoModal.style.display = "none"; 
+          } 
+          // 4. FALLBACK: Se nenhum modal visível (você está no Mapa), volte para a página anterior
+          else {
+              console.log("Ação: Mapa visível. Chamando history.back() para voltar à página principal.");
+              try {
+                  history.back(); // Volta para a URL anterior (sua página principal)
+              } catch (err) {
+                  console.error("Erro ao tentar history.back:", err);
+              }
+          }
+      });
   }
 
   // popstate handler
