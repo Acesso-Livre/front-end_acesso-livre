@@ -1,78 +1,111 @@
-/* LOGIN E AUTENTICAÇÃO ======================================= */
-
-.login-container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  display: grid;
-  place-items: center;
-  justify-items: center;
-  align-items: center;
-  align-content: center;
-  height: 100vh;
-  width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  font-family: 'Albert Sans', sans-serif;
-  z-index: 1;
-  padding: 20px;
-  margin: 0;
-}
-
-.login-container[style*="display: none"],
-#login-section[style*="display: none"] {
-  display: none !important;
-}
-
-html,
-body {
+html, body {
   margin: 0;
   height: 100%;
+  font-family: 'Albert Sans', sans-serif;
 }
 
+body {
+  display: flex;
+  min-height: 100vh;
+}
+
+.login-container {
+    width: 30%; 
+    flex: 0 0 auto; 
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* ❌ Removendo background roxo */
+    background: #2d3250; 
+    
+    /* ❌ Removendo padding para que o card ocupe 100% da área */
+    padding: 0; 
+}
+
+.hero-panel {
+    width: 70%; /* 🔑 Define 70% da largura restante da tela */
+    flex: 0 0 auto; /* Impede que ele cresça ou encolha */
+    min-height: 100vh;
+    background: #f7f7f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-panel img {
+  width: 90%;
+  max-width: 520px;
+  object-fit: contain;
+}
+
+/* Ajuste responsivo opcional */
+@media (max-width: 960px) {
+  body {
+    flex-direction: column;
+  }
+
+  .login-container,
+  .hero-panel {
+    width: 100%;
+    flex: none;
+    min-height: auto;
+  }
+
+  .hero-panel {
+    padding: 24px 0;
+  }
+}
+
+/* Para telas entre 481px e 958px, ocultar a imagem e fazer login ocupar 100% */
+@media (min-width: 481px) and (max-width: 1393px) {
+  .hero-panel {
+    display: none;
+  }
+
+  .login-container {
+    width: 100%;
+    flex: 1;
+  }
+}
+
+/* Para telas menores que 480px, ocultar a imagem e fazer login ocupar 100% */
+@media (max-width: 480px) {
+  .hero-panel {
+    display: none;
+  }
+
+  .login-container {
+    width: 100%;
+    flex: 1;
+  }
+}
+
+/* Login Card Styles */
 .login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 420px;
-  box-sizing: border-box;
   text-align: center;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.login-container,
-.login-container * {
-  -webkit-transform: none !important;
-  transform: none !important;
+.logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-body>.login-container,
-html>body>.login-container {
-  position: fixed !important;
-  left: 0 !important;
-  top: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  padding: 24px !important;
-}
-
-.login-header h1 {
-  margin: 0 0 10px 0;
-  color: #333;
-  font-size: 28px;
-  font-weight: 700;
-}
-
-.login-header p {
-  margin: 0 0 30px 0;
-  color: #666;
-  font-size: 16px;
+.login-card h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  font-weight: 600;
+  margin: 0;
 }
 
 .login-form {
@@ -81,143 +114,144 @@ html>body>.login-container {
 }
 
 .input-group {
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.input-group label {
-  display: block;
-  margin-bottom: 5px;
-  color: #333;
-  font-weight: 500;
+  position: relative;
+  border: 1px solid #2d3250;
+  border-radius: 6px;
+  background: #676f9d;
+  margin-bottom: 15px;
 }
 
 .input-group input {
   width: 100%;
-  padding: 12px 15px;
-  border: 2px solid #e1e5e9;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
+  border: none;
+  background: transparent;
+  padding: 25px 15px 12px;
+  font-size: 1rem;
+  font-family: inherit;
   box-sizing: border-box;
 }
 
 .input-group input:focus {
   outline: none;
-  border-color: #667eea;
+}
+
+.input-group label {
+  position: absolute;
+  top: 8px;
+  left: 15px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  pointer-events: none;
 }
 
 .login-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  padding: 12px 20px;
+  background: #0056d2;
+  color: #ffffff;
   border: none;
-  padding: 12px 30px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: background-color 0.3s ease;
   margin-top: 10px;
 }
 
 .login-btn:hover {
-  transform: translateY(-2px);
+  background: #003366;
 }
 
 .error-message {
-  color: #e74c3c;
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-.success-message {
-  color: #28a745;
-  margin-top: 15px;
-  font-size: 14px;
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 10px;
 }
 
 .register-link {
-  display: block;
-  margin-top: 20px;
-  color: #667eea;
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.3s ease;
   background: none;
   border: none;
-  outline: none;
+  color: #ffffff;
   cursor: pointer;
+  font-size: 1rem;
+  margin-top: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: text-decoration 0.3s ease;
 }
 
 .register-link:hover {
-  color: #764ba2;
   text-decoration: underline;
 }
 
-/* MODAL – ESQUECEU A SENHA ================================= */
+.back-btn {
+  padding: 10px 20px;
+  background: #ffffff;
+  color: #0056d2;
+  border: 1px solid #0056d2;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin-top: 20px;
+}
 
-/* MODAL – ESQUECEU A SENHA ================================= */
+.back-btn:hover {
+  background: #0056d2;
+  color: #ffffff;
+}
 
+.send-btn {
+  padding: 12px 20px;
+  background: #388e3c;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.send-btn:hover {
+  background: #2e7d32;
+}
+
+/* Forgot Password Modal Styles */
 .forgot-modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
-  display: none;
-  z-index: 9999 !important;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  background: #2d3250;
+  display: flex;
+  z-index: 1000;
 }
 
-.forgot-modal[style*="display: block"],
-.forgot-modal[style*="display: flex"] {
-  display: flex !important;
-  opacity: 1;
+.login-card .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #ffffff;
+  background: none;
+  border: none;
+  font-size: 2rem;
 }
 
-.forgot-modal-content {
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 20px;
-  max-width: 450px;
-  width: 90%;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  position: relative;
-  transform: translateY(-20px);
-  transition: transform 0.3s ease;
-  animation: slideDown 0.3s forwards;
-}
-
-@keyframes slideDown {
-  to {
-    transform: translateY(0);
-  }
-}
-
-.forgot-modal-content h2 {
-  margin-top: 0;
-  color: #333;
-  font-size: 24px;
+.login-card h2 {
   margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #ffffff;
   text-align: center;
 }
 
-.close-btn {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 28px;
-  color: #aaa;
-  cursor: pointer;
-  transition: color 0.2s;
-  line-height: 1;
-}
-
-.close-btn:hover {
-  color: #333;
+.success-message {
+  color: #388e3c;
+  font-size: 0.9rem;
+  margin-top: 10px;
 }

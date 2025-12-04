@@ -17,21 +17,20 @@
 </head>
 
 <body>
-  <!-- LOGIN -->
   <section class="login-container">
     <div class="login-card">
-      <h1>Acesso Administrativo</h1>
-      <p>Digite suas credenciais para continuar</p>
+      <img src="../../assets/img/global/logo-acesso-livre.png" alt="Logo Acesso Livre" class="logo">
+      <h1>LOGIN</h1>
 
       <form id="login-form" class="login-form">
         <div class="input-group">
-          <label for="admin-email">Email</label>
           <input type="email" id="admin-email" required />
+          <label for="admin-email">Email</label>
         </div>
 
         <div class="input-group">
-          <label for="admin-password">Senha</label>
           <input type="password" id="admin-password" required />
+          <label for="admin-password">Senha</label>
         </div>
 
         <button type="submit" class="login-btn">Entrar</button>
@@ -47,27 +46,42 @@
     </div>
   </section>
 
-  <!-- MODAL DE RECUPERAÇÃO DE SENHA -->
+  <section class="hero-panel">
+    <img src="../../assets/img/global/login-hero.png" alt="Painel ilustrativo" />
+  </section>
+
   <div id="forgotPasswordModal" class="forgot-modal" style="display:none;">
-    <div class="forgot-modal-content">
-      <span id="close-forgot-modal" class="close-btn">&times;</span>
+    <section class="login-container">
+      <div class="login-card" id="forgot-card">
+        <span id="close-forgot-modal" class="close-btn">&times;</span>
+        <h2>Recuperar Senha</h2>
 
-      <h2>Recuperar Senha</h2>
+        <form id="forgot-password-form">
+          <div class="input-group">
+            <input type="email" id="forgot-email" required />
+            <label for="forgot-email">Email</label>
+          </div>
 
-      <form id="forgot-password-form">
-        <div class="input-group">
-          <label for="forgot-email">Email</label>
-          <input type="email" id="forgot-email" required />
-        </div>
+          <button class="send-btn">Enviar</button>
+        </form>
 
-        <button class="login-btn">Enviar</button>
-      </form>
+        <p id="forgot-error" class="error-message" style="display:none"></p>
+        <p id="forgot-success" class="success-message" style="display:none;">
+          Instruções enviadas para o email!
+        </p>
 
-      <p id="forgot-error" class="error-message" style="display:none"></p>
-      <p id="forgot-success" class="success-message" style="display:none;">
-        Instruções enviadas para o email!
-      </p>
-    </div>
+        <button id="back-to-login" class="back-btn" type="button">Voltar ao Login</button>
+      </div>
+
+      <div class="login-card" id="success-card" style="display:none;">
+        <h2>Email foi enviado!</h2>
+        <button id="exit-success" class="login-btn">Sair</button>
+      </div>
+    </section>
+
+    <section class="hero-panel">
+      <img src="../../assets/img/global/login-hero.png" alt="Painel ilustrativo" />
+    </section>
   </div>
 
   <script src="./auth.js"></script>
