@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Acesso Livre</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@100..900&family=Comme:wght@100..900&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="/styles/global.css" />
+    <link rel="stylesheet" href="/auth/style.css" />
+</head>
+
+<body>
+    <!-- LOGIN -->
+    <section class="login-container">
+        <div class="login-card">
+            <h1>Acesso Administrativo</h1>
+            <p>Digite suas credenciais para continuar</p>
+
+            <form id="login-form" class="login-form">
+                <div class="input-group">
+                    <label for="admin-email">Email</label>
+                    <input type="email" id="admin-email" required />
+                </div>
+
+                <div class="input-group">
+                    <label for="admin-password">Senha</label>
+                    <input type="password" id="admin-password" required />
+                </div>
+
+                <button type="submit" class="login-btn">Entrar</button>
+            </form>
+
+            <p id="login-error" class="error-message" style="display:none;">
+                Usuário ou senha incorreta.
+            </p>
+
+            <button id="forgot-password-link" class="register-link" type="button">
+                Esqueceu a senha?
+            </button>
+        </div>
+    </section>
+
+    <!-- MODAL DE RECUPERAÇÃO DE SENHA -->
+    <div id="forgotPasswordModal" class="forgot-modal" style="display:none;">
+        <div class="forgot-modal-content">
+            <span id="close-forgot-modal" class="close-btn">&times;</span>
+
+            <h2>Recuperar Senha</h2>
+
+            <form id="forgot-password-form">
+                <div class="input-group">
+                    <label for="forgot-email">Email</label>
+                    <input type="email" id="forgot-email" required />
+                </div>
+
+                <button class="login-btn">Enviar</button>
+            </form>
+
+            <p id="forgot-error" class="error-message" style="display:none"></p>
+            <p id="forgot-success" class="success-message" style="display:none;">
+                Instruções enviadas para o email!
+            </p>
+        </div>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+</body>
+
+</html>
