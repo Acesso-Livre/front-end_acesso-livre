@@ -185,16 +185,25 @@ body {
 }
 
 .back-btn {
-  padding: 10px 20px;
+  position: absolute;
+  top: 60px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
   background: #ffffff;
   color: #0056d2;
   border: 1px solid #0056d2;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: 50%;
+  font-size: 1.5rem;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
-  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  z-index: 1001;
 }
 
 .back-btn:hover {
