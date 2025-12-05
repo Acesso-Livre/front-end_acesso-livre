@@ -3,6 +3,20 @@
    Usa window.api.* para dados.
 */
 
+import estacionamentoIcon from '../assets/img/map/estacionamento.png';
+import bloco5Icon from '../assets/img/map/Bloco-5.png';
+import bloco6Icon from '../assets/img/map/Bloco-6.png';
+import bloco8Icon from '../assets/img/map/Bloco-8.png';
+import bloco9Icon from '../assets/img/map/Bloco-9.png';
+import bloco16Icon from '../assets/img/map/Bloco-16.png';
+import quadraIcon from '../assets/img/map/Quadra.jpg';
+import quadraAreiaIcon from '../assets/img/map/Quadra de areia.jpg';
+import cantinaIcon from '../assets/img/map/Cantina.png';
+import bibliotecaIcon from '../assets/img/map/Biblioteca.png';
+import auditorioIcon from '../assets/img/map/Auditório.png';
+import coresIcon from '../assets/img/map/Cores.png';
+import entradaIcon from '../assets/img/map/entrada.jpg';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const MODAL_IDS = {
@@ -30,24 +44,75 @@ document.addEventListener("DOMContentLoaded", () => {
   // Função para criar ícone de pin
   function makePinIcon(color = "#FF0000", tipo = "default") {
     // cor padrão vermelha
-    // Para estacionamento, usa ícone customizado
-    if (tipo === "estacionamento") {
+    let iconSrc = null;
+    let altText = tipo;
+
+    switch (tipo) {
+      case "estacionamento":
+        iconSrc = estacionamentoIcon;
+        break;
+      case "bloco-5":
+        iconSrc = bloco5Icon;
+        break;
+      case "bloco-6":
+        iconSrc = bloco6Icon;
+        break;
+      case "bloco-8":
+        iconSrc = bloco8Icon;
+        break;
+      case "bloco-9":
+        iconSrc = bloco9Icon;
+        break;
+      case "bloco-16":
+        iconSrc = bloco16Icon;
+        break;
+      case "bloco":
+        iconSrc = bloco5Icon; // fallback
+        break;
+      case "quadra":
+      case "campo": // campo shares with quadra
+        iconSrc = quadraIcon;
+        break;
+      case "quadra_areia":
+        iconSrc = quadraAreiaIcon;
+        break;
+      case "cantina":
+        iconSrc = cantinaIcon;
+        break;
+      case "biblioteca":
+        iconSrc = bibliotecaIcon;
+        break;
+      case "auditorio":
+        iconSrc = auditorioIcon;
+        break;
+      case "cores":
+        iconSrc = coresIcon;
+        break;
+      case "entrada":
+        iconSrc = entradaIcon;
+        break;
+      default:
+        // No icon, use dot
+        break;
+    }
+
+    if (iconSrc) {
       return L.divIcon({
-        className: "pin-marker pin-estacionamento",
+        className: `pin-marker pin-${tipo}`,
         html: `<div class="dot" style="background-color: ${color};">
-                 <img src="/src/assets/img/map/estacionamento.png" alt="Estacionamento" class="pin-icon">
+                 <img src="${iconSrc}" alt="${altText}" class="pin-icon">
                </div>`,
         iconSize: [32, 32],
         iconAnchor: [16, 16],
       });
+    } else {
+      return L.divIcon({
+        className: "pin-marker",
+        html: `<div class="dot" style="background-color: ${color};"></div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      });
     }
-
-    return L.divIcon({
-      className: "pin-marker",
-      html: `<div class="dot" style="background-color: ${color};"></div>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-    });
   }
 
   // Abre modal com dados (somente apresentação)
@@ -238,18 +303,26 @@ document.addEventListener("DOMContentLoaded", () => {
   function detectTypeFromName(name) {
     const n = name.toLowerCase();
 
-    if (n.includes("estacionamento")) return "estacionamento";
-    if (n.includes("bloco")) return "bloco";
-    if (n.includes("quadra de areia")) return "quadra_areia";
-    if (n.includes("quadra")) return "quadra";
-    if (n.includes("campo")) return "campo";
-    if (n.includes("cantina")) return "cantina";
-    if (n.includes("biblioteca")) return "biblioteca";
-    if (n.includes("audit")) return "auditorio";
-    if (n.includes("cores")) return "cores";
-    if (n.includes("entrada")) return "entrada";
+    let tipo;
+    if (n.includes("estacionamento")) tipo = "estacionamento";
+    else if (n.includes("bloco") && (n.includes("5") || n.includes("v"))) tipo = "bloco-5";
+    else if (n.includes("bloco") && (n.includes("6") || n.includes("vi"))) tipo = "bloco-6";
+    else if (n.includes("bloco") && (n.includes("8") || n.includes("viii"))) tipo = "bloco-8";
+    else if (n.includes("bloco") && (n.includes("9") || n.includes("ix"))) tipo = "bloco-9";
+    else if (n.includes("bloco") && (n.includes("16") || n.includes("xvi"))) tipo = "bloco-16";
+    else if (n.includes("bloco")) tipo = "bloco";
+    else if (n.includes("quadra de areia")) tipo = "quadra_areia";
+    else if (n.includes("quadra")) tipo = "quadra";
+    else if (n.includes("campo")) tipo = "campo";
+    else if (n.includes("cantina")) tipo = "cantina";
+    else if (n.includes("biblioteca")) tipo = "biblioteca";
+    else if (n.includes("audit")) tipo = "auditorio";
+    else if (n.includes("cores")) tipo = "cores";
+    else if (n.includes("entrada")) tipo = "entrada";
+    else tipo = "default";
 
-    return "default";
+    console.log(`Name: "${name}", Detected tipo: "${tipo}"`);
+    return tipo;
   }
 
   // Render de pins (chama window.api.getAllLocations)
