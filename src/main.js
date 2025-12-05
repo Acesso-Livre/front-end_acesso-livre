@@ -3,6 +3,7 @@ import "./components/footer/footer.css";
 import footerHtml from "./components/footer/footer.html?raw";
 import "./components/header/header.css";
 import headerHtml from "./components/header/header.html?raw";
+import { initHeader } from "./components/header/header.js";
 import { fetchRecentComments } from "./mapa/api.js";
 
 // Carregar componentes dinamicamente
@@ -50,14 +51,13 @@ async function renderRecentComments() {
           <div class="title">
             <div class="comentario-local">${locationName}</div>
             <div class="comentario-nota">Nota: ${parseFloat(rating).toFixed(
-              2
-            )}/5</div>
+          2
+        )}/5</div>
           </div>
           <div class="text">
             <div class="comentario-nome">${userName}</div>
-            <div class="comentario-texto">${description.substring(0, 100)}${
-          description.length > 100 ? "..." : ""
-        }</div>
+            <div class="comentario-texto">${description.substring(0, 100)}${description.length > 100 ? "..." : ""
+          }</div>
           </div>
         </div>
       </a>
@@ -71,8 +71,9 @@ async function renderRecentComments() {
 }
 
 // Inicialização
-document.addEventListener("DOMContentLoaded", () => {
-  loadComponent(headerHtml, "body-start", "header");
-  loadComponent(footerHtml, "body-end", "footer");
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadComponent(headerHtml, "body-start", "header");
+  await loadComponent(footerHtml, "body-end", "footer");
+  initHeader(); // Inicializa os event listeners dos modais após carregar os componentes
   renderRecentComments();
 });

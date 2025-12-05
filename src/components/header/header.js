@@ -1,4 +1,4 @@
-function initHeader() {
+export function initHeader() {
 
 
     // Modal Sobre
@@ -77,4 +77,4 @@ if (headerNav) {
 }
 
 
-initHeader();
+// initHeader é chamado pelo main.js após carregar os componentes
