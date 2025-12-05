@@ -24,7 +24,7 @@ document.getElementById("login-form").addEventListener("submit", async function 
 // Forgot password modal
 const forgotLink = document.getElementById("forgot-password-link");
 const forgotModal = document.getElementById("forgotPasswordModal");
-const closeModal = document.getElementById("close-forgot-modal");
+const closeModal = document.getElementById("back-to-login");
 
 if (forgotLink && forgotModal) {
     forgotLink.addEventListener("click", () => {

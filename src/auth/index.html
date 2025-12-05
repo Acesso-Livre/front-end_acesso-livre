@@ -1,74 +1,87 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - Acesso Livre</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Acesso Livre</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@100..900&family=Comme:wght@100..900&display=swap"
-      rel="stylesheet"
-    />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@100..900&family=Comme:wght@100..900&display=swap"
+    rel="stylesheet"
+  />
 
-    <link rel="stylesheet" href="./style.css" />
-  </head>
+  <link rel="stylesheet" href="./style.css" />
+</head>
 
-  <body>
-    <!-- LOGIN -->
+<body>
+  <section class="login-container">
+    <div class="login-card">
+      <img src="/assets/img/global/logo-acesso-livre.png" alt="Logo Acesso Livre" class="logo">
+      <h1>LOGIN</h1>
+
+      <form id="login-form" class="login-form">
+        <div class="input-group">
+          <input type="email" id="admin-email" required />
+          <label for="admin-email">Email</label>
+        </div>
+
+        <div class="input-group">
+          <input type="password" id="admin-password" required />
+          <label for="admin-password">Senha</label>
+        </div>
+
+        <button type="submit" class="login-btn">Entrar</button>
+      </form>
+
+      <p id="login-error" class="error-message" style="display:none;">
+        Usuário ou senha incorreta.
+      </p>
+
+      <button id="forgot-password-link" class="register-link" type="button">
+        Esqueceu a senha?
+      </button>
+    </div>
+  </section>
+
+  <section class="hero-panel">
+    <img src="/assets/img/global/login-hero.png" alt="Painel ilustrativo" />
+  </section>
+
+  <div id="forgotPasswordModal" class="forgot-modal" style="display:none;">
     <section class="login-container">
-      <div class="login-card">
-        <h1>Acesso Administrativo</h1>
-        <p>Digite suas credenciais para continuar</p>
-
-        <form id="login-form" class="login-form">
-          <div class="input-group">
-            <label for="admin-email">Email</label>
-            <input type="email" id="admin-email" required />
-          </div>
-
-          <div class="input-group">
-            <label for="admin-password">Senha</label>
-            <input type="password" id="admin-password" required />
-          </div>
-
-          <button type="submit" class="login-btn">Entrar</button>
-        </form>
-
-        <p id="login-error" class="error-message" style="display: none">
-          Usuário ou senha incorreta.
-        </p>
-
-        <button id="forgot-password-link" class="register-link" type="button">
-          Esqueceu a senha?
-        </button>
-      </div>
-    </section>
-
-    <!-- MODAL DE RECUPERAÇÃO DE SENHA -->
-    <div id="forgotPasswordModal" class="forgot-modal" style="display: none">
-      <div class="forgot-modal-content">
-        <span id="close-forgot-modal" class="close-btn">&times;</span>
-
+      <div class="login-card" id="forgot-card">
         <h2>Recuperar Senha</h2>
 
         <form id="forgot-password-form">
           <div class="input-group">
-            <label for="forgot-email">Email</label>
             <input type="email" id="forgot-email" required />
+            <label for="forgot-email">Email</label>
           </div>
 
-          <button class="login-btn">Enviar</button>
+          <button class="send-btn">Enviar</button>
         </form>
 
-        <p id="forgot-error" class="error-message" style="display: none"></p>
-        <p id="forgot-success" class="success-message" style="display: none">
+        <p id="forgot-error" class="error-message" style="display:none"></p>
+        <p id="forgot-success" class="success-message" style="display:none;">
           Instruções enviadas para o email!
         </p>
-      </div>
-    </div>
 
-    <script type="module" src="./main.js"></script>
-  </body>
+        <button id="back-to-login" class="back-btn" type="button">&lt;</button>
+      </div>
+
+      <div class="login-card" id="success-card" style="display:none;">
+        <h2>Email foi enviado!</h2>
+        <button id="exit-success" class="login-btn">Sair</button>
+      </div>
+    </section>
+
+    <section class="hero-panel">
+      <img src="/assets/img/global/login-hero.png" alt="Painel ilustrativo" />
+    </section>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
 </html>
