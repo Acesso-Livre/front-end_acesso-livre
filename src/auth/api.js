@@ -1,6 +1,26 @@
 // src/auth/api.js
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// --- FUNÇÃO AUXILIAR PARA TRATAMENTO DE ERRO ROBUSTO ---
+/**
+ * Tenta extrair uma mensagem de erro detalhada da resposta da API.
+ * @param {Response} response Objeto Response do fetch.
+ * @returns {Promise<string>} Mensagem de erro.
+ */
+async function getErrorMessage(response) {
+    let errorDetails;
+    try {
+        // Tenta ler o corpo JSON da resposta de erro da API
+        errorDetails = await response.json(); 
+    } catch (e) {
+        // Se a resposta de erro não for JSON (ex: erro de servidor 500 sem corpo)
+        errorDetails = { message: response.statusText || "Falha na comunicação com o servidor." };
+    }
+
+    // Prioriza a mensagem do corpo, depois o status HTTP
+    return errorDetails.message || `Erro ${response.status}: Falha na solicitação.`;
+}
+
 export const authApi = {
     // Autenticar Usuário
     async login(email, password) {
@@ -13,7 +33,10 @@ export const authApi = {
                 },
             });
 
-            if (!response.ok) throw new Error("Erro ao fazer login");
+            if (!response.ok) {
+                const errorMessage = await getErrorMessage(response);
+                throw new Error(errorMessage);
+            }
 
             const data = await response.json();
 
@@ -24,8 +47,9 @@ export const authApi = {
 
             return data;
         } catch (err) {
-            console.error(err);
-            return [];
+            console.error("Erro ao fazer login:", err);
+            // É melhor relançar o erro para que o componente possa tratar a falha
+            throw err; 
         }
     },
 
@@ -47,6 +71,9 @@ export const authApi = {
             });
 
             if (!response.ok) {
+                // Em caso de falha na validação (token expirado/inválido), 
+                // limpamos o token e indicamos que é inválido.
+                sessionStorage.removeItem("authToken");
                 return { valid: false };
             }
 
@@ -54,9 +81,38 @@ export const authApi = {
             return data;
         } catch (err) {
             console.error("Erro ao validar token:", err);
+            // Relançar um erro aqui não é ideal, pois a função retorna {valid: false}
             return { valid: false };
         }
     },
+
+    // Solicitar recuperação de senha (FUNÇÃO CORRIGIDA)
+    async forgotPassword(email) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/admins/forgot-password`, {
+                method: "POST",
+                body: JSON.stringify({ email }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            // --- Tratamento de Erro Robusto (Aprimorado) ---
+            if (!response.ok) {
+                const errorMessage = await getErrorMessage(response);
+                throw new Error(errorMessage);
+            }
+            // --- Fim do Tratamento de Erro Robusto ---
+
+            // Retorna a resposta (geralmente uma mensagem de sucesso)
+            return await response.json();
+
+        } catch (err) {
+            console.error("Erro no authApi.forgotPassword:", err);
+            // Relançar o erro é essencial para que a UI saiba o que exibir
+            throw err;
+        }
+    }
 };
 
 // Export global para compatibilidade
