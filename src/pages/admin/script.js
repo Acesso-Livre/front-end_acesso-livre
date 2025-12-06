@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!token) {
         console.warn("Sem token → redirecionando ao login");
-        window.location.href = "/auth/";
+        window.location.href = "/pages/auth/";
         return;
     }
 
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ==========================
 document.getElementById("logout-btn").addEventListener("click", () => {
     sessionStorage.removeItem("authToken");
-    window.location.href = "/auth/";
+    window.location.href = "/pages/auth/";
 });
 
 // ==========================
