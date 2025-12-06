@@ -4,7 +4,7 @@ import footerHtml from "./components/footer/footer.html?raw";
 import "./components/header/header.css";
 import headerHtml from "./components/header/header.html?raw";
 import { initHeader } from "./components/header/header.js";
-import { fetchRecentComments } from "./mapa/api.js";
+import { fetchRecentComments } from "./pages/mapa/api.js";
 
 // Carregar componentes dinamicamente
 async function loadComponent(html, position = "body-end", componentName = "") {

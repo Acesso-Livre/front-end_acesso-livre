@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,29 +10,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@100..900&family=Comme:wght@100..900&display=swap"
-    rel="stylesheet"
-  />
+    rel="stylesheet" />
 
-  <link rel="stylesheet" href="../../styles/global.css" />
-  <link rel="stylesheet" href="./auth.css" />
+  <link rel="stylesheet" href="./style.css" />
 </head>
 
 <body>
-  <!-- LOGIN -->
   <section class="login-container">
     <div class="login-card">
-      <h1>Acesso Administrativo</h1>
-      <p>Digite suas credenciais para continuar</p>
+      <img src="/assets/img/global/acesso-livre-logo.svg" alt="Logo Acesso Livre" class="logo">
+      <h1>LOGIN</h1>
 
       <form id="login-form" class="login-form">
         <div class="input-group">
-          <label for="admin-email">Email</label>
           <input type="email" id="admin-email" required />
+          <label for="admin-email">Email</label>
         </div>
 
         <div class="input-group">
-          <label for="admin-password">Senha</label>
           <input type="password" id="admin-password" required />
+          <label for="admin-password">Senha</label>
         </div>
 
         <button type="submit" class="login-btn">Entrar</button>
@@ -47,31 +45,46 @@
     </div>
   </section>
 
-  <!-- MODAL DE RECUPERAÇÃO DE SENHA -->
+  <section class="hero-panel">
+    <img src="/assets/img/global/login-hero.png" alt="Painel ilustrativo" />
+  </section>
+
   <div id="forgotPasswordModal" class="forgot-modal" style="display:none;">
-    <div class="forgot-modal-content">
-      <span id="close-forgot-modal" class="close-btn">&times;</span>
+    <section class="login-container">
+      <div class="login-card" id="forgot-card">
+        <h2>Recuperar Senha</h2>
 
-      <h2>Recuperar Senha</h2>
+        <form id="forgot-password-form">
+          <div class="input-group">
+            <input type="email" id="forgot-email" required />
+            <label for="forgot-email">Email</label>
+          </div>
 
-      <form id="forgot-password-form">
-        <div class="input-group">
-          <label for="forgot-email">Email</label>
-          <input type="email" id="forgot-email" required />
-        </div>
+          <button class="send-btn">Enviar</button>
+        </form>
 
-        <button class="login-btn">Enviar</button>
-      </form>
+        <p id="forgot-error" class="error-message" style="display:none"></p>
+        <p id="forgot-success" class="success-message" style="display:none;">
+          Instruções enviadas para o email!
+        </p>
 
-      <p id="forgot-error" class="error-message" style="display:none"></p>
-      <p id="forgot-success" class="success-message" style="display:none;">
-        Instruções enviadas para o email!
-      </p>
-    </div>
+        <button id="back-to-login" class="back-btn" type="button">&lt;</button>
+      </div>
+
+      <div class="login-card" id="success-card" style="display:none;">
+        <h2>Email foi enviado!</h2>
+        <button id="exit-success" class="login-btn">Sair</button>
+      </div>
+    </section>
+
+    <section class="hero-panel">
+      <img src="/assets/img/global/login-hero.png" alt="Painel ilustrativo" />
+    </section>
   </div>
 
-  <script src="./auth.js"></script>
-  <script src="./forgot-password.js"></script>
-  <script src="./api_auth.js"></script>
+  <script type="module" src="./main.js"></script>
+  <script type="module" src="./api.js"></script>
+  <script type="module" src="./forgot-password.js"></script>
 </body>
+
 </html>
