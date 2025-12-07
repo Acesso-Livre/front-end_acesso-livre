@@ -9,6 +9,7 @@ const MODAL_IDS = {
   infoModal: "infoModal",
   addCommentModal: "addCommentModal",
 };
+
 const ELEMENT_IDS = {
   locationTitle: "location-title",
   locationDescription: "location-description",
@@ -29,24 +30,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Função para criar ícone de pin
   function makePinIcon(color = "#FF0000", tipo = "default") {
-    // cor padrão vermelha
-    // Para estacionamento, usa ícone customizado
-    if (tipo === "estacionamento") {
-      return L.divIcon({
-        className: "pin-marker pin-estacionamento",
-        html: `<div class="dot" style="background-color: ${color};">
-                 <img src="/src/assets/img/map/estacionamento.png" alt="Estacionamento" class="pin-icon">
-               </div>`,
-        iconSize: [32, 32],
-        iconAnchor: [16, 16],
-      });
-    }
+    // SVG simples similar a "gota" com círculo branco
+    const svg = `
+      <svg width="34" height="50" viewBox="0 0 34 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <path d="M17 0C7.6 0 0 7.6 0 17c0 12.8 17 33 17 33s17-20.2 17-33C34 7.6 26.4 0 17 0z" fill="${color}"/>
+        <circle cx="17" cy="17" r="7" fill="#fff"/>
+      </svg>
+    `;
 
+    // se quiser icon personalizado por tipo, você pode editar aqui (sem depender de arquivos externos)
     return L.divIcon({
-      className: "pin-marker",
-      html: `<div class="dot" style="background-color: ${color};"></div>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
+      className: `pin-marker pin-${tipo}`,
+      html: svg,
+      iconSize: [34, 50],
+      iconAnchor: [17, 50],
     });
   }
 
@@ -138,8 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
                       <div class="comment-header">
                           <span class="user-name">${c.user_name}</span>
                           <span class="comment-date">${new Date(
-                            c.created_at || c.date // Fallback para c.date se created_at não existir
-                          ).toLocaleDateString("pt-BR")}</span>
+              c.created_at || c.date // Fallback para c.date se created_at não existir
+            ).toLocaleDateString("pt-BR")}</span>
                       </div>
                       <div class="comment-rating">${commentStars}</div>
                       <p class="comment-text">${c.comment}</p>
@@ -480,8 +477,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="comment-header">
               <span class="user-name">${comment.user_name}</span>
               <span class="comment-date">${new Date(
-                comment.date
-              ).toLocaleDateString("pt-BR")}</span>
+              comment.date
+            ).toLocaleDateString("pt-BR")}</span>
             </div>
             <div class="comment-rating">${"⭐".repeat(
               comment.rating || 0

@@ -21,3 +21,7 @@ window.testGetAccessibilityItems = async function () {
     console.log('Result:', result);
     return result;
 };
+
+document.getElementById("closeInfoModal").addEventListener("click", () => {
+    document.getElementById("infoModal").style.display = "none";
+});

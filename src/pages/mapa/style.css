@@ -23,8 +23,6 @@ body {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  z-index: 2001;
-  /* Garante que fique acima do modal (2000) */
 }
 
 .btn {
@@ -296,6 +294,29 @@ body {
   margin: 0 auto;
 }
 
+.close-info-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 20;
+  background: white;
+  border: none;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.close-info-btn:hover {
+  transform: translateX(-3px);
+  background: #f3f3f3;
+}
+
 .back-btn {
   background-color: transparent;
   color: #fff;
@@ -312,12 +333,10 @@ img {
 }
 
 .swiper {
-  height: 40vh;
+  height: 50vh;
   width: 100%;
   position: relative;
 }
-
-
 
 .swiper-slide {
   text-align: center;
