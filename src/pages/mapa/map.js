@@ -10,11 +10,6 @@ const MODAL_IDS = {
   addCommentModal: "addCommentModal",
 };
 
-const ELEMENT_IDS = {
-  locationTitle: "location-title",
-  locationDescription: "location-description",
-};
-
 document.addEventListener("DOMContentLoaded", () => {
   const imgUrl = "/assets/img/map/mapa-ifba.png";
   const img = new Image();
@@ -29,19 +24,22 @@ document.addEventListener("DOMContentLoaded", () => {
   let modalPushed = false;
 
   // Função para criar ícone de pin
-  function makePinIcon(color = "#FF0000", tipo = "default") {
+  function makePinIcon(color = "#FF0000", tipo = "default", label="") {
     // SVG simples similar a "gota" com círculo branco
     const svg = `
       <svg width="34" height="50" viewBox="0 0 34 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
         <path d="M17 0C7.6 0 0 7.6 0 17c0 12.8 17 33 17 33s17-20.2 17-33C34 7.6 26.4 0 17 0z" fill="${color}"/>
-        <circle cx="17" cy="17" r="7" fill="#fff"/>
+        <circle cx="17" cy="17" r="14" fill="#fff"/>
       </svg>
     `;
 
     // se quiser icon personalizado por tipo, você pode editar aqui (sem depender de arquivos externos)
     return L.divIcon({
       className: `pin-marker pin-${tipo}`,
-      html: svg,
+      html: `
+      <div class="pin-label">${label}</div>
+      <div>${svg}</div>
+      `,
       iconSize: [34, 50],
       iconAnchor: [17, 50],
     });
@@ -259,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("PINS RECEBIDOS:", pins);
 
     pins.forEach((p) => {
-      const tipo = detectTypeFromName(p.name); // ← USAR AQUI
+      const tipo = detectTypeFromName(p.name); 
 
       const top = parseFloat(p.top) || 0;
       const left = parseFloat(p.left) || 0;
@@ -282,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const color = corMap[tipo] || corMap.default;
 
-      const marker = L.marker([y, x], { icon: makePinIcon(color, tipo) }).addTo(
+      const marker = L.marker([y, x], { icon: makePinIcon(color, tipo, p.name) }).addTo(
         map
       );
 

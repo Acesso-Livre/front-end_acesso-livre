@@ -1,5 +1,6 @@
 // src/auth/main.js - Entry point para página de login
 import './api.js';
+import './forgot-password.js'
 
 document.getElementById("login-form").addEventListener("submit", async function (e) {
   e.preventDefault();

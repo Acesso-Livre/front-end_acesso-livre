@@ -11,14 +11,14 @@ async function getErrorMessage(response) {
     let errorDetails;
     try {
         // Tenta ler o corpo JSON da resposta de erro da API
-        errorDetails = await response.json(); 
+        errorDetails = await response.json();
     } catch (e) {
         // Se a resposta de erro não for JSON (ex: erro de servidor 500 sem corpo)
         errorDetails = { message: response.statusText || "Falha na comunicação com o servidor." };
     }
 
     // Prioriza a mensagem do corpo, depois o status HTTP
-    return errorDetails.message || `Erro ${response.status}: Falha na solicitação.`;
+    return errorDetails.message || errorDetails.detail || `Erro ${response.status}: Falha na solicitação.`;
 }
 
 export const authApi = {
@@ -49,7 +49,7 @@ export const authApi = {
         } catch (err) {
             console.error("Erro ao fazer login:", err);
             // É melhor relançar o erro para que o componente possa tratar a falha
-            throw err; 
+            throw err;
         }
     },
 
