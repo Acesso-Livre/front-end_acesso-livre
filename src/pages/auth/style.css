@@ -92,8 +92,8 @@ body {
 }
 
 .logo {
-  width: 30px;
-  height: 30px;
+  width: 60px;
+  height: 60px;
   margin-bottom: 20px;
   display: flex;
   margin-left: auto;
@@ -103,7 +103,8 @@ body {
 .login-card h1 {
   font-size: 2rem;
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 200; /* antes 600 */
+  font-family: "Poppins", sans-serif;
   margin: 0;
 }
 
@@ -115,7 +116,7 @@ body {
 .input-group {
   position: relative;
   border: 1px solid #2d3250;
-  border-radius: 6px;
+  border-radius: 60px;
   background: #676f9d;
   margin-bottom: 15px;
 }
@@ -124,9 +125,9 @@ body {
   width: 100%;
   border: none;
   background: transparent;
-  padding: 25px 15px 12px;
+  padding: 25px 45px 25px 15px; /* espaço pro eye icon */
   font-size: 1rem;
-  font-family: inherit;
+  color: white;
   box-sizing: border-box;
 }
 
@@ -134,31 +135,88 @@ body {
   outline: none;
 }
 
-.input-group label {
-  position: absolute;
-  top: 8px;
-  left: 15px;
+/* Placeholder estilizado */
+.input-group input::placeholder {
   color: #ffffff;
+  opacity: 0.8;
   font-size: 0.9rem;
-  font-weight: 500;
-  pointer-events: none;
+}
+/* Placeholder desaparece no clique (comportamento nativo) */
+
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #fff;
+  opacity: 0.8;
+  user-select: none;
+}
+
+.toggle-password:hover {
+  opacity: 1;
+}
+
+input {
+  background-color: #676f9d;
+  color: #fff;
+  border: 1px solid #2d3250;
+  border-radius: 60px;
+}
+
+/* Autofill (Chrome) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #676f9d inset !important;
+  -webkit-text-fill-color: #fff !important;
 }
 
 .login-btn {
-  padding: 12px 20px;
-  background: #0056d2;
-  color: #ffffff;
+  width: 140px;                /* largura parecida com a do Sign up */
+  padding: 12px 0;             /* altura confortável */
   border: none;
-  border-radius: 6px;
+  border-radius: 999px;        /* formato de pílula */
+  cursor: pointer;
+  display: block;
+  margin: 20px auto 0 auto;
+
+  background: linear-gradient(135deg, #676f9d, #838cc4); /* roxo → rosa igual ao da imagem */
+  color: #ffffff;
   font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 10px;
+  font-family: "Poppins", sans-serif;
+
+  box-shadow: 0 4px 15px rgba(128, 0, 255, 0.30);       /* sombra suave */
+  transition: transform .2s ease, box-shadow .2s ease;  /* animação suave */
 }
 
+/* Hover */
 .login-btn:hover {
-  background: #003366;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(128, 0, 255, 0.40);
+}
+
+/* Ao clicar */
+.login-btn:active {
+  transform: scale(0.97);
+}
+
+/* LUZ suave abaixo */
+.login-btn::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 6px;
+  background: #676f9d;   /* mesma cor do botão */
+  opacity: 0.35;         /* luz fraca */
+  filter: blur(12px);
+  border-radius: 50%;
+  z-index: -1;
 }
 
 .error-message {
@@ -175,12 +233,22 @@ body {
   font-size: 1rem;
   margin-top: 20px;
   text-decoration: none;
-  font-weight: 500;
-  transition: text-decoration 0.3s ease;
+  font-weight: 400;
+  font-family: "Poppins", sans-serif;
+
+  transition: color .3s ease, opacity .3s ease, transform .15s ease;
+  display: inline-block; /* necessário para o transform funcionar */
 }
 
+/* Hover suave */
 .register-link:hover {
-  text-decoration: underline;
+  color: rgba(150, 130, 220, 1);
+  opacity: 1;
+}
+
+/* Clique (crescer) */
+.register-link:active {
+  transform: scale(1.08);   /* cresce um pouquinho */
 }
 
 .back-btn {
