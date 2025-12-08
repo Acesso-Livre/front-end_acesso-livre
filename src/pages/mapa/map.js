@@ -11,7 +11,7 @@ const MODAL_IDS = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  const imgUrl = "/assets/img/map/mapa-ifba.png";
+  const imgUrl = "/assets/img/map/mapa_ifba.svg";
   const img = new Image();
   // img.src = imgUrl; // Atribuído após definição dos handlers para evitar race conditions
 

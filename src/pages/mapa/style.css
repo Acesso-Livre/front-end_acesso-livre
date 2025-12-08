@@ -83,6 +83,7 @@ body {
 
 /* Mapa ocupa o restante da tela */
 #map {
+  background-color: #0050a0;
   position: absolute;
   top: 60px;
   left: 0;
