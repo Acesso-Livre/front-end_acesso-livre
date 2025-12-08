@@ -279,20 +279,50 @@ input:-webkit-autofill:focus {
 }
 
 .send-btn {
-  padding: 12px 20px;
-  background: #388e3c;
-  color: #ffffff;
+  width: 140px;
+  padding: 12px 0;
   border: none;
-  border-radius: 6px;
+  border-radius: 999px; /* pílula */
+  cursor: pointer;
+  display: block;
+  margin: 20px auto 0 auto;
+
+  background: linear-gradient(135deg, #676f9d, #838cc4);
+  color: #ffffff;
   font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 10px;
+  font-family: "Poppins", sans-serif;
+
+  box-shadow: 0 4px 15px rgba(128, 0, 255, 0.30);
+  transition: transform .2s ease, box-shadow .2s ease;
+  position: relative; /* necessário para ::after */
 }
 
+/* Hover */
 .send-btn:hover {
-  background: #2e7d32;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(128, 0, 255, 0.40);
+}
+
+/* Clique */
+.send-btn:active {
+  transform: scale(0.97);
+}
+
+/* Luz suave embaixo */
+.send-btn::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 6px;
+  background: #676f9d;
+  opacity: 0.35;
+  filter: blur(12px);
+  border-radius: 50%;
+  z-index: -1;
 }
 
 /* Forgot Password Modal Styles */
@@ -305,6 +335,55 @@ input:-webkit-autofill:focus {
   background: #2d3250;
   display: flex;
   z-index: 1000;
+}
+
+#forgotPasswordModal .input-group {
+  position: relative;
+  width: 100%;
+  margin-bottom: 25px;
+}
+
+#forgotPasswordModal .input-group input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ffffff70;
+  border-radius: 25px;
+  background: transparent;
+  font-size: 1rem;
+  color: #fff;
+  outline: none;
+  font-family: Poppins, sans-serif;
+}
+
+/* Label animada igual ao login */
+#forgotPasswordModal .input-group label {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #ffffffd4;
+  pointer-events: none;
+  transition: 0.25s ease;
+  font-family: Poppins, sans-serif;
+
+  /* stroke igual ao login */
+  -webkit-text-stroke: 0.4px #00000080;
+}
+
+/* estado "flutuado": quando há foco OU quando placeholder não está visível (ou seja, tem texto) */
+#forgotPasswordModal .input-group input:focus + label,
+#forgotPasswordModal .input-group input:not(:placeholder-shown) + label {
+  top: 6px;
+  transform: none;
+  font-size: 0.75rem;
+  color: #ffffff;
+  -webkit-text-stroke: 0px transparent;
+}
+
+/* melhora visual do foco */
+#forgotPasswordModal .input-group input:focus {
+  border-color: #ffffff;
 }
 
 .login-card .close-btn {
@@ -324,10 +403,4 @@ input:-webkit-autofill:focus {
   font-size: 1.5rem;
   color: #ffffff;
   text-align: center;
-}
-
-.success-message {
-  color: #388e3c;
-  font-size: 0.9rem;
-  margin-top: 10px;
 }
