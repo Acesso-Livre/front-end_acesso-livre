@@ -1,16 +1,16 @@
 body {
-  font-family: "Comme", sans-serif;
+  font-family: var(--font-family-base);
   margin: 0;
-  background: #d9e7f7;
+  background: var(--bg-color);
 }
 
 header {
-  background: #0B3A75;
+  background: var(--bg-gradient-start);
   padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: white;
+  color: var(--color-white);
 }
 
 .header-left {
@@ -24,19 +24,26 @@ header {
 }
 
 .header-title {
-  font-size: clamp(1.2rem, 4vw, 2.2rem); /* diminui em telas pequenas */
+  font-size: clamp(1.2rem, 4vw, 2.2rem);
   text-align: center;
   line-height: 1.2;
+  font-family: var(--font-family-heading);
 }
 
 .logout-btn {
-  background: white;
-  color: #0B3A75;
+  background: var(--color-white);
+  color: var(--bg-gradient-start);
   border: none;
   padding: 10px 18px;
-  font-weight: 600;
-  border-radius: 6px;
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #f0f0f0;
+  box-shadow: var(--shadow-md);
 }
 
 main {
@@ -47,54 +54,76 @@ main {
 }
 
 .comment-card-admin {
-  background: white;
-  border-radius: 10px;
+  background: var(--bg-card);
+  border-radius: var(--border-radius-md);
   padding: 20px;
   margin-bottom: 15px;
-  border-left: 5px solid #0B3A75;
+  border-left: 5px solid var(--primary-color);
   display: flex;
   flex-direction: column;
   gap: 10px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-family-base);
 }
 
 .review-header {
   display: flex;
   justify-content: space-between;
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-color);
 }
 
 .comment-text {
   font-size: 15px;
-  color: #333;
+  color: var(--text-color);
 }
 
 .btn-approve {
-  background: #0B3A75;
-  color: white;
+  background: var(--primary-color);
+  color: var(--color-white);
   border: none;
   padding: 10px 14px;
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
+  font-weight: var(--font-weight-bold);
+  transition: all 0.2s ease;
+}
+
+.btn-approve:hover {
+  background: var(--bg-gradient-start);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-reject {
-  background: #e9f3ff;
-  color: #0B3A75;
-  border: 1px solid #0B3A75;
+  background: #f0f7ff;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
   padding: 10px 14px;
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
+  font-weight: var(--font-weight-bold);
+  transition: all 0.2s ease;
+}
+
+.btn-reject:hover {
+  background: var(--primary-color);
+  color: var(--color-white);
 }
 
 .btn-photos {
-  background: #FFD447;
-  color: #0B3A75;
+  background: var(--color-yellow);
+  color: var(--text-color);
   border: none;
   padding: 10px 14px;
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
+  transition: all 0.2s ease;
+}
+
+.btn-photos:hover {
+  opacity: 0.9;
+  box-shadow: var(--shadow-md);
 }
 
 .modal {
@@ -104,19 +133,20 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   justify-content: center;
   align-items: center;
   z-index: 999;
 }
 
 .modal-content {
-  background: #fff;
+  background: var(--bg-card);
   width: 80%;
   max-width: 700px;
   padding: 20px;
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   position: relative;
+  font-family: var(--font-family-base);
 }
 
 .close {
@@ -125,6 +155,7 @@ main {
   right: 12px;
   font-size: 26px;
   cursor: pointer;
+  color: var(--text-color);
 }
 
 /* Swiper imagens */

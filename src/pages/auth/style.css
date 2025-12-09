@@ -2,7 +2,7 @@ html,
 body {
   margin: 0;
   height: 100%;
-  font-family: 'Albert Sans', sans-serif;
+  font-family: var(--font-family-base);
 }
 
 body {
@@ -17,9 +17,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-
-  background: #2d3250;
-
+  background: var(--bg-gradient-start);
   padding: 0;
 }
 
@@ -27,7 +25,7 @@ body {
   width: 70%;
   flex: 0 0 auto;
   min-height: 100vh;
-  background: #f7f7f7;
+  background: var(--bg-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -101,10 +99,10 @@ body {
 }
 
 .login-card h1 {
-  font-size: 2rem;
-  color: #ffffff;
-  font-weight: 200; /* antes 600 */
-  font-family: "Poppins", sans-serif;
+  font-size: var(--font-size-h2);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-heading);
   margin: 0;
 }
 
@@ -115,20 +113,21 @@ body {
 
 .input-group {
   position: relative;
-  border: 1px solid #2d3250;
-  border-radius: 60px;
-  background: #676f9d;
+  border: 2px solid var(--primary-color);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-white);
   margin-bottom: 15px;
 }
 
 .input-group input {
   width: 100%;
   border: none;
-  background: transparent;
-  padding: 25px 45px 25px 15px; /* espaço pro eye icon */
-  font-size: 1rem;
-  color: white;
+  background: var(--color-white);
+  padding: 16px 16px;
+  font-size: var(--font-size-text);
+  color: var(--text-color);
   box-sizing: border-box;
+  font-family: var(--font-family-base);
 }
 
 .input-group input:focus {
@@ -137,9 +136,9 @@ body {
 
 /* Placeholder estilizado */
 .input-group input::placeholder {
-  color: #ffffff;
-  opacity: 0.8;
-  font-size: 0.9rem;
+  color: var(--text-light);
+  opacity: 0.7;
+  font-size: 0.95rem;
 }
 /* Placeholder desaparece no clique (comportamento nativo) */
 
@@ -159,43 +158,42 @@ body {
 }
 
 input {
-  background-color: #676f9d;
-  color: #fff;
-  border: 1px solid #2d3250;
-  border-radius: 60px;
+  background-color: var(--color-white);
+  color: var(--text-color);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--border-radius-lg);
 }
 
 /* Autofill (Chrome) */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px #676f9d inset !important;
-  -webkit-text-fill-color: #fff !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--color-white) inset !important;
+  -webkit-text-fill-color: var(--text-color) !important;
 }
 
 .login-btn {
-  width: 140px;                /* largura parecida com a do Sign up */
-  padding: 12px 0;             /* altura confortável */
+  width: 140px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 999px;        /* formato de pílula */
+  border-radius: var(--border-radius-lg);
   cursor: pointer;
   display: block;
   margin: 20px auto 0 auto;
-
-  background: linear-gradient(135deg, #676f9d, #838cc4); /* roxo → rosa igual ao da imagem */
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 500;
-  font-family: "Poppins", sans-serif;
-
-  box-shadow: 0 4px 15px rgba(128, 0, 255, 0.30);       /* sombra suave */
-  transition: transform .2s ease, box-shadow .2s ease;  /* animação suave */
+  background: var(--bg-buttom);
+  color: var(--color-white);
+  font-size: var(--font-size-text);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-base);
+  box-shadow: var(--shadow-md);
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
 }
 
 /* Hover */
 .login-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(128, 0, 255, 0.40);
+  background-color: var(--bg-buttom-hover);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Ao clicar */
@@ -212,8 +210,8 @@ input:-webkit-autofill:focus {
   transform: translateX(-50%);
   width: 80%;
   height: 6px;
-  background: #676f9d;   /* mesma cor do botão */
-  opacity: 0.35;         /* luz fraca */
+  background: var(--bg-buttom);
+  opacity: 0.35;
   filter: blur(12px);
   border-radius: 50%;
   z-index: -1;
@@ -228,22 +226,21 @@ input:-webkit-autofill:focus {
 .register-link {
   background: none;
   border: none;
-  color: #ffffff;
+  color: var(--color-white);
   cursor: pointer;
-  font-size: 1rem;
+  font-size: var(--font-size-text);
   margin-top: 20px;
-  text-decoration: none;
-  font-weight: 400;
-  font-family: "Poppins", sans-serif;
-
+  text-decoration: underline;
+  font-weight: var(--font-weight-regular);
+  font-family: var(--font-family-base);
   transition: color .3s ease, opacity .3s ease, transform .15s ease;
-  display: inline-block; /* necessário para o transform funcionar */
+  display: inline-block;
 }
 
 /* Hover suave */
 .register-link:hover {
-  color: rgba(150, 130, 220, 1);
-  opacity: 1;
+  color: var(--secondary-color);
+  opacity: 0.9;
 }
 
 /* Clique (crescer) */
@@ -257,12 +254,12 @@ input:-webkit-autofill:focus {
   left: 20px;
   width: 40px;
   height: 40px;
-  background: #ffffff;
-  color: #0056d2;
-  border: 1px solid #0056d2;
+  background: var(--color-white);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
   border-radius: 50%;
   font-size: 1.5rem;
-  font-weight: 500;
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
   display: flex;
@@ -274,34 +271,33 @@ input:-webkit-autofill:focus {
 }
 
 .back-btn:hover {
-  background: #0056d2;
-  color: #ffffff;
+  background: var(--primary-color);
+  color: var(--color-white);
 }
 
 .send-btn {
   width: 140px;
-  padding: 12px 0;
+  padding: 12px 24px;
   border: none;
-  border-radius: 999px; /* pílula */
+  border-radius: var(--border-radius-lg);
   cursor: pointer;
   display: block;
   margin: 20px auto 0 auto;
-
-  background: linear-gradient(135deg, #676f9d, #838cc4);
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 500;
-  font-family: "Poppins", sans-serif;
-
-  box-shadow: 0 4px 15px rgba(128, 0, 255, 0.30);
-  transition: transform .2s ease, box-shadow .2s ease;
-  position: relative; /* necessário para ::after */
+  background: var(--bg-buttom);
+  color: var(--color-white);
+  font-size: var(--font-size-text);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-base);
+  box-shadow: var(--shadow-md);
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+  position: relative;
 }
 
 /* Hover */
 .send-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(128, 0, 255, 0.40);
+  background-color: var(--bg-buttom-hover);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Clique */
@@ -318,7 +314,7 @@ input:-webkit-autofill:focus {
   transform: translateX(-50%);
   width: 80%;
   height: 6px;
-  background: #676f9d;
+  background: var(--bg-buttom);
   opacity: 0.35;
   filter: blur(12px);
   border-radius: 50%;
@@ -332,7 +328,7 @@ input:-webkit-autofill:focus {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #2d3250;
+  background: var(--bg-gradient-start);
   display: flex;
   z-index: 1000;
 }
@@ -345,14 +341,14 @@ input:-webkit-autofill:focus {
 
 #forgotPasswordModal .input-group input {
   width: 100%;
-  padding: 14px;
-  border: 1px solid #ffffff70;
-  border-radius: 25px;
-  background: transparent;
-  font-size: 1rem;
-  color: #fff;
+  padding: 14px 16px;
+  border: 2px solid var(--primary-color);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+  font-size: var(--font-size-text);
+  color: var(--text-color);
   outline: none;
-  font-family: Poppins, sans-serif;
+  font-family: var(--font-family-base);
 }
 
 /* Label animada igual ao login */
@@ -361,14 +357,12 @@ input:-webkit-autofill:focus {
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1rem;
-  color: #ffffffd4;
+  font-size: var(--font-size-text);
+  color: var(--color-white);
   pointer-events: none;
   transition: 0.25s ease;
-  font-family: Poppins, sans-serif;
-
-  /* stroke igual ao login */
-  -webkit-text-stroke: 0.4px #00000080;
+  font-family: var(--font-family-base);
+  -webkit-text-stroke: 0px transparent;
 }
 
 /* estado "flutuado": quando há foco OU quando placeholder não está visível (ou seja, tem texto) */
@@ -383,24 +377,27 @@ input:-webkit-autofill:focus {
 
 /* melhora visual do foco */
 #forgotPasswordModal .input-group input:focus {
-  border-color: #ffffff;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
 }
 
 .login-card .close-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 1.5rem;
+  font-size: 2rem;
   cursor: pointer;
-  color: #ffffff;
+  color: var(--color-white);
   background: none;
   border: none;
-  font-size: 2rem;
+  transition: opacity .2s ease;
 }
 
 .login-card h2 {
   margin-bottom: 20px;
-  font-size: 1.5rem;
-  color: #ffffff;
+  font-size: var(--font-size-h3);
+  color: var(--color-white);
   text-align: center;
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
 }
