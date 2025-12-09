@@ -81,28 +81,28 @@ document.addEventListener("DOMContentLoaded", () => {
     let iconHtml;
 
     if (imagePath) {
-      // SVG com círculo clipping para a imagem
+      // SVG apenas círculo com imagem no centro
       iconHtml = `
-        <svg width="34" height="50" viewBox="0 0 34 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
           <defs>
             <clipPath id="circle-clip">
-              <circle cx="17" cy="17" r="12"/>
+              <circle cx="20" cy="20" r="18"/>
             </clipPath>
           </defs>
-          <!-- Pin shape -->
-          <path d="M17 0C7.6 0 0 7.6 0 17c0 12.8 17 33 17 33s17-20.2 17-33C34 7.6 26.4 0 17 0z" fill="${color}"/>
-          <!-- White background circle -->
-          <circle cx="17" cy="17" r="14" fill="#fff"/>
+          <!-- Circle background -->
+          <circle cx="20" cy="20" r="19" fill="${color}"/>
+          <!-- White border circle -->
+          <circle cx="20" cy="20" r="18" fill="#fff"/>
           <!-- Image inside clipped circle -->
-          <image href="${imagePath}" x="5" y="5" width="24" height="24" clip-path="url(#circle-clip)" preserveAspectRatio="xMidYMid slice"/>
+          <image href="${imagePath}" x="2" y="2" width="36" height="36" clip-path="url(#circle-clip)" preserveAspectRatio="xMidYMid slice"/>
         </svg>
       `;
     } else {
-      // Fallback apenas com SVG
+      // Fallback apenas com círculo SVG
       iconHtml = `
-        <svg width="34" height="50" viewBox="0 0 34 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-          <path d="M17 0C7.6 0 0 7.6 0 17c0 12.8 17 33 17 33s17-20.2 17-33C34 7.6 26.4 0 17 0z" fill="${color}"/>
-          <circle cx="17" cy="17" r="14" fill="#fff"/>
+        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <circle cx="20" cy="20" r="19" fill="${color}"/>
+          <circle cx="20" cy="20" r="18" fill="#fff"/>
         </svg>
       `;
     }
@@ -113,8 +113,8 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="pin-label">${label}</div>
       <div>${iconHtml}</div>
       `,
-      iconSize: [34, 50],
-      iconAnchor: [17, 50],
+      iconSize: [40, 40],
+      iconAnchor: [20, 20],
     });
   }
 
