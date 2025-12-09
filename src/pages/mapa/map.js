@@ -23,22 +23,95 @@ document.addEventListener("DOMContentLoaded", () => {
   let inModal = false;
   let modalPushed = false;
 
+  // Mapeamento de nomes de locais para imagens
+  const imageMap = {
+    "estacionamento": "/assets/img/map/estacionamento.svg",
+    "bloco 5": "/assets/img/map/Bloco-5.svg",
+    "bloco 6": "/assets/img/map/Bloco-6.svg",
+    "bloco 8": "/assets/img/map/Bloco-8.svg",
+    "bloco 9": "/assets/img/map/Bloco-9.svg",
+    "bloco 16": "/assets/img/map/Bloco-16.svg",
+    "quadra de areia": "/assets/img/map/Quadra de areia.svg",
+    "quadra": "/assets/img/map/Quadra.svg",
+    "campo": "/assets/img/map/Quadra.svg", // campo compartilha a mesma imagem da quadra
+    "biblioteca": "/assets/img/map/Biblioteca.svg",
+    "cantina": "/assets/img/map/Cantina.svg",
+    "auditório": "/assets/img/map/Auditório.svg",
+    "cores": "/assets/img/map/Cores.svg",
+    "entrada": "/assets/img/map/entrada.svg",
+  };
+
+  // Função para encontrar a imagem com matching flexível
+  function getImagePath(label) {
+    const lowerLabel = label.toLowerCase().trim();
+    
+    // Busca exata primeiro
+    if (imageMap[lowerLabel]) {
+      return imageMap[lowerLabel];
+    }
+    
+    // Busca parcial para blocos (ex: "Bloco 5" pode estar como "bloco 5" ou com caracteres extras)
+    if (lowerLabel.includes("bloco")) {
+      if (lowerLabel.includes("5")) return imageMap["bloco 5"];
+      if (lowerLabel.includes("6")) return imageMap["bloco 6"];
+      if (lowerLabel.includes("8")) return imageMap["bloco 8"];
+      if (lowerLabel.includes("9")) return imageMap["bloco 9"];
+      if (lowerLabel.includes("16")) return imageMap["bloco 16"];
+    }
+    
+    // Busca para outros tipos
+    if (lowerLabel.includes("quadra de areia") || lowerLabel.includes("areia")) return imageMap["quadra de areia"];
+    if (lowerLabel.includes("quadra")) return imageMap["quadra"];
+    if (lowerLabel.includes("campo")) return imageMap["campo"];
+    if (lowerLabel.includes("estacionamento")) return imageMap["estacionamento"];
+    if (lowerLabel.includes("biblioteca")) return imageMap["biblioteca"];
+    if (lowerLabel.includes("cantina")) return imageMap["cantina"];
+    if (lowerLabel.includes("audit")) return imageMap["auditório"];
+    if (lowerLabel.includes("cores")) return imageMap["cores"];
+    if (lowerLabel.includes("entrada")) return imageMap["entrada"];
+    
+    return null;
+  }
+
   // Função para criar ícone de pin
   function makePinIcon(color = "#FF0000", tipo = "default", label="") {
-    // SVG simples similar a "gota" com círculo branco
-    const svg = `
-      <svg width="34" height="50" viewBox="0 0 34 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-        <path d="M17 0C7.6 0 0 7.6 0 17c0 12.8 17 33 17 33s17-20.2 17-33C34 7.6 26.4 0 17 0z" fill="${color}"/>
-        <circle cx="17" cy="17" r="14" fill="#fff"/>
-      </svg>
-    `;
+    console.log("Making icon for tipo:", tipo, "name:", label);
 
-    // se quiser icon personalizado por tipo, você pode editar aqui (sem depender de arquivos externos)
+    const imagePath = getImagePath(label);
+    let iconHtml;
+
+    if (imagePath) {
+      // SVG com círculo clipping para a imagem
+      iconHtml = `
+        <svg width="34" height="50" viewBox="0 0 34 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <defs>
+            <clipPath id="circle-clip">
+              <circle cx="17" cy="17" r="12"/>
+            </clipPath>
+          </defs>
+          <!-- Pin shape -->
+          <path d="M17 0C7.6 0 0 7.6 0 17c0 12.8 17 33 17 33s17-20.2 17-33C34 7.6 26.4 0 17 0z" fill="${color}"/>
+          <!-- White background circle -->
+          <circle cx="17" cy="17" r="14" fill="#fff"/>
+          <!-- Image inside clipped circle -->
+          <image href="${imagePath}" x="5" y="5" width="24" height="24" clip-path="url(#circle-clip)" preserveAspectRatio="xMidYMid slice"/>
+        </svg>
+      `;
+    } else {
+      // Fallback apenas com SVG
+      iconHtml = `
+        <svg width="34" height="50" viewBox="0 0 34 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path d="M17 0C7.6 0 0 7.6 0 17c0 12.8 17 33 17 33s17-20.2 17-33C34 7.6 26.4 0 17 0z" fill="${color}"/>
+          <circle cx="17" cy="17" r="14" fill="#fff"/>
+        </svg>
+      `;
+    }
+
     return L.divIcon({
       className: `pin-marker pin-${tipo}`,
       html: `
       <div class="pin-label">${label}</div>
-      <div>${svg}</div>
+      <div>${iconHtml}</div>
       `,
       iconSize: [34, 50],
       iconAnchor: [17, 50],
