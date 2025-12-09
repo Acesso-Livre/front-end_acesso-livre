@@ -381,6 +381,32 @@ input:-webkit-autofill:focus {
   box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
 }
 
+/* Botão de fechar/voltar */
+.close-info-btn {
+  position: absolute;
+  top: 65px;
+  left: 20px;
+  z-index: 20;
+  background: white;
+  border: none;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 1.2rem;
+  color: #000000;
+}
+
+.close-info-btn:hover {
+  transform: translateX(-3px);
+  background: #f3f3f3;
+}
+
 .login-card .close-btn {
   position: absolute;
   top: 10px;
