@@ -24,6 +24,20 @@ document.getElementById("logout-btn").addEventListener("click", () => {
     window.location.href = "/pages/auth/";
 });
 
+const menuBtn = document.getElementById('menu-btn');
+const sideModal = document.getElementById('side-modal');
+const closeModal = document.getElementById('close-modal');
+
+menuBtn.addEventListener('click', () => {
+    sideModal.classList.add('active'); // abre modal
+    menuBtn.style.display = 'none';    // esconde botão
+});
+
+closeModal.addEventListener('click', () => {
+    sideModal.classList.remove('active'); // fecha modal
+    menuBtn.style.display = 'flex';       // mostra botão novamente
+});
+
 // ==========================
 // BUSCAR COMENTÁRIOS PENDENTES
 // ==========================

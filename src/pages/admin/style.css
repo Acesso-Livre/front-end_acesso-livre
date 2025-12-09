@@ -46,6 +46,52 @@ header {
   box-shadow: var(--shadow-md);
 }
 
+/* Botão do menu */
+#menu-btn {
+    position: fixed;
+    top: 85px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 1001;
+    transition: background-color 0.3s;
+}
+
+#menu-btn:hover { background-color: #f0f0f0; }
+
+#menu-btn svg { width: 28px; height: 28px; color: #007bff; }
+
+/* Modal lateral */
+#side-modal {
+    position: fixed;
+    top: 85px; /* logo/altura do header */
+    left: -300px; /* fora da tela inicialmente */
+    width: 300px;
+    height: calc(100% - 60px); /* não ultrapassa o header */
+    background-color: #fff;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.2);
+    transition: left 0.3s ease;
+    z-index: 1000;
+    padding: 20px;
+}
+
+#side-modal.active {
+    left: 0; /* desliza para dentro */
+}
+
+#side-modal h2 { margin-bottom: 20px; }
+#side-modal a { display: block; margin: 10px 0; color: #007bff; text-decoration: none; }
+#side-modal a:hover { text-decoration: underline; }
+#close-modal:hover { color: red; }
+
 main {
   max-width: 1100px;
   margin: 30px auto;
