@@ -330,18 +330,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Renderiza os pins usando a API (apenas aqui)
     await renderPinsOnMap(map, W, H);
 
-    // --- AQUI: adicionar botão redondo ---
-    const BotaoCustom = L.Control.extend({
-      onAdd: function (map) {
-        const btn = L.DomUtil.create("button", "btn-map-custom");
-        btn.innerHTML = "?"; // ícone ou texto
-        btn.title = "Botão";
-
-        // Impede que o clique arraste o mapa
-        L.DomEvent.disableClickPropagation(btn);
-        return btn;
-      },
-    });
     map.addControl(new BotaoCustom({ position: "bottomright" }));
 
     // --- AQUI: lógica de clique para mostrar e fechar modal ---
