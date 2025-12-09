@@ -136,14 +136,14 @@ main {
 }
 
 .btn-approve:hover {
-  background: var(--bg-gradient-start);
+  background: green;
   box-shadow: var(--shadow-md);
 }
 
 .btn-reject {
-  background: #f0f7ff;
+  background: #cfe0ff;
   color: var(--primary-color);
-  border: 2px solid var(--primary-color);
+  border: none;
   padding: 10px 14px;
   border-radius: var(--border-radius-sm);
   cursor: pointer;
@@ -152,7 +152,7 @@ main {
 }
 
 .btn-reject:hover {
-  background: var(--primary-color);
+  background: red;
   color: var(--color-white);
 }
 
