@@ -1,28 +1,41 @@
 // src/auth/main.js - Entry point para página de login
-import './api.js';
-import './forgot-password.js'
+import "./api.js";
+import "./forgot-password.js";
 
-document.getElementById("login-form").addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  const email = document.getElementById("admin-email").value;
-  const password = document.getElementById("admin-password").value;
-  const errorElement = document.getElementById("login-error");
-
-  errorElement.style.display = "none";
-
-  const response = await authApi.login(email, password);
-
-  if (response && response.access_token) {
-
-    // Login OK → redireciona para admin
-    window.location.href = "/pages/admin/index.html";
-
-  } else {
-    errorElement.style.display = "block";
-    errorElement.textContent = "Usuário ou senha incorreta.";
+// Verificar se houve reset de senha com sucesso
+document.addEventListener("DOMContentLoaded", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("reset") === "success") {
+    const successElement = document.getElementById("login-success");
+    if (successElement) {
+      successElement.style.display = "block";
+      // Limpar a URL para não mostrar a mensagem se o usuário der refresh
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   }
 });
+
+document
+  .getElementById("login-form")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("admin-email").value;
+    const password = document.getElementById("admin-password").value;
+    const errorElement = document.getElementById("login-error");
+
+    errorElement.style.display = "none";
+
+    const response = await authApi.login(email, password);
+
+    if (response && response.access_token) {
+      // Login OK → redireciona para admin
+      window.location.href = "/pages/admin/index.html";
+    } else {
+      errorElement.style.display = "block";
+      errorElement.textContent = "Usuário ou senha incorreta.";
+    }
+  });
 
 // Forgot password modal
 const forgotLink = document.getElementById("forgot-password-link");
@@ -58,7 +71,7 @@ if (forgotForm) {
   });
 }
 
-window.togglePassword = function(inputId, icon) {
+window.togglePassword = function (inputId, icon) {
   const input = document.getElementById(inputId);
 
   if (input.type === "password") {

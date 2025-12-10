@@ -1,0 +1,197 @@
+/* Importar estilos base da página de autenticação */
+@import url('../../auth/style.css');
+
+/* Estilos específicos da página de redefinição de senha */
+
+.email-info {
+    color: var(--color-white);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: var(--border-radius-md);
+}
+
+.email-info strong {
+    color: var(--color-yellow);
+}
+
+/* Requisitos de senha */
+.password-requirements {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-md);
+    padding: 15px;
+    margin: 20px 0;
+    color: var(--color-white);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.password-requirements p {
+    margin: 0 0 12px 0;
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-medium);
+    opacity: 0.9;
+}
+
+.password-requirements ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+}
+
+.password-requirements li {
+    margin: 0;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.3s ease;
+}
+
+.password-requirements li::before {
+    content: "radio_button_unchecked";
+    font-family: "Material Icons";
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.password-requirements li.valid {
+    color: #4caf50;
+    font-weight: 500;
+}
+
+.password-requirements li.valid::before {
+    content: "check_circle";
+    color: #4caf50;
+}
+
+/* Botão de Reset */
+#reset-btn {
+    width: 100%;
+    margin-top: 25px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+
+
+/* Mensagem de sucesso */
+.success-message {
+    color: #4caf50;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    text-align: center;
+    background: rgba(76, 175, 80, 0.1);
+    padding: 10px;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+/* Loading no botão */
+.btn-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-spinner-small {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid var(--color-white);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Estados do botão */
+.login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.login-btn:disabled:hover {
+    transform: none;
+    background-color: var(--bg-buttom);
+    box-shadow: var(--shadow-md);
+}
+
+/* Animação de fade para mensagens */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-message,
+.success-message {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Responsividade para requisitos de senha */
+@media (max-width: 480px) {
+    .password-requirements {
+        padding: 10px;
+        margin: 10px 0;
+    }
+
+    .password-requirements p {
+        font-size: 0.85rem;
+    }
+
+    .password-requirements li {
+        font-size: 0.8rem;
+        margin: 3px 0;
+    }
+}
+
+/* Ajustes específicos para o formulário de reset */
+#reset-form {
+    margin-top: 20px;
+}
+
+#reset-form .input-group {
+    margin-bottom: 15px;
+}
+
+#reset-form .input-group input {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    height: 42px;
+}
+
+/* Estilo para o botão quando está carregando */
+#reset-btn.loading {
+    pointer-events: none;
+}
+
+#reset-btn.loading #btn-text {
+    display: none;
+}
+
+#reset-btn.loading #btn-loading {
+    display: flex;
+}
+
+#reset-btn:not(.loading) #btn-loading {
+    display: none;
+}
+
+#reset-btn:not(.loading) #btn-text {
+    display: inline;
+}

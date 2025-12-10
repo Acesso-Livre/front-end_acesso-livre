@@ -1,93 +1,121 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Acesso Livre</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Acesso Livre</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@100..900&family=Comme:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@100..900&family=Comme:wght@100..900&display=swap"
-    rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">  
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
 
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
 
-  <link rel="stylesheet" href="../../styles/global.css" />
-  <link rel="stylesheet" href="./style.css" />
-</head>
-
-<body>
-  <section class="login-container">
-    <div class="login-card">
-      <img src="/assets/img/global/acesso-livre-logo.svg" alt="Logo Acesso Livre" class="logo">
-      <h1>LOGIN</h1>
-
-      <form id="login-form" class="login-form">
-        <div class="input-group">
-          <input type="email" id="admin-email" required placeholder="Email" />
-        </div>
-        <div class="input-group">
-          <input type="password" id="admin-password" required placeholder="Senha" />
-          <span class="toggle-password material-icons" onclick="togglePassword('admin-password', this)">
-            visibility
-          </span>
-        </div>
-
-        <button type="submit" class="login-btn">Entrar</button>
-      </form>
-
-      <p id="login-error" class="error-message" style="display:none;">
-        Usuário ou senha incorreta.
-      </p>
-
-      <button id="forgot-password-link" class="register-link" type="button">
-        Esqueceu a senha?
-      </button>
-    </div>
-  </section>
-
-  <section class="hero-panel">
-    <img src="/assets/img/global/login-hero.png" alt="Painel ilustrativo" />
-  </section>
-
-  <div id="forgotPasswordModal" class="forgot-modal" style="display:none;">
+  <body>
     <section class="login-container">
-      <div class="login-card" id="forgot-card">
-        <button id="back-to-login" class="close-info-btn" type="button">&lt;</button>
-        <h2>Recuperar Senha</h2>
+      <div class="login-card">
+        <img
+          src="/assets/img/global/acesso-livre-logo.svg"
+          alt="Logo Acesso Livre"
+          class="logo"
+        />
+        <h1>LOGIN</h1>
 
-        <form id="forgot-password-form">
+        <p id="login-success" class="success-message" style="display: none">
+          Senha redefinida com sucesso! Faça login com sua nova senha.
+        </p>
+
+        <form id="login-form" class="login-form">
           <div class="input-group">
-            <input type="email" id="forgot-email" required placeholder="Email" />
+            <input type="email" id="admin-email" required placeholder="Email" />
+          </div>
+          <div class="input-group">
+            <input
+              type="password"
+              id="admin-password"
+              required
+              placeholder="Senha"
+            />
+            <span
+              class="toggle-password material-icons"
+              onclick="togglePassword('admin-password', this)"
+            >
+              visibility
+            </span>
           </div>
 
-          <button class="send-btn">Enviar</button>
+          <button type="submit" class="login-btn">Entrar</button>
         </form>
 
-        <p id="forgot-error" class="error-message" style="display:none"></p>
-        <p id="forgot-success" class="success-message" style="display:none;">
-          Instruções enviadas para o email!
+        <p id="login-error" class="error-message" style="display: none">
+          Usuário ou senha incorreta.
         </p>
-      </div>
 
-      <div class="login-card" id="success-card" style="display:none;">
-        <h2>Email foi enviado!</h2>
-        <button id="exit-success" class="login-btn">Sair</button>
+        <button id="forgot-password-link" class="register-link" type="button">
+          Esqueceu a senha?
+        </button>
       </div>
     </section>
 
     <section class="hero-panel">
       <img src="/assets/img/global/login-hero.png" alt="Painel ilustrativo" />
     </section>
-  </div>
 
-  <script type="module" src="./script.js"></script>
-</body>
+    <div id="forgotPasswordModal" class="forgot-modal" style="display: none">
+      <section class="login-container">
+        <div class="login-card" id="forgot-card">
+          <button id="back-to-login" class="close-info-btn" type="button">
+            &lt;
+          </button>
+          <h2>Recuperar Senha</h2>
 
+          <form id="forgot-password-form">
+            <div class="input-group">
+              <input
+                type="email"
+                id="forgot-email"
+                required
+                placeholder="Email"
+              />
+            </div>
+
+            <button class="send-btn">Enviar</button>
+          </form>
+
+          <p id="forgot-error" class="error-message" style="display: none"></p>
+          <p id="forgot-success" class="success-message" style="display: none">
+            Instruções enviadas para o email!
+          </p>
+        </div>
+
+        <div class="login-card" id="success-card" style="display: none">
+          <h2>Email foi enviado!</h2>
+          <button id="exit-success" class="login-btn">Sair</button>
+        </div>
+      </section>
+
+      <section class="hero-panel">
+        <img src="/assets/img/global/login-hero.png" alt="Painel ilustrativo" />
+      </section>
+    </div>
+
+    <script type="module" src="./script.js"></script>
+  </body>
 </html>
