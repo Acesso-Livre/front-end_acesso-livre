@@ -1,5 +1,14 @@
 // src/auth/api.js
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// Ambiente: Nem sempre `import.meta.env` está definido quando a página
+// é aberta diretamente no navegador sem bundler (Vite). Usamos um
+// fallback seguro para evitar exceções que interrompam a execução do
+// módulo e impeçam os handlers de UI de serem registrados.
+// Detecta `import.meta.env.VITE_API_BASE_URL` quando disponível (em módulos)
+// e usa `window.__API_BASE_URL__` como fallback. Evitamos referências
+// inválidas a `import` que causariam SyntaxError.
+const API_BASE_URL = (typeof import.meta !== 'undefined' && import.meta && import.meta.env && import.meta.env.VITE_API_BASE_URL)
+    ? import.meta.env.VITE_API_BASE_URL
+    : (window.__API_BASE_URL__ || '');
 
 // --- FUNÇÃO AUXILIAR PARA TRATAMENTO DE ERRO ROBUSTO ---
 /**
