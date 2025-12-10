@@ -46,7 +46,6 @@ async function renderRecentComments() {
         const description = comment.description || comment.comment || "";
 
         return `
-      <a href="#">
         <div class="comentario-usuario">
           <div class="title">
             <div class="comentario-local">${locationName}</div>
