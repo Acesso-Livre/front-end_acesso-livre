@@ -25,28 +25,28 @@
             <span>Acesso Livre</span>
         </div>
 
-        <div class="header-title">Lista de avaliações pendentes</div>
+        <div class="header-title">Painel Administrativo</div>
 
         <button id="logout-btn" class="logout-btn">Sair</button>
     </header>
 
     <main>
 
-        <button id="menu-btn" class="menu-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">  
-                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
-            </svg>
-        </button>
-
-        <div id="side-modal">
-            <button id="close-modal" style="float: right; background: none; border: none; font-size: 20px; cursor: pointer;">✖</button>
-            <h2>Menu</h2>
-            <a href="#">Comentários</a>
-            <a href="#">Editar Local</a>
+        <div id="nav-tabs">
+            <button class="tab-btn active" data-tab="comments">Comentários</button>
+            <button class="tab-btn" data-tab="locations">Gerenciar Locais</button>
         </div>
 
-        <div id="reviews-list">
-            <!-- Comentários serão adicionados pelo JS -->
+        <div id="comments-content" class="tab-content active">
+            <div id="reviews-list">
+                <!-- Comentários serão adicionados pelo JS -->
+            </div>
+        </div>
+
+        <div id="locations-content" class="tab-content">
+            <div id="locations-container">
+                <!-- Locais serão adicionados pelo JS -->
+            </div>
         </div>
 
         <div id="photoModal" class="modal">
@@ -66,7 +66,6 @@
                     <div class="swiper-pagination"></div>
                 </div>
             </div>
-        </div>
         </div>
 
     </main>
