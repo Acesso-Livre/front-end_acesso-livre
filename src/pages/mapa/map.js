@@ -144,7 +144,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // 1. TÍTULO E DESCRIÇÃO
       // =========================
       titleEl.textContent = details.name || "Sem nome";
-      descEl.textContent = details.description || "Sem descrição";
+      // Atualiza descrição somente se o elemento estiver presente (aba removida em alguns layouts)
+      if (descEl) {
+        descEl.textContent = details.description || "";
+      }
 
       // =========================
       // 4. ITENS DE ACESSIBILIDADE
@@ -554,6 +557,68 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Helper: mostra um modal simples (estilo alert) com mensagem e botão OK
+  function showMessageModal(message, isError = false) {
+    // Remover se já existir
+    const existing = document.getElementById("message-modal");
+    if (existing) existing.remove();
+
+    const overlay = document.createElement("div");
+    overlay.id = "message-modal";
+    overlay.style.position = "fixed";
+    overlay.style.left = 0;
+    overlay.style.top = 0;
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.backgroundColor = "rgba(0,0,0,0.45)";
+    overlay.style.zIndex = 9999;
+
+    const card = document.createElement("div");
+    card.style.background = "#fff";
+    card.style.padding = "28px";
+    card.style.borderRadius = "12px";
+    card.style.boxShadow = "0 10px 30px rgba(0,0,0,0.18)";
+    // Tornar o card quadrado e um pouco maior
+    card.style.width = "min(300px, 92%)";
+    card.style.height = "min(300px, 92%)";
+    card.style.display = "flex";
+    card.style.flexDirection = "column";
+    card.style.alignItems = "center";
+    card.style.justifyContent = "center";
+    card.style.textAlign = "center";
+
+    const msg = document.createElement("p");
+    msg.textContent = message;
+    msg.style.margin = "0 0 22px 0";
+    msg.style.fontSize = "20px";
+    msg.style.lineHeight = "1.3";
+    msg.style.color = isError ? "#b91c1c" : "#064e3b";
+    msg.style.fontWeight = "700";
+
+    const btn = document.createElement("button");
+    btn.textContent = "OK";
+    btn.style.padding = "12px 22px";
+    btn.style.border = "none";
+    btn.style.borderRadius = "10px";
+    btn.style.cursor = "pointer";
+    btn.style.background = isError ? "#ef4444" : "#10b981";
+    btn.style.color = "#fff";
+    btn.style.fontSize = "16px";
+    btn.style.fontWeight = "700";
+
+    btn.addEventListener("click", () => {
+      overlay.remove();
+    });
+
+    card.appendChild(msg);
+    card.appendChild(btn);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+  }
+
   // Controla o botão "Adicionar comentário"
   (function initCommentFlow() {
     const commentBtn = document.querySelector(".comment-btn");
@@ -702,9 +767,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // NÃO sobrescrever window.pins — apenas chamar a API para enviar comentário
         const result = await window.api.postComment(commentData);
         if (result) {
-          alert("Comentário enviado para aprovação!");
+          showMessageModal("Comentário enviado para aprovação!");
         } else {
-          alert("Erro ao enviar comentário. Tente novamente.");
+          showMessageModal("Erro ao enviar comentário. Tente novamente.", true);
           return;
         }
 
