@@ -25,31 +25,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Mapeamento de nomes de locais para imagens
   const imageMap = {
-    "estacionamento": "/assets/img/map/estacionamento.svg",
+    estacionamento: "/assets/img/map/estacionamento.svg",
     "bloco 5": "/assets/img/map/Bloco-5.svg",
     "bloco 6": "/assets/img/map/Bloco-6.svg",
     "bloco 8": "/assets/img/map/Bloco-8.svg",
     "bloco 9": "/assets/img/map/Bloco-9.svg",
     "bloco 16": "/assets/img/map/Bloco-16.svg",
     "quadra de areia": "/assets/img/map/Quadra de areia.svg",
-    "quadra": "/assets/img/map/Quadra.svg",
-    "campo": "/assets/img/map/Quadra.svg", // campo compartilha a mesma imagem da quadra
-    "biblioteca": "/assets/img/map/Biblioteca.svg",
-    "cantina": "/assets/img/map/Cantina.svg",
-    "auditório": "/assets/img/map/Auditório.svg",
-    "cores": "/assets/img/map/Cores.svg",
-    "entrada": "/assets/img/map/entrada.svg",
+    quadra: "/assets/img/map/Quadra.svg",
+    campo: "/assets/img/map/Quadra.svg", // campo compartilha a mesma imagem da quadra
+    biblioteca: "/assets/img/map/Biblioteca.svg",
+    cantina: "/assets/img/map/Cantina.svg",
+    auditório: "/assets/img/map/Auditório.svg",
+    cores: "/assets/img/map/Cores.svg",
+    entrada: "/assets/img/map/entrada.svg",
   };
 
   // Função para encontrar a imagem com matching flexível
   function getImagePath(label) {
     const lowerLabel = label.toLowerCase().trim();
-    
+
     // Busca exata primeiro
     if (imageMap[lowerLabel]) {
       return imageMap[lowerLabel];
     }
-    
+
     // Busca parcial para blocos (ex: "Bloco 5" pode estar como "bloco 5" ou com caracteres extras)
     if (lowerLabel.includes("bloco")) {
       if (lowerLabel.includes("5")) return imageMap["bloco 5"];
@@ -58,23 +58,25 @@ document.addEventListener("DOMContentLoaded", () => {
       if (lowerLabel.includes("9")) return imageMap["bloco 9"];
       if (lowerLabel.includes("16")) return imageMap["bloco 16"];
     }
-    
+
     // Busca para outros tipos
-    if (lowerLabel.includes("quadra de areia") || lowerLabel.includes("areia")) return imageMap["quadra de areia"];
+    if (lowerLabel.includes("quadra de areia") || lowerLabel.includes("areia"))
+      return imageMap["quadra de areia"];
     if (lowerLabel.includes("quadra")) return imageMap["quadra"];
     if (lowerLabel.includes("campo")) return imageMap["campo"];
-    if (lowerLabel.includes("estacionamento")) return imageMap["estacionamento"];
+    if (lowerLabel.includes("estacionamento"))
+      return imageMap["estacionamento"];
     if (lowerLabel.includes("biblioteca")) return imageMap["biblioteca"];
     if (lowerLabel.includes("cantina")) return imageMap["cantina"];
     if (lowerLabel.includes("audit")) return imageMap["auditório"];
     if (lowerLabel.includes("cores")) return imageMap["cores"];
     if (lowerLabel.includes("entrada")) return imageMap["entrada"];
-    
+
     return null;
   }
 
   // Função para criar ícone de pin
-  function makePinIcon(color = "#FF0000", tipo = "default", label="") {
+  function makePinIcon(color = "#FF0000", tipo = "default", label = "") {
     console.log("Making icon for tipo:", tipo, "name:", label);
 
     const imagePath = getImagePath(label);
@@ -209,8 +211,8 @@ document.addEventListener("DOMContentLoaded", () => {
                       <div class="comment-header">
                           <span class="user-name">${c.user_name}</span>
                           <span class="comment-date">${new Date(
-              c.created_at || c.date // Fallback para c.date se created_at não existir
-            ).toLocaleDateString("pt-BR")}</span>
+                            c.created_at || c.date // Fallback para c.date se created_at não existir
+                          ).toLocaleDateString("pt-BR")}</span>
                       </div>
                       <div class="comment-rating">${commentStars}</div>
                       <p class="comment-text">${c.comment}</p>
@@ -330,12 +332,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const accessibilityPins = [];
 
     for (const location of allLocations) {
-      const pinsForLocation = await window.api.getAccessibilityPinsForLocation(location.id);
-      accessibilityPins.push(...pinsForLocation.map(pin => ({
-        ...pin,
-        locationName: location.name,
-        locationId: location.id
-      })));
+      const pinsForLocation = await window.api.getAccessibilityPinsForLocation(
+        location.id
+      );
+      accessibilityPins.push(
+        ...pinsForLocation.map((pin) => ({
+          ...pin,
+          locationName: location.name,
+          locationId: location.id,
+        }))
+      );
     }
 
     console.log("ACCESSIBILITY PINS RECEBIDOS:", accessibilityPins);
@@ -348,7 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Criar ícone personalizado para pins de acessibilidade
       const accessibilityIcon = L.divIcon({
-        className: 'accessibility-pin',
+        className: "accessibility-pin",
         html: `
           <div style="background: white; border-radius: 50%; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #4CAF50;">
             <img src="/assets/icons/${pin.type}.svg" alt="${pin.type}" style="width: 30px; height: 30px;">
@@ -361,7 +367,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const marker = L.marker([y, x], { icon: accessibilityIcon }).addTo(map);
 
       // Adicionar popup com informações
-      marker.bindPopup(`<b>${pin.type.replace('-', ' ').toUpperCase()}</b><br>Local: ${pin.locationName}<br>Criado em: ${new Date(pin.created_at).toLocaleDateString('pt-BR')}`);
+      marker.bindPopup(
+        `<b>${pin.type.replace("-", " ").toUpperCase()}</b><br>Local: ${
+          pin.locationName
+        }<br>Criado em: ${new Date(pin.created_at).toLocaleDateString("pt-BR")}`
+      );
     });
   }
 
@@ -398,9 +408,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const color = corMap[tipo] || corMap.default;
 
-      const marker = L.marker([y, x], { icon: makePinIcon(color, tipo, p.name) }).addTo(
-        map
-      );
+      const marker = L.marker([y, x], {
+        icon: makePinIcon(color, tipo, p.name),
+      }).addTo(map);
 
       marker.on("click", async () => {
         // Usar os dados do pin diretamente (p), pois já contêm a descrição retornada pelo getAllLocations
@@ -584,8 +594,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="comment-header">
               <span class="user-name">${comment.user_name}</span>
               <span class="comment-date">${new Date(
-              comment.date
-            ).toLocaleDateString("pt-BR")}</span>
+                comment.date
+              ).toLocaleDateString("pt-BR")}</span>
             </div>
             <div class="comment-rating">${"⭐".repeat(
               comment.rating || 0
@@ -759,16 +769,36 @@ document.addEventListener("DOMContentLoaded", () => {
       const accessibilityIcons = [
         { name: "Ramp", icon: "ramp.svg", type: "ramp" },
         { name: "Elevator", icon: "elevator.svg", type: "elevator" },
-        { name: "Wide Entrance", icon: "wide-entrance.svg", type: "wide-entrance" },
-        { name: "Parking Special", icon: "parking-special.svg", type: "parking-special" },
-        { name: "Tactile Floor", icon: "tactile-floor.svg", type: "tactile-floor" },
-        { name: "Drinking Fountain", icon: "drinking-fountain.svg", type: "drinking-fountain" },
-        { name: "Fire Extinguisher", icon: "fire-extinguisher.svg", type: "fire-extinguisher" },
+        {
+          name: "Wide Entrance",
+          icon: "wide-entrance.svg",
+          type: "wide-entrance",
+        },
+        {
+          name: "Parking Special",
+          icon: "parking-special.svg",
+          type: "parking-special",
+        },
+        {
+          name: "Tactile Floor",
+          icon: "tactile-floor.svg",
+          type: "tactile-floor",
+        },
+        {
+          name: "Drinking Fountain",
+          icon: "drinking-fountain.svg",
+          type: "drinking-fountain",
+        },
+        {
+          name: "Fire Extinguisher",
+          icon: "fire-extinguisher.svg",
+          type: "fire-extinguisher",
+        },
         { name: "Libras", icon: "libras.svg", type: "libras" },
-        { name: "Generic", icon: "generic.svg", type: "generic" }
+        { name: "Generic", icon: "generic.svg", type: "generic" },
       ];
 
-      accessibilityIcons.forEach(item => {
+      accessibilityIcons.forEach((item) => {
         const iconDiv = document.createElement("div");
         iconDiv.style.display = "flex";
         iconDiv.style.flexDirection = "column";
@@ -830,12 +860,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Função para adicionar pin de acessibilidade
     async function addAccessibilityPin(iconType) {
       if (!window.currentLocationId) {
-        showMessageModal("Local não selecionado. Selecione um local primeiro.", true);
+        showMessageModal(
+          "Local não selecionado. Selecione um local primeiro.",
+          true
+        );
         return;
       }
 
       // Obter a posição do local atual
-      const currentLocation = window.pins?.find(p => p.id === window.currentLocationId);
+      const currentLocation = window.pins?.find(
+        (p) => p.id === window.currentLocationId
+      );
       if (!currentLocation) {
         showMessageModal("Local não encontrado.", true);
         return;
@@ -853,7 +888,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // Enviar para o backend
       const result = await window.api.postAccessibilityPin(pinData);
       if (!result) {
-        showMessageModal("Erro ao adicionar pin de acessibilidade. Tente novamente.", true);
+        showMessageModal(
+          "Erro ao adicionar pin de acessibilidade. Tente novamente.",
+          true
+        );
         return;
       }
 
@@ -865,7 +903,7 @@ document.addEventListener("DOMContentLoaded", () => {
         left: currentLocation.left,
         top: currentLocation.top,
         locationId: window.currentLocationId,
-        isTemporary: false
+        isTemporary: false,
       };
 
       // Adicionar à lista de pins permanentes
@@ -876,8 +914,12 @@ document.addEventListener("DOMContentLoaded", () => {
         renderTemporaryAccessibilityPin(newPin, window.currentMapInstance, img);
       }
 
-      console.log(`Pin de acessibilidade "${iconType}" adicionado com sucesso no local ${window.currentLocationId}`);
-      showMessageModal(`Pin de acessibilidade "${iconType}" adicionado com sucesso!`);
+      console.log(
+        `Pin de acessibilidade "${iconType}" adicionado com sucesso no local ${window.currentLocationId}`
+      );
+      showMessageModal(
+        `Pin de acessibilidade "${iconType}" adicionado com sucesso!`
+      );
     }
 
     // Função para renderizar pin temporário no mapa
@@ -892,7 +934,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Criar ícone personalizado para o pin de acessibilidade
       const accessibilityIcon = L.divIcon({
-        className: 'accessibility-pin',
+        className: "accessibility-pin",
         html: `
           <div style="background: white; border-radius: 50%; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
             <img src="${pin.icon}" alt="${pin.type}" style="width: 30px; height: 30px;">
@@ -902,10 +944,16 @@ document.addEventListener("DOMContentLoaded", () => {
         iconAnchor: [20, 20],
       });
 
-      const marker = L.marker([y, x], { icon: accessibilityIcon }).addTo(mapInstance);
+      const marker = L.marker([y, x], { icon: accessibilityIcon }).addTo(
+        mapInstance
+      );
 
       // Adicionar popup com informações
-      marker.bindPopup(`<b>${pin.type.replace('-', ' ').toUpperCase()}</b><br>Pin de acessibilidade temporário`);
+      marker.bindPopup(
+        `<b>${pin.type
+          .replace("-", " ")
+          .toUpperCase()}</b><br>Pin de acessibilidade temporário`
+      );
 
       // Armazenar referência do marker para possível remoção futura
       pin.marker = marker;
@@ -913,7 +961,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Função para renderizar todos os pins temporários
     function renderAllTemporaryPins(mapInstance, imgElement) {
-      temporaryAccessibilityPins.forEach(pin => {
+      temporaryAccessibilityPins.forEach((pin) => {
         if (!pin.marker) {
           renderTemporaryAccessibilityPin(pin, mapInstance, imgElement);
         }
@@ -921,9 +969,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Event listener para o botão de adicionar pin de acessibilidade
-    const btnAddAccessibilityPin = document.getElementById("btn-add-accessibility-pin");
+    const btnAddAccessibilityPin = document.getElementById(
+      "btn-add-accessibility-pin"
+    );
     if (btnAddAccessibilityPin) {
-      btnAddAccessibilityPin.addEventListener("click", showAccessibilityIconSelection);
+      btnAddAccessibilityPin.addEventListener(
+        "click",
+        showAccessibilityIconSelection
+      );
     }
 
     // estrela rating
