@@ -1,5 +1,7 @@
 // src/admin/script.js - Entry point para página admin
 import './api.js';
+// Importa o handler global de erros (mostra modal amigável em caso de falhas)
+import '../../utils/error-handler.js';
 
 // ==========================
 // PROTEÇÃO DE ROTA

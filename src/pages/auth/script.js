@@ -1,6 +1,8 @@
 // src/auth/main.js - Entry point para página de login
 import "./api.js";
 import "./forgot-password.js";
+// Importa o handler global de erros (cria modal e listeners)
+import "../../utils/error-handler.js";
 
 // Verificar se houve reset de senha com sucesso
 document.addEventListener("DOMContentLoaded", () => {
@@ -26,14 +28,32 @@ document
 
     errorElement.style.display = "none";
 
-    const response = await authApi.login(email, password);
+    try {
+      const response = await authApi.login(email, password);
 
-    if (response && response.access_token) {
-      // Login OK → redireciona para admin
-      window.location.href = "/pages/admin/index.html";
-    } else {
+      if (response && response.access_token) {
+        // Login OK → redireciona para admin
+        window.location.href = "/pages/admin/index.html";
+        return;
+      }
+
+      // Caso raro: sem token retornado
+      errorElement.textContent = "Email ou senha incorreta";
       errorElement.style.display = "block";
-      errorElement.textContent = "Usuário ou senha incorreta.";
+    } catch (err) {
+      // Se for erro de usuário (ex.: 401/400), mostrar mensagem simples
+      if (err && err.isUserError) {
+        errorElement.textContent = "Email ou senha incorreta";
+        errorElement.style.display = "block";
+        return;
+      }
+
+      // Erro de sistema: delegar ao modal global (se disponível)
+      if (window.mostrarErroParaUsuario) {
+        window.mostrarErroParaUsuario('Ops, algo deu errado ao tentar entrar.', err);
+      } else {
+        console.error(err);
+      }
     }
   });
 

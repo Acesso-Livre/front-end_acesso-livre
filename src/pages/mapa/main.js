@@ -1,6 +1,8 @@
 // src/mapa/main.js - Entry point para página do mapa
 import './api.js';
 import './map.js';
+// Importa handler global de erros
+import '../../utils/error-handler.js';
 
 // Test functions para desenvolvimento
 window.testGetLocations = async function (skip = 0, limit = 10) {

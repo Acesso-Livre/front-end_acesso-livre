@@ -27,7 +27,10 @@ async function getErrorMessage(response) {
     }
 
     // Prioriza a mensagem do corpo, depois o status HTTP
-    return errorDetails.message || errorDetails.detail || `Erro ${response.status}: Falha na solicitação.`;
+    return {
+        message: errorDetails.message || errorDetails.detail || `Erro ${response.status}: Falha na solicitação.`,
+        status: response.status
+    };
 }
 
 export const authApi = {
@@ -43,8 +46,12 @@ export const authApi = {
             });
 
             if (!response.ok) {
-                const errorMessage = await getErrorMessage(response);
-                throw new Error(errorMessage);
+                const errInfo = await getErrorMessage(response);
+                const err = new Error(errInfo.message);
+                // Marcar status e se é erro de usuário (4xx)
+                err.status = errInfo.status || response.status;
+                err.isUserError = err.status >= 400 && err.status < 500;
+                throw err;
             }
 
             const data = await response.json();
@@ -108,8 +115,11 @@ export const authApi = {
 
             // --- Tratamento de Erro Robusto (Aprimorado) ---
             if (!response.ok) {
-                const errorMessage = await getErrorMessage(response);
-                throw new Error(errorMessage);
+                const errInfo = await getErrorMessage(response);
+                const err = new Error(errInfo.message);
+                err.status = errInfo.status || response.status;
+                err.isUserError = err.status >= 400 && err.status < 500;
+                throw err;
             }
             // --- Fim do Tratamento de Erro Robusto ---
 
