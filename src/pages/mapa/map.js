@@ -325,6 +325,55 @@ document.addEventListener("DOMContentLoaded", () => {
     return "default";
   }
 
+  // Render de pins de acessibilidade
+  async function renderAccessibilityPinsOnMap(map, W, H) {
+    // Buscar pins de acessibilidade para todos os locais
+    const allLocations = window.pins || [];
+    const accessibilityPins = [];
+
+    for (const location of allLocations) {
+      const pinsForLocation = await window.api.getAccessibilityPinsForLocation(
+        location.id
+      );
+      accessibilityPins.push(
+        ...pinsForLocation.map((pin) => ({
+          ...pin,
+          locationName: location.name,
+          locationId: location.id,
+        }))
+      );
+    }
+
+    console.log("ACCESSIBILITY PINS RECEBIDOS:", accessibilityPins);
+
+    accessibilityPins.forEach((pin) => {
+      const top = parseFloat(pin.top) || 0;
+      const left = parseFloat(pin.left) || 0;
+      const x = (left / 100) * W;
+      const y = (top / 100) * H;
+
+      // Criar ícone personalizado para pins de acessibilidade
+      const accessibilityIcon = L.divIcon({
+        className: "accessibility-pin",
+        html: `
+          <div style="background: white; border-radius: 50%; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #4CAF50;">
+            <img src="/assets/icons/${pin.type}.svg" alt="${pin.type}" style="width: 30px; height: 30px;">
+          </div>
+        `,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+      });
+
+      const marker = L.marker([y, x], { icon: accessibilityIcon }).addTo(map);
+
+      // Adicionar popup com informações
+      marker.bindPopup(
+        `<b>${pin.type.replace("-", " ").toUpperCase()}</b><br>Local: ${
+          pin.locationName
+        }<br>Criado em: ${new Date(pin.created_at).toLocaleDateString("pt-BR")}`
+      );
+    });
+  }
 
   // Render de pins (chama window.api.getAllLocations)
   async function renderPinsOnMap(map, W, H) {
@@ -369,6 +418,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
+    // Buscar e renderizar pins de acessibilidade existentes
+    await renderAccessibilityPinsOnMap(map, W, H);
 
     // Ocultar loader após carregar pins
     const loader = document.getElementById("map-loader");
@@ -550,7 +601,6 @@ document.addEventListener("DOMContentLoaded", () => {
               comment.rating || 0
             )}</div>
             <p class="comment-text">${comment.comment}</p>
-            ${comment.accessibility_type ? `<div class="accessibility-pin-display" style="margin-top: 10px;"><img src="/assets/icons/${comment.accessibility_type}.svg" alt="${comment.accessibility_type}" style="width: 30px; height: 30px; border-radius: 50%; background: white; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); cursor: pointer;" onclick="sendPinToComments('${comment.accessibility_type}', '${comment.id}')"></div>` : ''}
           </div>
         `
           )
@@ -624,29 +674,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(overlay);
   }
 
-  // Tipo de acessibilidade selecionado para o comentário
-  let selectedAccessibilityType = null;
-
-  // Função para enviar pin clicado aos comentários
-  function sendPinToComments(type, commentId) {
-    const commentData = {
-      comment: "Pin clicado: " + type,
-      accessibility_type: type,
-    };
-
-    window.api.postComment(commentData).then(result => {
-      if (result) {
-        showMessageModal("Pin enviado aos comentários!");
-        // Recarregar comentários se necessário
-        // loadCommentsForLocation(window.currentLocationId);
-      } else {
-        showMessageModal("Erro ao enviar pin.", true);
-      }
-    });
-  }
-
-  // Tornar a função global para uso no onclick
-  window.sendPinToComments = sendPinToComments;
+  // Array para armazenar pins de acessibilidade adicionados nesta sessão
+  let sessionAddedPins = [];
 
   // Controla o botão "Adicionar comentário"
   (function initCommentFlow() {
@@ -828,21 +857,116 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.appendChild(overlay);
     }
 
-    // Função para adicionar pin de acessibilidade como comentário
+    // Função para adicionar pin de acessibilidade
     async function addAccessibilityPin(iconType) {
-      const commentData = {
-        comment: "Pin de acessibilidade adicionado: " + iconType,
-        accessibility_type: iconType,
+      if (!window.currentLocationId) {
+        showMessageModal(
+          "Local não selecionado. Selecione um local primeiro.",
+          true
+        );
+        return;
+      }
+
+      // Obter a posição do local atual
+      const currentLocation = window.pins?.find(
+        (p) => p.id === window.currentLocationId
+      );
+      if (!currentLocation) {
+        showMessageModal("Local não encontrado.", true);
+        return;
+      }
+
+      // Preparar dados para enviar à API
+      const pinData = {
+        type: iconType,
+        left: currentLocation.left,
+        top: currentLocation.top,
+        location_id: window.currentLocationId,
+        created_at: new Date().toISOString(),
       };
 
-      const result = await window.api.postComment(commentData);
-      if (result) {
-        showMessageModal("Pin de acessibilidade enviado com sucesso!");
-      } else {
-        showMessageModal("Erro ao enviar pin de acessibilidade.", true);
+      // Enviar para o backend
+      const result = await window.api.postAccessibilityPin(pinData);
+      if (!result) {
+        showMessageModal(
+          "Erro ao adicionar pin de acessibilidade. Tente novamente.",
+          true
+        );
+        return;
       }
+
+      // Criar pin com ID real do backend
+      const newPin = {
+        id: result.id || `temp-${Date.now()}`,
+        type: iconType,
+        icon: `/assets/icons/${iconType}.svg`,
+        left: currentLocation.left,
+        top: currentLocation.top,
+        locationId: window.currentLocationId,
+        isTemporary: false,
+      };
+
+      // Adicionar à lista de pins permanentes
+      temporaryAccessibilityPins.push(newPin);
+
+      // Renderizar o pin no mapa se o mapa estiver carregado
+      if (window.currentMapInstance && img) {
+        renderTemporaryAccessibilityPin(newPin, window.currentMapInstance, img);
+      }
+
+      console.log(
+        `Pin de acessibilidade "${iconType}" adicionado com sucesso no local ${window.currentLocationId}`
+      );
+      showMessageModal(
+        `Pin de acessibilidade "${iconType}" adicionado com sucesso!`
+      );
     }
 
+    // Função para renderizar pin temporário no mapa
+    function renderTemporaryAccessibilityPin(pin, mapInstance, imgElement) {
+      if (!mapInstance || !imgElement) return;
+
+      const W = imgElement.naturalWidth;
+      const H = imgElement.naturalHeight;
+
+      const x = (pin.left / 100) * W;
+      const y = (pin.top / 100) * H;
+
+      // Criar ícone personalizado para o pin de acessibilidade
+      const accessibilityIcon = L.divIcon({
+        className: "accessibility-pin",
+        html: `
+          <div style="background: white; border-radius: 50%; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+            <img src="${pin.icon}" alt="${pin.type}" style="width: 30px; height: 30px;">
+          </div>
+        `,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+      });
+
+      const marker = L.marker([y, x], { icon: accessibilityIcon }).addTo(
+        mapInstance
+      );
+
+      // Adicionar popup com informações
+      marker.bindPopup(
+        `<b>${pin.type
+          .replace("-", " ")
+          .toUpperCase()}</b><br>Pin de acessibilidade temporário`
+      );
+
+      // Armazenar referência do marker para possível remoção futura
+      pin.marker = marker;
+    }
+
+    // Função para renderizar todos os pins temporários
+    function renderAllTemporaryPins(mapInstance, imgElement) {
+      temporaryAccessibilityPins.forEach((pin) => {
+        if (!pin.marker) {
+          renderTemporaryAccessibilityPin(pin, mapInstance, imgElement);
+        }
+      });
+    }
 
     // Event listener para o botão de adicionar pin de acessibilidade
     const btnAddAccessibilityPin = document.getElementById(
@@ -945,7 +1069,6 @@ document.addEventListener("DOMContentLoaded", () => {
           location_id: window.currentLocationId,
           status: "pending",
           images: selectedImages, // Passar o array de arquivos selecionados
-          accessibility_type: selectedAccessibilityType,
         };
 
         // NÃO sobrescrever window.pins — apenas chamar a API para enviar comentário
@@ -964,9 +1087,6 @@ document.addEventListener("DOMContentLoaded", () => {
           s.textContent = "☆";
         });
         ratingInput.value = "";
-        selectedImages = [];
-        renderFileList();
-        selectedAccessibilityType = null;
 
         // fecha addCommentModal e reabre infoModal
         const addModal = document.getElementById(MODAL_IDS.addCommentModal);
