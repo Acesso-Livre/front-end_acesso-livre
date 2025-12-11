@@ -97,6 +97,9 @@ export async function postComment(commentData) {
         formData.append('comment', commentData.comment);
         formData.append('location_id', commentData.location_id);
         formData.append('status', commentData.status);
+        if (commentData.accessibility_type) {
+            formData.append('accessibility_type', commentData.accessibility_type);
+        }
 
         // Enviar imagens
         if (commentData.images && Array.isArray(commentData.images)) {
@@ -107,7 +110,7 @@ export async function postComment(commentData) {
             formData.append("images", commentData.images);
         }
 
-        const response = await fetch(`${API_BASE_URL}/comments`, {
+        const response = await fetch('/api/comments', {
             method: "POST",
             body: formData,
         });
@@ -126,7 +129,7 @@ export async function postComment(commentData) {
 // Buscar comentários pendentes (admin)
 export async function getPendingComments() {
     try {
-        const response = await fetch(`${API_BASE_URL}/comments/pending`);
+        const response = await fetch('/api/comments/pending');
         if (!response.ok) throw new Error("Erro ao buscar pendentes");
         return await response.json();
     } catch (error) {
@@ -203,40 +206,7 @@ export async function fetchRecentComments() {
     }
 }
 
-// Postar um pin de acessibilidade
-export async function postAccessibilityPin(pinData) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/locations/accessibility-pins`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(pinData),
-        });
 
-        if (!response.ok) {
-            throw new Error("Erro ao postar pin de acessibilidade");
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Erro postAccessibilityPin:", error);
-        return null;
-    }
-}
-
-// Buscar pins de acessibilidade para um local
-export async function getAccessibilityPinsForLocation(locationId) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/locations/${locationId}/accessibility-pins`);
-        if (!response.ok) throw new Error("Erro ao buscar pins de acessibilidade");
-        const data = await response.json();
-        return data.accessibility_pins || [];
-    } catch (error) {
-        console.error("Erro getAccessibilityPinsForLocation:", error);
-        return [];
-    }
-}
 
 // Export global para compatibilidade
 window.api = {
@@ -252,6 +222,4 @@ window.api = {
     getApprovedCommentsForLocation,
     getCommentsByLocationId,
     fetchRecentComments,
-    postAccessibilityPin,
-    getAccessibilityPinsForLocation,
 };
