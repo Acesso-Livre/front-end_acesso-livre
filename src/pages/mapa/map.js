@@ -13,7 +13,6 @@ const MODAL_IDS = {
 document.addEventListener("DOMContentLoaded", () => {
   const imgUrl = "/assets/img/map/mapa_ifba.svg";
   const img = new Image();
-  // img.src = imgUrl; // Atribuído após definição dos handlers para evitar race conditions
 
   // Garantir modal fechado
   const initialModal = document.getElementById(MODAL_IDS.infoModal);
@@ -248,10 +247,11 @@ document.addEventListener("DOMContentLoaded", () => {
         let allImages = [];
         comments.forEach((c) => {
           if (c.images && Array.isArray(c.images)) {
-            allImages = allImages.concat(c.images);
-          } else if (c.images && typeof c.images === "string") {
-            // Caso venha como string única (depende da API)
-            allImages.push(c.images);
+            c.images.forEach((imgObj) => {
+              if (imgObj.url && typeof imgObj.url === "string") {
+                allImages.push(imgObj.url);
+              }
+            });
           }
         });
 
