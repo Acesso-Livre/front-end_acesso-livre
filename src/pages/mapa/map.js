@@ -4,7 +4,6 @@
 */
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 const MODAL_IDS = {
   infoModal: "infoModal",
   addCommentModal: "addCommentModal",
@@ -918,6 +917,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let selectedImages = [];
 
+    // Função para validar formatos de imagem permitidos
+    function isAllowedImageFile(file) {
+      const allowedExtensions = ['png', 'jpg', 'jpeg', 'webp', 'heic', 'heif'];
+      const fileName = file.name.toLowerCase();
+      const fileExtension = fileName.split('.').pop();
+      return allowedExtensions.includes(fileExtension);
+    }
+
     const imgInput = document.getElementById("comment-image");
     const fileList = document.getElementById("file-list");
     const btnAddImage = document.getElementById("btn-add-image");
@@ -930,29 +937,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (imgInput) {
       imgInput.addEventListener("change", () => {
-        if (!imgInput.files || imgInput.files.length === 0) return;
-
-        let invalidFound = false;
         for (const file of imgInput.files) {
-          const isJpeg =
-            (file.type && file.type.toLowerCase() === "image/png") ||
-            /\.(jpe?g)$/i.test(file.name || "");
-
-          if (!isJpeg) {
-            invalidFound = true;
-            continue; // ignora arquivos inválidos
+          if (file.size > 10485760) { // 10MB limit
+            showMessageModal("Imagem muito grande. O tamanho máximo é 10MB.", true);
+            continue;
           }
-
+          if (!isAllowedImageFile(file)) {
+            const fileExtension = file.name.split('.').pop().toUpperCase();
+            showMessageModal(`Arquivo rejeitado: "${file.name}"\n\nFormato ".${fileExtension}" não é permitido.\n\nUse apenas: PNG, JPG, JPEG, WEBP, HEIC ou HEIF.`, true);
+            continue;
+          }
           selectedImages.push(file);
-        }
-
-        if (invalidFound) {
-          // Usa o modal já existente para mostrar erro do usuário
-          try {
-            showMessageModal("Envie apenas arquivos png", true);
-          } catch (e) {
-            alert("Envie apenas arquivos png");
-          }
         }
 
         imgInput.value = "";

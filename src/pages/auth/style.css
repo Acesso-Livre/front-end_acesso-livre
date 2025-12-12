@@ -11,7 +11,7 @@ body {
 }
 
 .login-container {
-  width: 30%;
+  width: 100%;
   flex: 0 0 auto;
   min-height: 100vh;
   display: flex;
@@ -22,13 +22,7 @@ body {
 }
 
 .hero-panel {
-  width: 70%;
-  flex: 0 0 auto;
-  min-height: 100vh;
-  background: var(--bg-color);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: none;
 }
 
 .hero-panel img {
@@ -176,13 +170,13 @@ input:-webkit-autofill:focus {
 .login-btn {
   width: 140px;
   padding: 12px 24px;
-  border: none;
+  border: 2px solid #0055CC;
   border-radius: var(--border-radius-lg);
   cursor: pointer;
   display: block;
   margin: 20px auto 0 auto;
-  background: var(--bg-buttom);
-  color: var(--color-white);
+  background: var(--color-white);
+  color: #0055CC;
   font-size: var(--font-size-text);
   font-weight: var(--font-weight-bold);
   font-family: var(--font-family-base);
@@ -193,7 +187,7 @@ input:-webkit-autofill:focus {
 /* Hover */
 .login-btn:hover {
   transform: translateY(-2px);
-  background-color: var(--bg-buttom-hover);
+  background-color: #f0f8ff;
   box-shadow: var(--shadow-lg);
 }
 
@@ -211,7 +205,7 @@ input:-webkit-autofill:focus {
   transform: translateX(-50%);
   width: 80%;
   height: 6px;
-  background: var(--bg-buttom);
+  background: #0055CC;
   opacity: 0.35;
   filter: blur(12px);
   border-radius: 50%;
@@ -253,7 +247,7 @@ input:-webkit-autofill:focus {
   border: none;
   color: var(--color-white);
   cursor: pointer;
-  font-size: var(--font-size-text);
+  font-size: calc(var(--font-size-text) * 1.5);
   margin-top: 20px;
   text-decoration: underline;
   font-weight: var(--font-weight-regular);
@@ -264,8 +258,8 @@ input:-webkit-autofill:focus {
 
 /* Hover suave */
 .register-link:hover {
-  color: var(--secondary-color);
-  opacity: 0.9;
+  color: #ffff00;
+  opacity: 1;
 }
 
 /* Clique (crescer) */
