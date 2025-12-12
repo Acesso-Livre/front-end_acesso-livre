@@ -305,6 +305,4 @@ window.api = {
     getApprovedCommentsForLocation,
     getCommentsByLocationId,
     fetchRecentComments,
-    postAccessibilityPin,
-    getAccessibilityPinsForLocation,
 };
