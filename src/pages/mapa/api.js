@@ -107,9 +107,16 @@ export async function postComment(commentData) {
             formData.append("images", commentData.images);
         }
 
+        const token = sessionStorage.getItem('authToken');
+        const headers = {};
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
         const response = await fetch(`${API_BASE_URL}/comments`, {
             method: "POST",
             body: formData,
+            headers: headers,
         });
 
         if (!response.ok) {
@@ -164,7 +171,17 @@ export async function rejectComment(commentId) {
 // Buscar SOMENTE comentários aprovados de um local
 export async function getApprovedCommentsForLocation(locationId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/comments/${locationId}/comments`);
+        const token = sessionStorage.getItem('authToken');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/comments/${locationId}/comments`, {
+            headers: headers
+        });
 
         if (!response.ok) throw new Error("Erro buscar comentários aprovados");
 
@@ -180,7 +197,17 @@ export async function getApprovedCommentsForLocation(locationId) {
 // Buscar TODOS os comentários de um local (pendente, aprovado, rejeitado)
 export async function getCommentsByLocationId(locationId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/comments/${locationId}/comments`);
+        const token = sessionStorage.getItem('authToken');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/comments/${locationId}/comments`, {
+            headers: headers
+        });
         if (!response.ok) throw new Error("Erro ao buscar comentários");
         const data = await response.json();
         return data.comments || [];
@@ -193,12 +220,73 @@ export async function getCommentsByLocationId(locationId) {
 // Buscar comentários recentes para página inicial
 export async function fetchRecentComments() {
     try {
-        const response = await fetch(`${API_BASE_URL}/comments/recent`);
+        const token = sessionStorage.getItem('authToken');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/comments/recent`, {
+            headers: headers
+        });
         if (!response.ok) throw new Error("Erro ao buscar comentários recentes");
         const data = await response.json();
         return data.comments || [];
     } catch (error) {
         console.error("Erro fetchRecentComments:", error);
+        return [];
+    }
+}
+
+// Postar um pin de acessibilidade
+export async function postAccessibilityPin(pinData) {
+    try {
+        const token = sessionStorage.getItem('authToken');
+        const headers = {
+            "Content-Type": "application/json",
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/locations/accessibility-pins`, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(pinData),
+        });
+
+        if (!response.ok) {
+            throw new Error("Erro ao postar pin de acessibilidade");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Erro postAccessibilityPin:", error);
+        return null;
+    }
+}
+
+// Buscar pins de acessibilidade para um local
+export async function getAccessibilityPinsForLocation(locationId) {
+    try {
+        const token = sessionStorage.getItem('authToken');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/locations/${locationId}/accessibility-pins`, {
+            headers: headers
+        });
+        if (!response.ok) throw new Error("Erro ao buscar pins de acessibilidade");
+        const data = await response.json();
+        return data.accessibility_pins || [];
+    } catch (error) {
+        console.error("Erro getAccessibilityPinsForLocation:", error);
         return [];
     }
 }

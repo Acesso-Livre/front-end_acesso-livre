@@ -130,6 +130,26 @@ window.reject = async function (id) {
 };
 
 // ==========================
+// FUNÇÃO HELPER: Resolver IDs de imagem para URLs
+// ==========================
+function resolveImageUrl(image) {
+  // Se for string (URL já resolvida)
+  if (typeof image === 'string') {
+    return image;
+  }
+  // Se for objeto com url (compatibilidade com formato atual)
+  if (image && typeof image === 'object' && image.url) {
+    return image.url;
+  }
+  // Se for objeto com id (novo formato)
+  if (image && typeof image === 'object' && image.id) {
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+    return `${API_BASE_URL}/images/${image.id}`;
+  }
+  return null;
+}
+
+// ==========================
 // MODAL DE FOTOS COM SWIPER
 // ==========================
 window.viewPhotos = function (imagesData) {
@@ -147,52 +167,64 @@ window.viewPhotos = function (imagesData) {
 
   // Mostrar modal com spinner
   swiperWrapper.innerHTML =
-    '<div class="loading-container" id="loadingSpinner-foto"><div class="loading-spinner"></div></div>';
+    '<div class="loading-container"><div class="loading-spinner"></div></div>';
   modal.style.display = "flex";
 
+  // Processar imagens
   let imageArray = [];
-
+  
   if (Array.isArray(images)) {
-    // Verificar se é array de objetos com propriedade url ou array de strings
-    if (images.length > 0 && typeof images[0] === "object" && images[0].url) {
-      imageArray = images.map((img) => img.url);
-    } else {
-      imageArray = images;
-    }
+    images.forEach((img) => {
+      const url = resolveImageUrl(img);
+      if (url) imageArray.push(url);
+    });
   } else if (typeof images === "string" && images.trim()) {
     imageArray = images.split(",").map((img) => img.trim());
   }
 
-  // Simular carregamento
-  setTimeout(() => {
-    // Limpar spinner e adicionar fotos
-    swiperWrapper.innerHTML = "";
-
+  // Renderizar imagens sem delay desnecessário
+  swiperWrapper.innerHTML = "";
+  
+  if (imageArray.length === 0) {
+    // Fallback: sem imagens
+    swiperWrapper.innerHTML = `
+      <div class="swiper-slide" style="background-color: #ffffff; height: 100%; display: flex; align-items: center; justify-content: center;">
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; color: #9ca3af;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; opacity: 0.5;">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          <p style="font-size: 14px; font-weight: 500;">Sem imagens</p>
+        </div>
+      </div>`;
+  } else {
+    // Adicionar slides
     imageArray.forEach((url) => {
       const slide = document.createElement("div");
       slide.className = "swiper-slide";
-      slide.innerHTML = `<img src="${url}" alt=""/>`;
+      slide.innerHTML = `<img src="${url}" alt="Foto" style="width: 100%; height: 100%; object-fit: cover;">`;
       swiperWrapper.appendChild(slide);
     });
+  }
 
-    // Destruir instância anterior (se existir) para evitar bug
-    if (window.swiperInstance) {
-      window.swiperInstance.destroy(true, true);
-    }
+  // Destruir instância anterior (se existir) para evitar bug
+  if (window.swiperInstance) {
+    window.swiperInstance.destroy(true, true);
+  }
 
-    // Criar Swiper
-    window.swiperInstance = new Swiper(".swiper", {
-      loop: true,
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-    });
-  }, 1000); // 1 segundo
+  // Criar Swiper
+  window.swiperInstance = new Swiper(".swiper", {
+    loop: imageArray.length > 1,
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });
 };
 
 // Fechar modal

@@ -119,6 +119,74 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ===== FUNÇÃO HELPER: Resolver IDs de imagem para URLs =====
+  // Se o backend retornar imagens com IDs, esta função converte para URLs
+  function resolveImageUrl(image) {
+    // Se for string (URL já resolvida)
+    if (typeof image === 'string') {
+      return image;
+    }
+    // Se for objeto com url (compatibilidade com formato atual)
+    if (image && typeof image === 'object' && image.url) {
+      return image.url;
+    }
+    // Se for objeto com id (novo formato)
+    if (image && typeof image === 'object' && image.id) {
+      return `${API_BASE_URL}/images/${image.id}`;
+    }
+    return null;
+  }
+
+  // ===== FUNÇÃO HELPER: Renderizar carrossel de imagens =====
+  // Centraliza a lógica de exibição de imagens para reutilização
+  function renderImagesCarousel(swiperWrapper, images) {
+    if (!images || images.length === 0) {
+      // Fallback: sem imagens
+      swiperWrapper.innerHTML = `
+        <div class="swiper-slide" style="background-color: #ffffff; height: 100%;">
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; color: #9ca3af;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; opacity: 0.5;">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <p style="font-size: 14px; font-weight: 500;">Sem imagens disponíveis</p>
+          </div>
+        </div>`;
+      return;
+    }
+
+    // Renderizar slides
+    swiperWrapper.innerHTML = '';
+    images.forEach((image) => {
+      const imageUrl = resolveImageUrl(image);
+      if (imageUrl) {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+        slide.innerHTML = `
+          <div class="project-img">
+            <img src="${imageUrl}" alt="Imagem do comentário" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>`;
+        swiperWrapper.appendChild(slide);
+      }
+    });
+
+    // Reinitializar Swiper
+    if (window.swiperInstance) {
+      window.swiperInstance.destroy();
+    }
+    window.swiperInstance = new Swiper('.swiper', {
+      loop: images.length > 1,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+      },
+    });
+  }
+
   // Abre modal com dados (somente apresentação)
   async function openLocationModal(locationData) {
     try {
@@ -247,50 +315,11 @@ document.addEventListener("DOMContentLoaded", () => {
         let allImages = [];
         comments.forEach((c) => {
           if (c.images && Array.isArray(c.images)) {
-            c.images.forEach((imgObj) => {
-              if (imgObj.url && typeof imgObj.url === "string") {
-                allImages.push(imgObj.url);
-              }
-            });
+            allImages = allImages.concat(c.images);
           }
         });
 
-        if (allImages.length > 0) {
-          swiperWrapper.innerHTML = ""; // Limpar loader antes de adicionar imagens
-          allImages.forEach((imgUrl) => {
-            swiperWrapper.innerHTML += `
-                  <div class="swiper-slide">
-                      <div class="project-img">
-                          <img src="${imgUrl}" alt="Imagem do comentário">
-                      </div>
-                  </div>`;
-          });
-        } else {
-          swiperWrapper.innerHTML = `
-              <div class="swiper-slide" style="background-color: #ffffff; height: 100%;">
-                  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; color: #9ca3af;">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; opacity: 0.5;">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                        <polyline points="21 15 16 10 5 21"></polyline>
-                      </svg>
-                      <p style="font-size: 14px; font-weight: 500;">Sem imagens disponíveis</p>
-                  </div>
-              </div>`;
-        }
-
-        // Recarregar o carrossel
-        if (window.swiperInstance) window.swiperInstance.destroy();
-        window.swiperInstance = new Swiper(".swiper", {
-          loop: allImages.length > 1, // Só faz loop se tiver mais de 1 imagem
-          navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-          },
-          pagination: {
-            el: ".swiper-pagination",
-          },
-        });
+        renderImagesCarousel(swiperWrapper, allImages);
       } catch (error) {
         console.error("Erro ao carregar dados do local:", error);
         commentsList.innerHTML = "<p>Erro ao carregar comentários.</p>";
