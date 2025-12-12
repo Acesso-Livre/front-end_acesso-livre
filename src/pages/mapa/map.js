@@ -854,18 +854,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const fileList = document.getElementById("file-list");
     const btnAddImage = document.getElementById("btn-add-image");
 
-    btnAddImage.addEventListener("click", () => {
-      imgInput.click();
-    });
+    if (btnAddImage) {
+      btnAddImage.addEventListener("click", () => {
+        if (imgInput) imgInput.click();
+      });
+    }
 
-    imgInput.addEventListener("change", () => {
-      for (const file of imgInput.files) {
-        selectedImages.push(file);
-      }
+    if (imgInput) {
+      imgInput.addEventListener("change", () => {
+        if (!imgInput.files || imgInput.files.length === 0) return;
 
-      imgInput.value = "";
-      renderFileList();
-    });
+        let invalidFound = false;
+        for (const file of imgInput.files) {
+          const isJpeg =
+            (file.type && file.type.toLowerCase() === "image/png") ||
+            /\.(jpe?g)$/i.test(file.name || "");
+
+          if (!isJpeg) {
+            invalidFound = true;
+            continue; // ignora arquivos inválidos
+          }
+
+          selectedImages.push(file);
+        }
+
+        if (invalidFound) {
+          // Usa o modal já existente para mostrar erro do usuário
+          try {
+            showMessageModal("Envie apenas arquivos png", true);
+          } catch (e) {
+            alert("Envie apenas arquivos png");
+          }
+        }
+
+        imgInput.value = "";
+        renderFileList();
+      });
+    }
 
     function renderFileList() {
       fileList.innerHTML = "";
