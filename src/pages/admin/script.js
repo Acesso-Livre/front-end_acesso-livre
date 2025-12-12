@@ -88,27 +88,23 @@ async function loadPendingComments() {
 
     card.innerHTML = `
       <div class="top-info">
-        <strong>${comment.user_name ?? "Usuário"}</strong> — ${
-      comment.rating ?? ""
-    } ⭐
+        <strong>${comment.user_name ?? "Usuário"}</strong> — ${comment.rating ?? ""
+      } ⭐
       </div>
 
       <p class="comment-text">${comment.comment}</p>
 
       <div class="actions">
-        <button class="btn-approve" onclick="approve(${
-          comment.id
-        })">Aprovar</button>
-        <button class="btn-reject" onclick="reject(${
-          comment.id
-        })">Rejeitar</button>
-        ${
-          hasImages
-            ? `<button class="btn-photos" onclick="viewPhotos(decodeURIComponent('${encodeURIComponent(
-                JSON.stringify(images)
-              )}'))">Fotos</button>`
-            : ""
-        }
+        <button class="btn-approve" onclick="approve(${comment.id
+      })">Aprovar</button>
+        <button class="btn-reject" onclick="reject(${comment.id
+      })">Rejeitar</button>
+        ${hasImages
+        ? `<button class="btn-photos" onclick="viewPhotos(decodeURIComponent('${encodeURIComponent(
+          JSON.stringify(images)
+        )}'))">Fotos</button>`
+        : ""
+      }
       </div>
     `;
 
@@ -172,7 +168,7 @@ window.viewPhotos = function (imagesData) {
 
   // Processar imagens
   let imageArray = [];
-  
+
   if (Array.isArray(images)) {
     images.forEach((img) => {
       const url = resolveImageUrl(img);
@@ -184,7 +180,7 @@ window.viewPhotos = function (imagesData) {
 
   // Renderizar imagens sem delay desnecessário
   swiperWrapper.innerHTML = "";
-  
+
   if (imageArray.length === 0) {
     // Fallback: sem imagens
     swiperWrapper.innerHTML = `
@@ -273,10 +269,16 @@ async function loadLocationsList() {
     html += '<div class="locations-grid">';
 
     locations.forEach((location) => {
-      // Processar imagens
+      // Processar imagens - suporta arrays de strings ou objetos
       let images = [];
       if (Array.isArray(location.images)) {
-        images = location.images.filter((img) => img && img.trim());
+        images = location.images
+          .map((img) => {
+            if (typeof img === 'string') return img.trim();
+            if (img && typeof img === 'object' && img.url) return img.url;
+            return null;
+          })
+          .filter((img) => img);
       } else if (
         typeof location.images === "string" &&
         location.images.trim()
@@ -293,9 +295,8 @@ async function loadLocationsList() {
         : '<div class="location-grid-no-img">📍</div>';
 
       html += `
-                <div class="location-grid-card" onclick="viewLocationDetails(${
-                  location.id
-                })">
+                <div class="location-grid-card" onclick="viewLocationDetails(${location.id
+        })">
                     <div class="location-grid-image">
                         ${imageHtml}
                     </div>
@@ -321,10 +322,16 @@ async function viewLocationDetails(locationId) {
   try {
     const location = await window.adminApi.getLocation(locationId);
 
-    // Processar imagens
+    // Processar imagens - suporta arrays de strings ou objetos
     let images = [];
     if (Array.isArray(location.images)) {
-      images = location.images.filter((img) => img && img.trim());
+      images = location.images
+        .map((img) => {
+          if (typeof img === 'string') return img.trim();
+          if (img && typeof img === 'object' && img.url) return img.url;
+          return null;
+        })
+        .filter((img) => img);
     } else if (typeof location.images === "string" && location.images.trim()) {
       images = location.images
         .split(",")
@@ -371,11 +378,10 @@ async function viewLocationDetails(locationId) {
         .map(
           (item) => `
                 <li>
-                    ${
-                      item.image
-                        ? `<img src="${item.image}" alt="${item.name}" style="width: 20px; height: 20px; margin-right: 8px;">`
-                        : ""
-                    }
+                    ${item.image
+              ? `<img src="${item.image}" alt="${item.name}" style="width: 20px; height: 20px; margin-right: 8px;">`
+              : ""
+            }
                     ${item.name}
                 </li>
             `
@@ -401,9 +407,8 @@ async function viewLocationDetails(locationId) {
                 <section class="detail-info-section">
                     <div class="detail-header">
                         <h1>${location.name}</h1>
-                        <button class="btn-edit-main" onclick="openLocationForm(${
-                          location.id
-                        })">Editar Local</button>
+                        <button class="btn-edit-main" onclick="openLocationForm(${location.id
+      })">Editar Local</button>
                     </div>
                     
                     <div class="detail-tabs">
@@ -422,27 +427,23 @@ async function viewLocationDetails(locationId) {
                         
                         <div class="detail-tab-pane" id="description-pane">
                             <h3>Descrição</h3>
-                            <p>${
-                              location.description || "Sem descrição fornecida"
-                            }</p>
+                            <p>${location.description || "Sem descrição fornecida"
+      }</p>
                         </div>
                         
                         <div class="detail-tab-pane" id="position-pane">
                             <h3>Posição no Mapa</h3>
                             <p><strong>Top:</strong> ${location.top || "-"}</p>
-                            <p><strong>Left:</strong> ${
-                              location.left || "-"
-                            }</p>
+                            <p><strong>Left:</strong> ${location.left || "-"
+      }</p>
                         </div>
                     </div>
                     
                     <div class="detail-actions">
-                        <button class="btn-edit" onclick="openLocationForm(${
-                          location.id
-                        })">Editar</button>
-                        <button class="btn-delete" onclick="confirmDeleteLocation(${
-                          location.id
-                        })">Excluir</button>
+                        <button class="btn-edit" onclick="openLocationForm(${location.id
+      })">Editar</button>
+                        <button class="btn-delete" onclick="confirmDeleteLocation(${location.id
+      })">Excluir</button>
                     </div>
                 </section>
             </div>
@@ -535,80 +536,70 @@ async function openLocationForm(locationId = null) {
         <form class="location-form" id="locationForm">
             <div class="form-group">
                 <label for="locName">Nome *</label>
-                <input type="text" id="locName" name="name" required value="${
-                  location?.name || ""
-                }" />
+                <input type="text" id="locName" name="name" required value="${location?.name || ""
+    }" />
             </div>
 
             <div class="form-group">
                 <label for="locDescription">Descrição</label>
-                <textarea id="locDescription" name="description">${
-                  location?.description || ""
-                }</textarea>
+                <textarea id="locDescription" name="description">${location?.description || ""
+    }</textarea>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div class="form-group">
                     <label for="locTop">Posição Y (top)</label>
-                    <input type="number" id="locTop" name="top" value="${
-                      location?.top || ""
-                    }" />
+                    <input type="number" id="locTop" name="top" value="${location?.top || ""
+    }" />
                 </div>
 
                 <div class="form-group">
                     <label for="locLeft">Posição X (left)</label>
-                    <input type="number" id="locLeft" name="left" value="${
-                      location?.left || ""
-                    }" />
+                    <input type="number" id="locLeft" name="left" value="${location?.left || ""
+    }" />
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="locImages">Imagens (URLs separadas por vírgula)</label>
-                <textarea id="locImages" name="images">${
-                  location?.images ? location.images.join(", ") : ""
-                }</textarea>
+                <textarea id="locImages" name="images">${location?.images ? location.images.join(", ") : ""
+    }</textarea>
             </div>
 
             <div class="form-group">
                 <label>Itens de Acessibilidade</label>
                 <div class="accessibility-items">
                     ${accessibilityItems
-                      .map(
-                        (item) => `
+      .map(
+        (item) => `
                         <div class="accessibility-item-card">
-                            <input type="checkbox" id="acc-${item.id}" value="${
-                          item.id
-                        }" 
-                                ${
-                                  selectedAccessibilityItems.includes(item.id)
-                                    ? "checked"
-                                    : ""
-                                } />
+                            <input type="checkbox" id="acc-${item.id}" value="${item.id
+          }" 
+                                ${selectedAccessibilityItems.includes(item.id)
+            ? "checked"
+            : ""
+          } />
                             <div class="accessibility-item-content">
-                                ${
-                                  item.image
-                                    ? `<img src="${item.image}" alt="${item.name}" class="accessibility-icon">`
-                                    : ""
-                                }
+                                ${item.image
+            ? `<img src="${item.image}" alt="${item.name}" class="accessibility-icon">`
+            : ""
+          }
                                 <label for="acc-${item.id}">${item.name}</label>
                             </div>
                         </div>
                     `
-                      )
-                      .join("")}
-                    ${
-                      accessibilityItems.length === 0
-                        ? '<p style="color: #999; margin: 0;">Nenhum item disponível</p>'
-                        : ""
-                    }
+      )
+      .join("")}
+                    ${accessibilityItems.length === 0
+      ? '<p style="color: #999; margin: 0;">Nenhum item disponível</p>'
+      : ""
+    }
                 </div>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-submit">${
-                  location ? "Salvar Alterações" : "Criar Local"
-                }</button>
+                <button type="submit" class="btn-submit">${location ? "Salvar Alterações" : "Criar Local"
+    }</button>
                 <button type="button" class="btn-cancel" onclick="loadLocationsList()">Cancelar</button>
             </div>
         </form>
