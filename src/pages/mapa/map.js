@@ -4,7 +4,6 @@
 */
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 const MODAL_IDS = {
   infoModal: "infoModal",
   addCommentModal: "addCommentModal",
@@ -850,6 +849,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let selectedImages = [];
 
+    // Função para validar formatos de imagem permitidos
+    function isAllowedImageFile(file) {
+      const allowedExtensions = ['png', 'jpg', 'jpeg', 'webp', 'heic', 'heif'];
+      const fileName = file.name.toLowerCase();
+      const fileExtension = fileName.split('.').pop();
+      return allowedExtensions.includes(fileExtension);
+    }
+
     const imgInput = document.getElementById("comment-image");
     const fileList = document.getElementById("file-list");
     const btnAddImage = document.getElementById("btn-add-image");
@@ -858,14 +865,25 @@ document.addEventListener("DOMContentLoaded", () => {
       imgInput.click();
     });
 
-    imgInput.addEventListener("change", () => {
-      for (const file of imgInput.files) {
-        selectedImages.push(file);
-      }
+    if (imgInput) {
+      imgInput.addEventListener("change", () => {
+        for (const file of imgInput.files) {
+          if (file.size > 10485760) { // 10MB limit
+            showMessageModal("Imagem muito grande. O tamanho máximo é 10MB.", true);
+            continue;
+          }
+          if (!isAllowedImageFile(file)) {
+            const fileExtension = file.name.split('.').pop().toUpperCase();
+            showMessageModal(`Arquivo rejeitado: "${file.name}"\n\nFormato ".${fileExtension}" não é permitido.\n\nUse apenas: PNG, JPG, JPEG, WEBP, HEIC ou HEIF.`, true);
+            continue;
+          }
+          selectedImages.push(file);
+        }
 
-      imgInput.value = "";
-      renderFileList();
-    });
+        imgInput.value = "";
+        renderFileList();
+      });
+    }
 
     function renderFileList() {
       fileList.innerHTML = "";
