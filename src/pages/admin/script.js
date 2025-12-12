@@ -203,7 +203,7 @@ window.viewPhotos = function (imagesData) {
     imageArray.forEach((url) => {
       const slide = document.createElement("div");
       slide.className = "swiper-slide";
-      slide.innerHTML = `<img src="${url}" alt="Foto" style="width: 100%; height: 100%; object-fit: cover;">`;
+      slide.innerHTML = `<img src="${url}" alt="" style="width: 100%; height: 100%; object-fit: cover;">`;
       swiperWrapper.appendChild(slide);
     });
   }

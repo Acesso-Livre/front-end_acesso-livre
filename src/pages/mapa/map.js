@@ -218,19 +218,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // =========================
-      // 4. ITENS DE ACESSIBILIDADE
+      // 4. ITENS DE ACESSIBILIDADE (será atualizado após carregar comentários)
       // =========================
-      infoList.innerHTML = "";
-      if (
-        details.accessibility_items &&
-        details.accessibility_items.length > 0
-      ) {
-        details.accessibility_items.forEach((item) => {
-          infoList.innerHTML += `<li>${item.name}</li>`;
-        });
-      } else {
-        infoList.innerHTML = "<li>Nenhum item de acessibilidade informado</li>";
-      }
+      infoList.innerHTML = `
+        <li style="display: flex; justify-content: center; padding: 20px;">
+          <span class="loader" style="width: 24px; height: 24px; border-width: 3px;"></span>
+        </li>
+      `;
 
       // =========================
       // 5. COMENTÁRIOS E AVALIAÇÃO E IMAGENS (Unificado)
@@ -277,8 +271,8 @@ document.addEventListener("DOMContentLoaded", () => {
                       <div class="comment-header">
                           <span class="user-name">${c.user_name}</span>
                           <span class="comment-date">${new Date(
-                            c.created_at || c.date // Fallback para c.date se created_at não existir
-                          ).toLocaleDateString("pt-BR")}</span>
+              c.created_at || c.date // Fallback para c.date se created_at não existir
+            ).toLocaleDateString("pt-BR")}</span>
                       </div>
                       <div class="comment-rating">${commentStars}</div>
                       <p class="comment-text">${c.comment}</p>
@@ -319,6 +313,80 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         renderImagesCarousel(swiperWrapper, allImages);
+
+        // D. Coletar e exibir ícones dos comentários (sem duplicatas)
+        // Buscar todos os ícones disponíveis da API
+        let availableIcons = [];
+        try {
+          const iconsResponse = await fetch(`${API_BASE_URL}/comments/icons/`);
+          if (iconsResponse.ok) {
+            const iconsData = await iconsResponse.json();
+            console.log("DEBUG - Resposta da API /comments/icons/:", iconsData);
+            availableIcons = iconsData.icons || iconsData.comment_icons || iconsData || [];
+            console.log("DEBUG - Ícones disponíveis:", availableIcons);
+            if (availableIcons.length > 0) {
+              console.log("DEBUG - Estrutura de um ícone:", availableIcons[0]);
+            }
+          }
+        } catch (iconError) {
+          console.warn("Erro ao buscar ícones:", iconError);
+        }
+
+        // Criar mapa de ID -> ícone para lookup rápido
+        const iconMap = new Map();
+        if (Array.isArray(availableIcons)) {
+          availableIcons.forEach(icon => {
+            iconMap.set(icon.id, icon);
+          });
+        }
+
+        // Coletar IDs únicos dos ícones de todos os comentários
+        const uniqueIconIds = new Set();
+        comments.forEach((c) => {
+          // Suporte para comment_icon_ids (array de IDs) ou comment_icons (array de objetos)
+          if (c.comment_icon_ids && Array.isArray(c.comment_icon_ids)) {
+            c.comment_icon_ids.forEach(id => uniqueIconIds.add(id));
+          }
+          if (c.comment_icons && Array.isArray(c.comment_icons)) {
+            c.comment_icons.forEach(icon => {
+              if (icon.id) uniqueIconIds.add(icon.id);
+            });
+          }
+        });
+
+        // Mapear IDs para ícones completos
+        const allCommentIcons = [];
+        uniqueIconIds.forEach(iconId => {
+          const icon = iconMap.get(iconId);
+          if (icon) {
+            allCommentIcons.push(icon);
+          }
+        });
+
+        // Atualizar seção de Informações de Acessibilidade com os ícones
+        if (allCommentIcons.length > 0) {
+          // Placeholder SVG em base64 para quando a imagem não carregar
+          const placeholderSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
+
+          infoList.innerHTML = `
+            <div class="accessibility-icons-grid">
+              ${allCommentIcons.map(icon => `
+                <div class="accessibility-icon-item">
+                  <img 
+                    src="${icon.icon_url || icon.image_url || icon.image || placeholderSvg}" 
+                    alt="${icon.name}" 
+                    title="${icon.name}"
+                    class="accessibility-icon-img"
+                    onerror="this.onerror=null; this.src='${placeholderSvg}'; this.classList.add('icon-placeholder');"
+                  />
+                  <span class="accessibility-icon-name">${icon.name}</span>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else {
+          infoList.innerHTML = "<li>Nenhum item de acessibilidade informado</li>";
+        }
       } catch (error) {
         console.error("Erro ao carregar dados do local:", error);
         commentsList.innerHTML = "<p>Erro ao carregar comentários.</p>";
@@ -569,8 +637,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="comment-header">
               <span class="user-name">${comment.user_name}</span>
               <span class="comment-date">${new Date(
-                comment.date
-              ).toLocaleDateString("pt-BR")}</span>
+              comment.date
+            ).toLocaleDateString("pt-BR")}</span>
             </div>
             <div class="comment-rating">${"⭐".repeat(
               comment.rating || 0
@@ -861,9 +929,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const fileList = document.getElementById("file-list");
     const btnAddImage = document.getElementById("btn-add-image");
 
-    btnAddImage.addEventListener("click", () => {
-      imgInput.click();
-    });
+    if (btnAddImage) {
+      btnAddImage.addEventListener("click", () => {
+        if (imgInput) imgInput.click();
+      });
+    }
 
     if (imgInput) {
       imgInput.addEventListener("change", () => {
