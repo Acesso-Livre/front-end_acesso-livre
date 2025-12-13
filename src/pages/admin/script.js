@@ -701,7 +701,7 @@ async function openLocationForm(locationId = null) {
             <div class="form-group">
                 <div id="image-box">
                     <button id="btn-add-image" type="button">Adicionar imagem</button>
-                    <input type="file" id="comment-image" multiple style="display:none">
+                    <input type="file" id="comment-image" multiple style="display:none location?.image value="${location?.image || ""}">
                     <ul id="file-list"></ul>
                 </div>
                     ${(() => {
@@ -809,6 +809,195 @@ async function openLocationForm(locationId = null) {
     `;
 
   container.innerHTML = html;
+
+  // Inicializar uploader local dentro do formulário (btn-add-image, comment-image, file-list)
+  (function initLocationImageBox() {
+    let selectedImages = [];
+
+    function isAllowedImageFile(file) {
+      const allowedExtensions = ['png', 'jpg', 'jpeg', 'webp', 'heic', 'heif'];
+      const fileName = file.name.toLowerCase();
+      const fileExtension = fileName.split('.').pop();
+      return allowedExtensions.includes(fileExtension);
+    }
+
+    const imgInput = document.getElementById('comment-image');
+    const fileList = document.getElementById('file-list');
+    const btnAddImage = document.getElementById('btn-add-image');
+
+    if (!fileList || !btnAddImage || !imgInput) return;
+
+    btnAddImage.addEventListener('click', () => { if (imgInput) imgInput.click(); });
+
+    // Minimal single-file upload function - used when clicking 'Adicionar imagem'
+    async function uploadSingleImage(file) {
+      if (!file) return null;
+      const fd = new FormData();
+      fd.append('image', file);
+      if (location && location.id) fd.append('location_id', location.id);
+
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+      const endpoints = [`${API_BASE_URL}/locations/images`, `${API_BASE_URL}/images`, `${API_BASE_URL}/comments/images`];
+
+      let lastErr = null;
+      for (const endpoint of endpoints) {
+        try {
+          const token = sessionStorage.getItem('authToken');
+          const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+          const res = await fetch(endpoint, { method: 'POST', headers, body: fd });
+          if (!res.ok) { lastErr = new Error(`Falha ${res.status}`); continue; }
+          const body = await res.json();
+          const imgRes = body?.image || body || null;
+          const imgUrl = imgRes?.url || imgRes?.image_url || imgRes?.path || null;
+          const imgId = imgRes?.id || imgRes?.image_id || null;
+
+          // Add to edit carousel if present
+          try {
+            const carousel = document.getElementById('edit-location-carousel');
+            if (carousel) {
+              const wrapper = carousel.querySelector('.swiper-wrapper');
+              if (wrapper) {
+                const slide = document.createElement('div');
+                slide.className = 'swiper-slide';
+                slide.innerHTML = `\n                  <div class="carousel-image-item" data-image-id="${imgId || ''}" data-image-url="${imgUrl || ''}">\n                    <img src="${imgUrl || ''}" alt="Imagem enviada">\n                    <button type=\"button\" class=\"btn-delete-image\" onclick=\"deleteLocationImage('${imgId}', this)\">Excluir</button>\n                  </div>`;
+                wrapper.appendChild(slide);
+                if (window.editLocationCarousel) window.editLocationCarousel.update();
+              }
+            }
+          } catch (err) { console.warn('Erro ao adicionar slide:', err); }
+
+          return imgRes;
+        } catch (err) {
+          lastErr = err;
+        }
+      }
+      throw lastErr || new Error('Falha ao enviar imagem');
+    }
+
+    // A simple uploader: upload immediately when a file is selected
+    imgInput.addEventListener('change', async () => {
+      if (!imgInput.files || imgInput.files.length === 0) return;
+      const file = imgInput.files[0];
+
+      if (file.size > 10485760) { // 10MB
+        showMessageModal('Imagem muito grande. O tamanho máximo é 10MB.', true);
+        imgInput.value = '';
+        return;
+      }
+      if (!isAllowedImageFile(file)) {
+        const fileExtension = file.name.split('.').pop().toUpperCase();
+        showMessageModal(`Arquivo rejeitado: "${file.name}"\n\nFormato ".${fileExtension}" não é permitido.\n\nUse apenas: PNG, JPG, JPEG, WEBP, HEIC ou HEIF.`, true);
+        imgInput.value = '';
+        return;
+      }
+
+      // Upload the single selected file immediately
+      try {
+        await uploadSingleImage(file);
+      } catch (err) {
+        console.error('Erro ao enviar imagem única:', err);
+        alert('Erro ao enviar imagem. Tente novamente.');
+      } finally {
+        imgInput.value = '';
+      }
+    });
+
+    function renderFileList() {
+      fileList.innerHTML = '';
+      selectedImages.forEach((file, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `\n          <span>${file.name}</span>\n        `;
+
+        const btnUpload = document.createElement('button');
+        btnUpload.type = 'button';
+        btnUpload.textContent = 'Enviar';
+        btnUpload.style.marginLeft = '8px';
+        btnUpload.addEventListener('click', () => uploadImageToServer(index, btnUpload));
+
+        const btnRemove = document.createElement('button');
+        btnRemove.type = 'button';
+        btnRemove.textContent = 'X';
+        btnRemove.style.background = 'red';
+        btnRemove.style.color = 'white';
+        btnRemove.style.border = 'none';
+        btnRemove.style.padding = '2px 6px';
+        btnRemove.style.borderRadius = '4px';
+        btnRemove.style.cursor = 'pointer';
+        btnRemove.style.marginLeft = '6px';
+        btnRemove.addEventListener('click', () => {
+          selectedImages.splice(index, 1);
+          renderFileList();
+        });
+
+        li.appendChild(btnUpload);
+        li.appendChild(btnRemove);
+        fileList.appendChild(li);
+      });
+    }
+
+    async function uploadImageToServer(index, btnEl) {
+      const file = selectedImages[index];
+      if (!file) return;
+
+      // Build FormData
+      const fd = new FormData();
+      fd.append('image', file);
+      // If editing an existing location, include its id so server can associate
+      if (location && location.id) fd.append('location_id', location.id);
+
+      // Use token if available
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+      const endpoints = [`${API_BASE_URL}/locations/images`, `${API_BASE_URL}/images`, `${API_BASE_URL}/comments/images`];
+
+      // Button state
+      const originalText = btnEl.textContent;
+      btnEl.disabled = true;
+      btnEl.textContent = 'Enviando...';
+
+      let lastErr = null;
+      for (const endpoint of endpoints) {
+        try {
+          const token = sessionStorage.getItem('authToken');
+          const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+          const res = await fetch(endpoint, { method: 'POST', headers, body: fd });
+          if (!res.ok) { lastErr = new Error(`Falha ${res.status}`); continue; }
+          const body = await res.json();
+          const imgRes = body?.image || body || null;
+          const imgUrl = imgRes?.url || imgRes?.image_url || imgRes?.path || null;
+          const imgId = imgRes?.id || imgRes?.image_id || null;
+
+          // Add to edit carousel if present
+          try {
+            const carousel = document.getElementById('edit-location-carousel');
+            if (carousel) {
+              const wrapper = carousel.querySelector('.swiper-wrapper');
+              if (wrapper) {
+                const slide = document.createElement('div');
+                slide.className = 'swiper-slide';
+                slide.innerHTML = `\n                  <div class="carousel-image-item" data-image-id="${imgId || ''}" data-image-url="${imgUrl || ''}">\n                    <img src="${imgUrl || ''}" alt="Imagem enviada">\n                    <button type=\"button\" class=\"btn-delete-image\" onclick=\"deleteLocationImage('${imgId}', this)\">Excluir</button>\n                  </div>`;
+                wrapper.appendChild(slide);
+                if (window.editLocationCarousel) window.editLocationCarousel.update();
+              }
+
+                
+            }
+          } catch (err) { console.warn('Erro ao adicionar slide:', err); }
+
+          // Remove uploaded file from selectedImages
+          selectedImages.splice(index, 1);
+          renderFileList();
+          return imgRes;
+        } catch (err) {
+          lastErr = err;
+        }
+      }
+
+      btnEl.disabled = false;
+      btnEl.textContent = originalText;
+      alert('Erro ao enviar imagem: ' + (lastErr?.message || 'tente novamente'));
+      return null;
+    }
+  })();
 
   // Inicializar Swiper do carrossel de imagens (se existir)
   const carouselEl = document.getElementById('edit-location-carousel');
