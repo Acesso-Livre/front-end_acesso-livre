@@ -177,6 +177,32 @@ main {
   box-shadow: var(--shadow-md);
 }
 
+/* Ícones de acessibilidade nos comentários */
+.comment-icons-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.comment-icon-small {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.comment-icon-small:hover {
+  transform: scale(1.15);
+}
+
 .modal {
   display: none;
   position: fixed;
