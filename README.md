@@ -59,7 +59,7 @@ front-end_acesso-livre/
 ├── css/              # Estilos da aplicação
 ├── js/               # Scripts JavaScript
 └── README.md         # Documentação do projeto
-
+```
 
 ▶️ Como Executar o Projeto
 
@@ -113,3 +113,4 @@ Lucas Souza
 Luís Roberto
 
 Projeto orientado pelo professor Fabio Oliveira.
+
