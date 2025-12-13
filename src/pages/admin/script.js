@@ -195,7 +195,21 @@ window.approve = async function (id) {
         showAlert("Comentário aprovado com sucesso!", "Sucesso");
       } catch (error) {
         console.error("Erro ao aprovar:", error);
-        showAlert("Erro ao aprovar comentário. Tente novamente.", "Erro");
+
+        // Verificação de dupla checagem: se o erro for de timeout ou rede,
+        // mas a operação completou no backend, o comentário não estará mais na lista.
+        const pending = await commentService.getPending();
+        const stillPending = Array.isArray(pending)
+          ? pending.some(c => c.id === id)
+          : (pending?.comments || []).some(c => c.id === id);
+
+        if (!stillPending) {
+          // Assumir sucesso pois não está mais pendente
+          loadPendingComments(); // recarregar UI
+          showAlert("Comentário aprovado (com alerta de rede).", "Sucesso Parcial");
+        } else {
+          showAlert("Erro ao aprovar comentário. Tente novamente.", "Erro");
+        }
       }
     }
   });
@@ -215,7 +229,19 @@ window.reject = async function (id) {
           showAlert("Comentário rejeitado com sucesso!", "Sucesso");
         } catch (error) {
           console.error("Erro ao rejeitar:", error);
-          showAlert("Erro ao rejeitar comentário. Tente novamente.", "Erro");
+
+          // Verificação de dupla checagem
+          const pending = await commentService.getPending();
+          const stillPending = Array.isArray(pending)
+            ? pending.some(c => c.id === id)
+            : (pending?.comments || []).some(c => c.id === id);
+
+          if (!stillPending) {
+            loadPendingComments();
+            showAlert("Comentário rejeitado (com alerta de rede).", "Sucesso Parcial");
+          } else {
+            showAlert("Erro ao rejeitar comentário. Tente novamente.", "Erro");
+          }
         }
       }
     }
