@@ -77,6 +77,34 @@ async function loadPendingComments() {
     return;
   }
 
+  // Coletar location_ids para buscar nomes faltantes
+  const missingLocationIds = new Set();
+  list.forEach((c) => {
+    if (!c.location_name) {
+      const id = c.location_id || c.locationId || (c.location && c.location.id);
+      if (id) missingLocationIds.add(id);
+    }
+  });
+
+  // Map de lookup id -> nome do local
+  const locationNameById = {};
+  if (missingLocationIds.size > 0) {
+    try {
+      await Promise.all(
+        Array.from(missingLocationIds).map(async (id) => {
+          try {
+            const loc = await window.adminApi.getLocation(id);
+            locationNameById[id] = loc && loc.name ? loc.name : "Local desconhecido";
+          } catch (err) {
+            locationNameById[id] = "Local desconhecido";
+          }
+        })
+      );
+    } catch (e) {
+      console.error("Erro ao buscar nomes de locais:", e);
+    }
+  }
+
   container.innerHTML = "";
 
   list.forEach((comment) => {
@@ -86,10 +114,23 @@ async function loadPendingComments() {
     const images = comment.images || "";
     const hasImages = images.length > 0;
 
+    // Resolver nome do local
+    const locationName =
+      comment.location_name ||
+      (comment.location && comment.location.name) ||
+      locationNameById[comment.location_id] ||
+      locationNameById[comment.locationId] ||
+      "Local desconhecido";
+
     card.innerHTML = `
-      <div class="top-info">
-        <strong>${comment.user_name ?? "Usuário"}</strong> — ${comment.rating ?? ""
-      } ⭐
+      <div class="review-header">
+        <div>
+          <strong>${comment.user_name ?? "Usuário"}</strong>
+          <span class="comment-location"> — ${locationName}</span>
+        </div>
+        <div class="comment-meta">
+          <span class="comment-rating">${comment.rating ?? ""} ⭐</span>
+        </div>
       </div>
 
       <p class="comment-text">${comment.comment}</p>
