@@ -81,3 +81,7 @@ export function showModal(title, message, { onConfirm = null, isDestructive = fa
 export function showAlert(message, title = "Aviso") {
     showModal(title, message, { showCancel: false, confirmText: "OK" });
 }
+
+export function showConfirmation({ title, message, onConfirm }) {
+    showModal(title, message, { onConfirm: onConfirm });
+}

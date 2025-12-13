@@ -32,32 +32,48 @@ export const commentService = {
     },
 
     async approve(id) {
-        return await apiClient.patch(`/comments/${id}/status`, { status: "approved" });
+        try {
+            return await apiClient.patch(`/comments/${id}/status`, { status: "approved" });
+        } catch (error) {
+            console.error("Erro ao aprovar comentário:", error);
+            throw error;
+        }
     },
 
     async reject(id) {
-        return await apiClient.patch(`/comments/${id}/status`, { status: "rejected" });
+        try {
+            return await apiClient.patch(`/comments/${id}/status`, { status: "rejected" });
+        } catch (error) {
+            console.error("Erro ao rejeitar comentário:", error);
+            throw error;
+        }
     },
 
     async create(data) {
         try {
-            let body = data;
-            // Check if there are images to upload
-            if (data.images && Array.isArray(data.images) && data.images.length > 0) {
-                const formData = new FormData();
-                for (const key in data) {
-                    if (key === "images") {
+            const formData = new FormData();
+
+            for (const key in data) {
+                // Skip null or undefined
+                if (data[key] === undefined || data[key] === null) continue;
+
+                if (key === "images") {
+                    if (Array.isArray(data.images) && data.images.length > 0) {
                         data.images.forEach((image) => {
                             formData.append("images", image);
                         });
-                    } else if (data[key] !== undefined && data[key] !== null) {
-                        formData.append(key, data[key]);
                     }
+                } else if (Array.isArray(data[key])) {
+                    // Append array items individually (e.g. comment_icon_ids)
+                    data[key].forEach((item) => {
+                        formData.append(key, item);
+                    });
+                } else {
+                    formData.append(key, data[key]);
                 }
-                body = formData;
             }
 
-            const response = await apiClient.post("/comments/", body);
+            const response = await apiClient.post("/comments/", formData);
             return response;
         } catch (error) {
             console.error("Erro ao criar comentário:", error);

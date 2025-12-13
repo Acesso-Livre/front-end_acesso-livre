@@ -468,6 +468,35 @@ document.addEventListener("DOMContentLoaded", () => {
     updatePinScale();
     map.on("zoom", updatePinScale);
 
+    // Define BotaoCustom control
+    const BotaoCustom = L.Control.extend({
+      options: { position: "bottomright" },
+      onAdd: function (map) {
+        const div = L.DomUtil.create("div", "btn-map-custom");
+        div.innerHTML = `
+          <div style="
+            background-color: white; 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            cursor: pointer;
+          ">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </div>
+        `;
+        // Prevent map click propagation
+        L.DomEvent.disableClickPropagation(div);
+        return div;
+      },
+    });
+
     // Renderiza os pins usando a API (apenas aqui)
     await renderPinsOnMap(map, W, H);
     map.addControl(new BotaoCustom({ position: "bottomright" }));
@@ -1006,7 +1035,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .filter(id => !isNaN(id));
 
           if (validIds.length > 0) {
-            commentData.comment_icon_ids = validIds.join(",");
+            commentData.comment_icon_ids = validIds;
           }
         }
 

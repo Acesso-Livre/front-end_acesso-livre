@@ -2,7 +2,7 @@
 import { locationService } from "../../services/location-service.js";
 import { commentService } from "../../services/comment-service.js";
 import { resolveImageUrl } from "../../utils/image-utils.js";
-import { showModal, showAlert } from "../../utils/modal.js";
+import { showModal, showAlert, showConfirmation } from "../../utils/modal.js";
 import "../../utils/error-handler.js";
 
 // ==========================
@@ -189,8 +189,14 @@ window.approve = async function (id) {
     title: "Aprovar Comentário",
     message: "Deseja aprovar e publicar este comentário?",
     onConfirm: async () => {
-      await commentService.approve(id);
-      loadPendingComments();
+      try {
+        await commentService.approve(id);
+        loadPendingComments();
+        showAlert("Comentário aprovado com sucesso!", "Sucesso");
+      } catch (error) {
+        console.error("Erro ao aprovar:", error);
+        showAlert("Erro ao aprovar comentário. Tente novamente.", "Erro");
+      }
     }
   });
 };
@@ -203,8 +209,14 @@ window.reject = async function (id) {
       confirmText: "Rejeitar",
       isDestructive: true,
       onConfirm: async () => {
-        await commentService.reject(id);
-        loadPendingComments();
+        try {
+          await commentService.reject(id);
+          loadPendingComments();
+          showAlert("Comentário rejeitado com sucesso!", "Sucesso");
+        } catch (error) {
+          console.error("Erro ao rejeitar:", error);
+          showAlert("Erro ao rejeitar comentário. Tente novamente.", "Erro");
+        }
       }
     }
   );
