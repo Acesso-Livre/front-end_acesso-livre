@@ -623,42 +623,12 @@ function backToLocationsList() {
 // 2. Abrir formulário de criação/edição
 async function openLocationForm(locationId = null) {
   const container = document.getElementById("locations-container");
-  // Carregar dados necessários (agora buscando ícones de comentários)
+  // Carregar dados necessários
   let accessibilityItems = [];
   let location = null;
   let selectedAccessibilityItemIds = [];
 
   try {
-    // Tentar buscar ícones de comentários primeiro (nova rota)
-    let iconsResponse = null;
-    try {
-      iconsResponse = await window.adminApi.getCommentIcons();
-      window.lastApiResponse = iconsResponse;
-      console.log("Resposta getCommentIcons:", iconsResponse);
-    } catch (e) {
-      window.lastApiResponse = { error: e.toString() };
-      console.warn("Falha ao buscar ícones de comentário:", e);
-    }
-
-    // Processar resposta
-    if (Array.isArray(iconsResponse) && iconsResponse.length > 0) {
-      accessibilityItems = iconsResponse;
-    } else if (iconsResponse && Array.isArray(iconsResponse.comment_icons) && iconsResponse.comment_icons.length > 0) {
-      accessibilityItems = iconsResponse.comment_icons;
-    } else if (iconsResponse && Array.isArray(iconsResponse.icons) && iconsResponse.icons.length > 0) {
-      accessibilityItems = iconsResponse.icons;
-    } else if (iconsResponse && Array.isArray(iconsResponse.data) && iconsResponse.data.length > 0) {
-      accessibilityItems = iconsResponse.data;
-    } else {
-      // Fallback: Se não encontrou ícones, tentar a rota antiga de itens de acessibilidade
-      console.log("Fallback para getAccessibilityItems...");
-      const legacyResponse = await window.adminApi.getAccessibilityItems();
-      accessibilityItems = Array.isArray(legacyResponse) ? legacyResponse : (legacyResponse?.accessibility_items || []);
-    }
-
-    // Log final para debug
-    console.log("Itens finais para renderizar:", accessibilityItems);
-
     // Se estiver editando, buscar dados do local
     if (locationId) {
       container.innerHTML =
@@ -673,6 +643,7 @@ async function openLocationForm(locationId = null) {
 
       // Extrair array de comentários (API retorna { comments: [...] })
       const comments = commentsResponse?.comments || commentsResponse || [];
+
 
       console.log("Comentários do local:", comments);
 
@@ -735,7 +706,7 @@ async function openLocationForm(locationId = null) {
     }
   } catch (error) {
     console.error("Erro ao carregar dados:", error);
-    alert("Erro ao carregar dados do formulário");
+    showAlert("Erro ao carregar dados do formulário", "Erro");
     return;
   }
 
@@ -759,14 +730,33 @@ async function openLocationForm(locationId = null) {
             <div class="position-inputs-grid">
                 <div class="form-group">
                     <label for="locTop">Posição Y (top)</label>
-                    <input type="number" id="locTop" name="top" value="${location?.top || ""
+                    <input type="number" id="locTop" name="top" step="0.01" value="${location?.top || ""
     }" />
                 </div>
 
                 <div class="form-group">
                     <label for="locLeft">Posição X (left)</label>
-                    <input type="number" id="locLeft" name="left" value="${location?.left || ""}" />
+                    <input type="number" id="locLeft" name="left" step="0.01" value="${location?.left || ""}" />
                 </div>
+            </div>
+            
+            <div class="form-group" style="margin-top: 5px;">
+                <button type="button" id="btnOpenMapPicker" class="btn-map-picker" style="
+                    display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+                    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+                    color: white; border: none; border-radius: 8px; cursor: pointer;
+                    font-size: 14px; font-weight: 500; transition: all 0.2s;
+                ">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    Selecionar no Mapa
+                </button>
+                <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">
+                    Clique no botão acima para abrir o mapa e selecionar visualmente a posição do local. 
+                    As coordenadas X e Y serão preenchidas automaticamente.
+                </p>
             </div>
 
             ${location ? `
@@ -816,39 +806,7 @@ async function openLocationForm(locationId = null) {
             </div>
             ` : ''}
 
-            ${location ? `
-            <div class="form-group">
-                <label>Itens de Acessibilidade <span style="font-weight: normal; color: #999; font-size: 12px;">(baseado nos comentários)</span></label>
-                
-                <div class="accessibility-icons-grid">
-                    ${selectedAccessibilityItemIds.length > 0
-        ? selectedAccessibilityItemIds.map(iconId => {
-          // Encontrar o ícone correspondente na lista de todos os ícones
-          const item = accessibilityItems.find(i => i.id == iconId);
-          if (!item) return '';
 
-          const itemName = item.name || item.title || 'Item';
-          const itemImage = item.icon_url || item.image || item.icon || null;
-          const placeholderSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
-
-          return `
-                            <div class="accessibility-icon-item">
-                              <img 
-                                src="${itemImage || placeholderSvg}" 
-                                alt="${itemName}" 
-                                title="${itemName}"
-                                class="accessibility-icon-img"
-                                onerror="this.onerror=null; this.src='${placeholderSvg}'; this.classList.add('icon-placeholder');"
-                              />
-                              <span class="accessibility-icon-name">${itemName}</span>
-                            </div>
-                          `;
-        }).join('')
-        : '<p style="color: #999; margin: 0; text-align: center; grid-column: 1 / -1; padding: 20px;">Nenhum item de acessibilidade nos comentários</p>'
-      }
-                </div>
-            </div>
-            ` : ''}
 
             <div class="form-actions">
                 <button type="submit" class="btn-submit">${location ? "Salvar Alterações" : "Criar Local"}</button>
@@ -883,6 +841,14 @@ async function openLocationForm(locationId = null) {
     });
   }
 
+  // ===== MAP PICKER: Seleção de posição no mapa =====
+  const btnOpenMapPicker = document.getElementById('btnOpenMapPicker');
+  if (btnOpenMapPicker) {
+    btnOpenMapPicker.addEventListener('click', () => {
+      openMapPicker();
+    });
+  }
+
   // Listener do formulário
   document
     .getElementById("locationForm")
@@ -896,8 +862,8 @@ async function openLocationForm(locationId = null) {
         const data = {
           name: formData.get("name"),
           description: formData.get("description") || "",
-          top: formData.get("top") ? parseInt(formData.get("top")) : null,
-          left: formData.get("left") ? parseInt(formData.get("left")) : null,
+          top: formData.get("top") ? parseFloat(formData.get("top")) : null,
+          left: formData.get("left") ? parseFloat(formData.get("left")) : null,
         };
 
         // Nota: Imagens são gerenciadas via carrossel (exclusão individual)
@@ -914,42 +880,34 @@ async function openLocationForm(locationId = null) {
           if (location) {
             // Atualizar local existente
             await window.adminApi.updateLocation(location.id, data);
-            alert("Local atualizado com sucesso!");
+            showAlert("Local atualizado com sucesso!", "Sucesso");
           } else {
             // Criar novo local
             const created = await window.adminApi.createLocation(data);
+            console.log("Resposta CreateLocation:", created);
+
             const createdId = created?.id || (created?.location && created.location.id) || created?.location_id || created?.data?.id || created?.data?.location_id;
-            if (!created || !createdId) {
-              throw new Error('Falha ao criar local');
+
+            if (!created) {
+              throw new Error('Falha na comunicação com a API (resposta vazia)');
+            }
+            if (!createdId) {
+              console.warn("Local criado mas ID não encontrado na resposta:", created);
+              showAlert("Local criado, mas houve uma incerteza na resposta do servidor. A lista será recarregada.", "Aviso");
+              loadLocationsList();
+              return;
             }
             // Atualiza a variável de local para que upload use o location_id
             const createdObj = created?.location || created?.data || created;
             createdObj.id = createdId;
             location = createdObj;
 
-            // Se houver imagens selecionadas para upload, enviar agora
-            if (selectedImages && selectedImages.length > 0) {
-              const uploadingBtn = document.querySelector('.btn-submit');
-              if (uploadingBtn) { uploadingBtn.disabled = true; uploadingBtn.textContent = 'Criando e enviando imagens...'; }
-              for (const file of [...selectedImages]) {
-                try {
-                  await uploadSingleImage(file);
-                } catch (err) {
-                  console.error('Erro ao enviar imagem após criação:', err);
-                }
-              }
-              // limpar a lista local
-              selectedImages.length = 0;
-              const fileListEl = document.getElementById('file-list');
-              if (fileListEl) fileListEl.innerHTML = '';
-              if (uploadingBtn) { uploadingBtn.disabled = false; uploadingBtn.textContent = 'Criar Local'; }
-            }
-            alert("Local criado com sucesso!");
+            showAlert("Local criado com sucesso!", "Sucesso");
           }
           loadLocationsList();
         } catch (error) {
           console.error("Erro ao salvar local:", error);
-          alert("Erro ao salvar local. Tente novamente.");
+          showAlert(`Erro ao salvar local: ${error.message || error}`, "Erro");
         }
       };
 
@@ -973,11 +931,11 @@ async function confirmDeleteLocation(id) {
     onConfirm: async () => {
       try {
         await window.adminApi.deleteLocation(id);
-        alert("Local excluído com sucesso!");
+        showAlert("Local excluído com sucesso!", "Sucesso");
         loadLocationsList();
       } catch (error) {
         console.error("Erro ao excluir local:", error);
-        alert("Erro ao excluir local. Tente novamente.");
+        showAlert("Erro ao excluir local. Tente novamente.", "Erro");
       }
     }
   });
@@ -986,7 +944,7 @@ async function confirmDeleteLocation(id) {
 // 4. Deletar imagem de local
 async function deleteLocationImage(imageId, buttonElement) {
   if (!imageId || imageId === 'null' || imageId === 'undefined') {
-    alert("Esta imagem não possui um ID válido para exclusão.");
+    showAlert("Esta imagem não possui um ID válido para exclusão.", "Erro");
     return;
   }
 
@@ -1026,13 +984,13 @@ async function deleteLocationImage(imageId, buttonElement) {
             }
           }
 
-          alert("Imagem excluída com sucesso!");
+          showAlert("Imagem excluída com sucesso!", "Sucesso");
         } else {
           throw new Error("Falha ao excluir imagem");
         }
       } catch (error) {
         console.error("Erro ao excluir imagem:", error);
-        alert("Erro ao excluir imagem. Tente novamente.");
+        showAlert("Erro ao excluir imagem. Tente novamente.", "Erro");
 
         // Restaurar botão
         if (buttonElement) {
@@ -1072,10 +1030,17 @@ function showConfirmation({ title, message, confirmText = "Confirmar", cancelTex
   }
 
   // Set content
+  // Set content
   titleEl.textContent = title;
   messageEl.textContent = message;
   confirmBtn.textContent = confirmText;
-  cancelBtn.textContent = cancelText;
+
+  if (cancelText) {
+    cancelBtn.textContent = cancelText;
+    cancelBtn.style.display = 'inline-block'; // or flex item default
+  } else {
+    cancelBtn.style.display = 'none';
+  }
 
   // Set style
   if (isDestructive) {
@@ -1117,10 +1082,236 @@ function showConfirmation({ title, message, confirmText = "Confirmar", cancelTex
   }
 }
 
+// Helper para Alertas simples (substituindo o alert nativo)
+function showAlert(message, title = "Aviso") {
+  showConfirmation({
+    title: title,
+    message: message,
+    confirmText: "OK",
+    cancelText: null,
+    onConfirm: () => { }
+  });
+}
+
 // Expor funções globalmente para chamadas inline
 window.openLocationForm = openLocationForm;
 window.confirmDeleteLocation = confirmDeleteLocation;
 window.loadLocationsList = loadLocationsList;
 window.viewLocationDetails = viewLocationDetails;
 window.backToLocationsList = backToLocationsList;
+window.showAlert = showAlert;
 window.deleteLocationImage = deleteLocationImage;
+
+// ===== MAP PICKER: Função para abrir mapa e selecionar posição =====
+let mapPickerInstance = null;
+let mapPickerMarker = null;
+let selectedMapPosition = { top: null, left: null };
+
+function openMapPicker() {
+  const modal = document.getElementById('mapPickerModal');
+  const container = document.getElementById('mapPickerContainer');
+  const coordsDisplay = document.getElementById('mapPickerCoords');
+  const confirmBtn = document.getElementById('confirmMapPicker');
+  const closeBtn = document.getElementById('closeMapPicker');
+  const cancelBtn = document.getElementById('cancelMapPicker');
+
+  if (!modal || !container) {
+    console.error('Elementos do Map Picker não encontrados');
+    return;
+  }
+
+  // Reset
+  selectedMapPosition = { top: null, left: null };
+  coordsDisplay.textContent = 'Posição: Clique no mapa';
+
+  // Mostrar modal
+  modal.style.display = 'flex';
+
+  // Aguardar render e inicializar mapa
+  setTimeout(() => {
+    // Destruir mapa anterior se existir
+    if (mapPickerInstance) {
+      mapPickerInstance.remove();
+      mapPickerInstance = null;
+    }
+
+    // Imagem do mapa
+    const imgUrl = '/assets/img/map/mapa_ifba.svg';
+    const img = new Image();
+
+    // Iniciar busca de locais existentes (referência visual) IMEDIATAMENTE
+    const locationsPromise = window.adminApi.getLocations().catch(err => {
+      console.error("Erro ao pré-carregar locais no map picker:", err);
+      return [];
+    });
+
+    img.onload = async () => {
+      const W = img.naturalWidth;
+      const H = img.naturalHeight;
+      const bounds = [[0, 0], [H, W]];
+
+      // Criar mapa
+      mapPickerInstance = L.map(container, {
+        crs: L.CRS.Simple,
+        minZoom: -2,
+        maxZoom: 2,
+        zoomSnap: 0.25,
+        attributionControl: false,
+        maxBounds: bounds,
+        maxBoundsViscosity: 1.0,
+      });
+
+      L.imageOverlay(imgUrl, bounds).addTo(mapPickerInstance);
+      mapPickerInstance.fitBounds(bounds);
+
+      // Evento de clique no mapa
+      mapPickerInstance.on('click', (e) => {
+        const { lat, lng } = e.latlng;
+
+        // Converter para porcentagem (baseado nas dimensões da imagem)
+        const topPercent = (lat / H) * 100;
+        const leftPercent = (lng / W) * 100;
+
+        selectedMapPosition = {
+          top: topPercent.toFixed(2),
+          left: leftPercent.toFixed(2)
+        };
+
+        // Atualizar display
+        coordsDisplay.textContent = `Posição: Y=${selectedMapPosition.top}% | X=${selectedMapPosition.left}%`;
+
+        // Adicionar/mover marcador (destaque azul)
+        if (mapPickerMarker) {
+          mapPickerMarker.setLatLng(e.latlng);
+        } else {
+          mapPickerMarker = L.marker(e.latlng, {
+            icon: L.divIcon({
+              className: 'map-picker-pin',
+              html: `<div style="
+                width: 30px; height: 30px; background: #007bff; border: 3px solid white;
+                border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+              "></div>`,
+              iconSize: [30, 30],
+              iconAnchor: [15, 30],
+            })
+          }).addTo(mapPickerInstance);
+        }
+      });
+
+      // CARREGAR LOCAIS EXISTENTES COMO REFERÊNCIA
+      try {
+        const response = await locationsPromise;
+        const existingLocs = Array.isArray(response) ? response : response?.locations || [];
+
+        if (Array.isArray(existingLocs)) {
+          const detectType = (name) => {
+            const n = (name || "").toLowerCase();
+            if (n.includes("estacionamento")) return "estacionamento";
+            if (n.includes("bloco")) return "bloco";
+            if (n.includes("quadra de areia")) return "quadra_areia";
+            if (n.includes("quadra")) return "quadra";
+            if (n.includes("campo")) return "campo";
+            if (n.includes("cantina")) return "cantina";
+            if (n.includes("biblioteca")) return "biblioteca";
+            if (n.includes("audit")) return "auditorio";
+            if (n.includes("cores")) return "cores";
+            if (n.includes("entrada")) return "entrada";
+            return "default";
+          };
+
+          const corMap = {
+            estacionamento: "#FF0000",
+            bloco: "#00FF00",
+            campo: "#0000FF",
+            quadra: "#FFFF00",
+            quadra_areia: "#FFA500",
+            biblioteca: "#800080",
+            cantina: "#00FFFF",
+            auditorio: "#FFC0CB",
+            cores: "#808080",
+            entrada: "#000000",
+            default: "#888888",
+          };
+
+          existingLocs.forEach(loc => {
+            if (!loc.top || !loc.left) return;
+
+            const top = parseFloat(loc.top);
+            const left = parseFloat(loc.left);
+
+            const x = (left / 100) * W;
+            const y = (top / 100) * H;
+
+            const type = detectType(loc.name);
+            const color = corMap[type] || corMap.default;
+
+            L.circleMarker([y, x], {
+              radius: 6,
+              fillColor: color,
+              color: "#fff",
+              weight: 1,
+              opacity: 0.9,
+              fillOpacity: 0.8
+            })
+              .bindTooltip(loc.name, {
+                permanent: true,
+                direction: "top",
+                className: "map-picker-tooltip",
+                offset: [0, -6]
+              })
+              .addTo(mapPickerInstance);
+          });
+        }
+      } catch (err) {
+        console.error("Erro ao carregar locais de referência no map picker:", err);
+      }
+    };
+
+    img.onerror = () => {
+      container.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Erro ao carregar imagem do mapa</p>';
+    };
+
+    img.src = imgUrl;
+  }, 100);
+
+  // Confirmar posição
+  confirmBtn.onclick = () => {
+    if (selectedMapPosition.top !== null && selectedMapPosition.left !== null) {
+      // Preencher campos do formulário
+      const topInput = document.getElementById('locTop');
+      const leftInput = document.getElementById('locLeft');
+
+      if (topInput) topInput.value = selectedMapPosition.top;
+      if (leftInput) leftInput.value = selectedMapPosition.left;
+
+      closeMapPickerModal();
+    } else {
+      showAlert('Por favor, clique no mapa para selecionar uma posição.', "Aviso");
+    }
+  };
+
+  // Fechar modal (botão X e botão Cancelar)
+  if (closeBtn) closeBtn.onclick = closeMapPickerModal;
+  if (cancelBtn) cancelBtn.onclick = closeMapPickerModal;
+
+  // Fechar ao clicar fora
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      closeMapPickerModal();
+    }
+  };
+}
+
+function closeMapPickerModal() {
+  const modal = document.getElementById('mapPickerModal');
+  if (modal) modal.style.display = 'none';
+
+  // Limpar marcador
+  if (mapPickerMarker && mapPickerInstance) {
+    mapPickerInstance.removeLayer(mapPickerMarker);
+    mapPickerMarker = null;
+  }
+}
+
+window.openMapPicker = openMapPicker;

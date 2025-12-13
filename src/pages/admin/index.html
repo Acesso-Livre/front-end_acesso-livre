@@ -80,8 +80,35 @@
             </div>
         </div>
 
+        <!-- Modal de Seleção de Posição no Mapa -->
+        <div id="mapPickerModal" class="modal">
+            <div class="modal-content map-picker-modal-content"
+                style="width: 95%; max-width: 900px; height: 80vh; padding: 15px; display: flex; flex-direction: column;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0;">
+                    <h2 style="margin: 0; font-size: 18px;">Selecione a posição no mapa</h2>
+                </div>
+                <p style="margin: 0 0 10px 0; font-size: 13px; color: #666; flex-shrink: 0;">
+                    Clique no mapa para definir a posição do local. As coordenadas serão preenchidas automaticamente.
+                </p>
+                <div id="mapPickerContainer"
+                    style="width: 100%; flex: 1; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; position: relative; z-index: 0;">
+                </div>
+                <div
+                    style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-shrink: 0;">
+                    <span id="mapPickerCoords" style="font-size: 13px; color: #333;">Posição: Clique no mapa</span>
+                    <div class="modal-actions" style="display: flex; gap: 10px; padding: 0; margin: 0;">
+                        <button id="cancelMapPicker" class="btn-cancel">Cancelar</button>
+                        <button id="confirmMapPicker" class="btn-confirm-action">Confirmar Posição</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script type="module" src="./script.js"></script>
     <script type="module" src="./api.js"></script>

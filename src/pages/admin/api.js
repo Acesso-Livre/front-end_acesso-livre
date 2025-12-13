@@ -7,7 +7,7 @@ function checkAuthResponse(response) {
         // Token expirado ou inválido - limpar e redirecionar
         sessionStorage.removeItem("authToken");
         alert("Sessão expirada. Faça login novamente.");
-        window.location.href = "/src/pages/auth/";
+        window.location.href = "/pages/auth/";
         throw new Error("Token expirado");
     }
     return response;
@@ -117,7 +117,9 @@ export const adminApi = {
                 },
                 body: JSON.stringify(data)
             });
-            return await response.json();
+            checkAuthResponse(response);
+            const json = await response.json();
+            return json;
         } catch (err) {
             console.error("Erro ao criar local:", err);
             return null;
@@ -135,7 +137,9 @@ export const adminApi = {
                 },
                 body: JSON.stringify(data)
             });
-            return await response.json();
+            checkAuthResponse(response);
+            const json = await response.json();
+            return json;
         } catch (err) {
             console.error("Erro ao atualizar local:", err);
             return null;

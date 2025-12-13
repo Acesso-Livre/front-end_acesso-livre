@@ -1246,6 +1246,13 @@ main {
 .btn-confirm-action {
   background: var(--primary-color);
   color: white;
+  padding: 10px 24px;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-weight: var(--font-weight-bold);
+  border: none;
+  font-size: 14px;
+  transition: all 0.2s ease;
 }
 
 .btn-confirm-action:hover {
@@ -1261,7 +1268,66 @@ main {
   background: #c82333;
 }
 
-.btn-cancel:hover {
+#confirmationModal .btn-cancel:hover {
   background-color: #e2e6ea;
   color: #212529;
+}
+
+/* ===== MAP PICKER - Leaflet Controls ===== */
+#mapPickerContainer {
+  background: var(--primary-color);
+}
+
+/* Forçar estilos nos controles de zoom do Leaflet */
+#mapPickerContainer .leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 4px !important;
+  overflow: hidden;
+}
+
+#mapPickerContainer .leaflet-control-zoom a,
+#mapPickerContainer .leaflet-control-zoom-in,
+#mapPickerContainer .leaflet-control-zoom-out {
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  color: #333 !important;
+  background: white !important;
+  border: none !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  text-decoration: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s ease !important;
+}
+
+#mapPickerContainer .leaflet-control-zoom a:hover,
+#mapPickerContainer .leaflet-control-zoom-in:hover,
+#mapPickerContainer .leaflet-control-zoom-out:hover {
+  background: #f0f0f0 !important;
+  color: #000 !important;
+}
+
+#mapPickerContainer .leaflet-control-zoom-in {
+  border-radius: 4px 4px 0 0 !important;
+}
+
+#mapPickerContainer .leaflet-control-zoom-out {
+  border-radius: 0 0 4px 4px !important;
+  border-bottom: none !important;
+}
+
+/* Remover estilos padrão do Leaflet que podem interferir */
+#mapPickerContainer .leaflet-bar a {
+  background-position: center !important;
+}
+
+/* Cursor de crosshair no mapa para indicar seleção */
+#mapPickerContainer .leaflet-container {
+  cursor: crosshair;
 }
