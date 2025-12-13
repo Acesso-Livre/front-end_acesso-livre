@@ -483,8 +483,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const map = L.map("map", {
       crs: L.CRS.Simple,
-      minZoom: 0,
-      maxZoom: 3,
+      minZoom: 0.5,
+      maxZoom: 2,
       zoomSnap: 0.25,
       attributionControl: false,
       maxBounds: bounds,
@@ -499,7 +499,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const fillZoom = Math.max(zoomH, zoomW);
     const baseZoom = fillZoom;
     map.setZoom(fillZoom);
-    map.setMinZoom(fillZoom - 2);
+    map.setMinZoom(fillZoom - 0.1);
+    map.setMaxZoom(fillZoom + 1);
 
     // Keep pins scaled relative to the map zoom so they don't appear too large/small
     function updatePinScale() {
