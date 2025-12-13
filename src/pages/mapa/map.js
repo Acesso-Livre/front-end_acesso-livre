@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "bloco 16": "/assets/img/map/Bloco-16.svg",
     "quadra de areia": "/assets/img/map/Quadra de areia.svg",
     quadra: "/assets/img/map/Quadra.svg",
-    campo: "/assets/img/map/Quadra.svg", // campo compartilha a mesma imagem da quadra
+    campo: "/assets/img/map/Quadra.svg",
     biblioteca: "/assets/img/map/Biblioteca.svg",
     cantina: "/assets/img/map/Cantina.svg",
     auditório: "/assets/img/map/Auditório.svg",
@@ -141,51 +141,64 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== FUNÇÃO HELPER: Renderizar carrossel de imagens =====
   // Centraliza a lógica de exibição de imagens para reutilização
   function renderImagesCarousel(swiperWrapper, images) {
-    if (!images || images.length === 0) {
-      // Fallback: sem imagens
-      swiperWrapper.innerHTML = `
-        <div class="swiper-slide" style="background-color: #ffffff; height: 100%;">
-          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; color: #9ca3af;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; opacity: 0.5;">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <circle cx="8.5" cy="8.5" r="1.5"></circle>
-              <polyline points="21 15 16 10 5 21"></polyline>
-            </svg>
-            <p style="font-size: 14px; font-weight: 500;">Sem imagens disponíveis</p>
-          </div>
-        </div>`;
-      return;
-    }
-
-    // Renderizar slides
+    // Limpa slides anteriores
     swiperWrapper.innerHTML = '';
-    images.forEach((image) => {
-      const imageUrl = resolveImageUrl(image);
-      if (imageUrl) {
+
+    // Fallback: sem imagens
+    if (!images || images.length === 0) {
+      swiperWrapper.innerHTML = `
+      <div class="swiper-slide" style="background-color: #ffffff; height: 100%;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; color: #9ca3af;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; opacity: 0.5;">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          <p style="font-size: 14px; font-weight: 500;">Sem imagens disponíveis</p>
+        </div>
+      </div>
+    `;
+    } else {
+      // Renderizar um slide por imagem
+      images.forEach((image) => {
+        const imageUrl = resolveImageUrl(image);
+        if (!imageUrl) return;
+
         const slide = document.createElement('div');
         slide.className = 'swiper-slide';
-        slide.innerHTML = `
-          <div class="project-img">
-            <img src="${imageUrl}" alt="Imagem do comentário" style="width: 100%; height: 100%; object-fit: cover;">
-          </div>`;
-        swiperWrapper.appendChild(slide);
-      }
-    });
 
-    // Reinitializar Swiper
-    if (window.swiperInstance) {
-      window.swiperInstance.destroy();
+        slide.innerHTML = `
+        <div class="project-img">
+          <img
+            src="${imageUrl}"
+            alt="Imagem do comentário"
+            style="width: 100%; height: 100%; object-fit: cover;"
+          />
+        </div>
+      `;
+
+        swiperWrapper.appendChild(slide);
+      });
     }
-    window.swiperInstance = new Swiper('.swiper', {
-      loop: images.length > 1,
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      pagination: {
-        el: '.swiper-pagination',
-      },
-    });
+
+    // Inicializar Swiper apenas uma vez
+    if (!window.swiperInstance) {
+      window.swiperInstance = new Swiper('.swiper', {
+        loop: images && images.length > 1,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+      });
+    } else {
+      // Atualizar corretamente quando trocar as imagens
+      window.swiperInstance.update();
+      window.swiperInstance.slideTo(0, 0);
+    }
   }
 
   // Abre modal com dados (somente apresentação)
