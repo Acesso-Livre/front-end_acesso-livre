@@ -44,21 +44,72 @@ Este repositório contém o **front-end da aplicação**, desenvolvido com foco 
 - **HTML5** — Estrutura semântica  
 - **CSS3** — Estilização e responsividade  
 - **JavaScript (Vanilla)** — Lógica e interatividade  
-- **Bootstrap** — Layout responsivo e componentes visuais  
+- **Bootstrap** — Layout responsivo e componentes visuais
+- **Vite** — Ferramenta de build e ambiente de desenvolvimento rápido  
 - **Boas práticas de Acessibilidade Web (WCAG)**  
 
 ---
 
 ## 📂 Estrutura do Projeto
 
-```bash
+```
 front-end_acesso-livre/
+├── public/
+│   └── assets/                    # Recursos estáticos
+│       ├── fonts/                 # Fontes customizadas
+│       ├── img/                   # Imagens do projeto
+│       │   ├── icons/             # Ícones de acessibilidade
+│       │   └── map/               # Imagens do mapa (SVGs dos locais)
+│       └── ...
 │
-├── index.html        # Página principal
-├── assets/           # Imagens, ícones e recursos visuais
-├── css/              # Estilos da aplicação
-├── js/               # Scripts JavaScript
-└── README.md         # Documentação do projeto
+├── src/
+│   ├── components/                # Componentes reutilizáveis
+│   │   ├── header/                # Header da aplicação
+│   │   │   ├── header.html
+│   │   │   ├── header.css
+│   │   │   └── header.js
+│   │   └── footer/                # Footer da aplicação
+│   │       ├── footer.html
+│   │       └── footer.css
+│   │
+│   ├── pages/                     # Páginas da aplicação
+│   │   ├── admin/                 # Painel administrativo
+│   │   │   ├── index.html
+│   │   │   ├── script.js          # Lógica do painel admin
+│   │   │   ├── api.js             # Chamadas à API (admin)
+│   │   │   ├── style.css
+│   │   │   └── password-reset/    # Recuperação de senha
+│   │   │
+│   │   ├── auth/                  # Autenticação (Login)
+│   │   │   ├── index.html
+│   │   │   ├── script.js          # Lógica de login
+│   │   │   ├── api.js             # Chamadas à API (auth)
+│   │   │   ├── forgot-password.js # Esqueci minha senha
+│   │   │   └── style.css
+│   │   │
+│   │   └── mapa/                  # Página principal do mapa
+│   │       ├── index.html
+│   │       ├── map.js             # Lógica do mapa interativo
+│   │       ├── api.js             # Chamadas à API (mapa)
+│   │       ├── main.js            # Entry point
+│   │       └── style.css
+│   │
+│   ├── styles/                    # Estilos globais
+│   │   ├── global.css             # Reset e estilos base
+│   │   ├── index.css              # Estilos da home
+│   │   └── error-handler.css      # Estilos de erro
+│   │
+│   ├── utils/                     # Utilitários
+│   │   └── ...
+│   │
+│   ├── index.html                 # Página inicial (home)
+│   └── main.js                    # Entry point principal
+│
+├── .env                           # Variáveis de ambiente (não versionado)
+├── .env.example                   # Exemplo de variáveis de ambiente
+├── package.json                   # Dependências do projeto
+├── vite.config.js                 # Configuração do Vite
+└── README.md                      # Este arquivo
 ```
 
 ## ▶️ Como Executar o Projeto
@@ -119,6 +170,7 @@ Luís Roberto
 Pedro Wandrey
 
 Projeto orientado pelo professor: Fabio Oliveira
+
 
 
 
