@@ -5,6 +5,14 @@
 </p>
 
 <p align="center">
+  <a href="#-sobre-o-projeto">Sobre</a> •
+  <a href="#-funcionalidades">Funcionalidades</a> •
+  <a href="#-tecnologias">Tecnologias</a> •
+  <a href="#-como-executar">Como Executar</a> •
+  <a href="#-contribuidores">Contribuidores</a>
+</p>
+
+<p align="center">
   Projeto desenvolvido no <strong>Projeto Integrador</strong> do curso de
   <strong>Análise e Desenvolvimento de Sistemas (ADS)</strong> — IFBA
 </p>
@@ -19,34 +27,31 @@ Este repositório contém o **front-end da aplicação**, desenvolvido com foco 
 
 ---
 
-## 🎯 Objetivos do Front-end
-
-- Criar uma interface simples e acessível  
-- Facilitar a visualização dos pontos de acessibilidade  
-- Garantir responsividade em diferentes dispositivos  
-- Aplicar boas práticas de acessibilidade web  
-- Integrar com a API do projeto  
-
----
-
 ## 🧠 Funcionalidades
 
-- 📍 Visualização de locais acessíveis no campus  
-- 🔎 Filtros por tipo de acessibilidade (rampas, elevadores, entradas largas etc.)  
-- 📝 Exibição de informações detalhadas dos pontos mapeados  
-- ♿ Interface pensada para acessibilidade e usabilidade  
-- 📱 Layout responsivo (desktop e mobile)  
+- 📍 **Visualização de locais** acessíveis no campus
+- 🔎 **Filtros inteligentes** por tipo de acessibilidade (rampas, elevadores, etc.)
+- 📝 **Informações detalhadas** dos pontos mapeados
+- 🔐 **Painel Administrativo** para gestão de conteúdo
+- 🛠️ **Gestão de Locais** (CRUD) com seleção interativa no mapa
+- ✅ **Moderação** de comentários e avaliações
+- ♿ **Acessibilidade** e usabilidade como prioridade
+- 📱 **Layout responsivo** (Desktop e Mobile)
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠 Tecnologias
 
-- **HTML5** — Estrutura semântica  
-- **CSS3** — Estilização e responsividade  
-- **JavaScript (Vanilla)** — Lógica e interatividade  
-- **Bootstrap** — Layout responsivo e componentes visuais
-- **Vite** — Ferramenta de build e ambiente de desenvolvimento rápido  
-- **Boas práticas de Acessibilidade Web (WCAG)**  
+<div align="center">
+
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=white)
+![Leaflet](https://img.shields.io/badge/Leaflet-199900?style=for-the-badge&logo=Leaflet&logoColor=white)
+
+</div>
 
 ---
 
@@ -54,124 +59,63 @@ Este repositório contém o **front-end da aplicação**, desenvolvido com foco 
 
 ```
 front-end_acesso-livre/
-├── public/
-│   └── assets/                    # Recursos estáticos
-│       ├── fonts/                 # Fontes customizadas
-│       ├── img/                   # Imagens do projeto
-│       │   ├── icons/             # Ícones de acessibilidade
-│       │   └── map/               # Imagens do mapa (SVGs dos locais)
-│       └── ...
-│
+├── public/                # Recursos estáticos (assets)
 ├── src/
-│   ├── components/                # Componentes reutilizáveis
-│   │   ├── header/                # Header da aplicação
-│   │   │   ├── header.html
-│   │   │   ├── header.css
-│   │   │   └── header.js
-│   │   └── footer/                # Footer da aplicação
-│   │       ├── footer.html
-│   │       └── footer.css
-│   │
-│   ├── pages/                     # Páginas da aplicação
-│   │   ├── admin/                 # Painel administrativo
-│   │   │   ├── index.html
-│   │   │   ├── script.js          # Lógica do painel admin
-│   │   │   ├── api.js             # Chamadas à API (admin)
-│   │   │   ├── style.css
-│   │   │   └── password-reset/    # Recuperação de senha
-│   │   │
-│   │   ├── auth/                  # Autenticação (Login)
-│   │   │   ├── index.html
-│   │   │   ├── script.js          # Lógica de login
-│   │   │   ├── api.js             # Chamadas à API (auth)
-│   │   │   ├── forgot-password.js # Esqueci minha senha
-│   │   │   └── style.css
-│   │   │
-│   │   └── mapa/                  # Página principal do mapa
-│   │       ├── index.html
-│   │       ├── map.js             # Lógica do mapa interativo
-│   │       ├── api.js             # Chamadas à API (mapa)
-│   │       ├── main.js            # Entry point
-│   │       └── style.css
-│   │
-│   ├── styles/                    # Estilos globais
-│   │   ├── global.css             # Reset e estilos base
-│   │   ├── index.css              # Estilos da home
-│   │   └── error-handler.css      # Estilos de erro
-│   │
-│   ├── utils/                     # Utilitários
-│   │   └── ...
-│   │
-│   ├── index.html                 # Página inicial (home)
-│   └── main.js                    # Entry point principal
-│
-├── .env                           # Variáveis de ambiente (não versionado)
-├── .env.example                   # Exemplo de variáveis de ambiente
-├── package.json                   # Dependências do projeto
-├── vite.config.js                 # Configuração do Vite
-└── README.md                      # Este arquivo
+│   ├── components/        # Componentes reutilizáveis (Header, Footer)
+│   ├── pages/             # Páginas (Admin, Auth, Mapa)
+│   ├── styles/            # Estilos globais
+│   └── utils/             # Scripts utilitários
+├── .env.example           # Exemplo de variáveis de ambiente
+├── package.json           # Dependências e Scripts
+├── vite.config.js         # Configuração do Vite
+└── README.md              # Documentação
 ```
 
-## ▶️ Como Executar o Projeto
+---
 
-1. Clone o repositório:
+## ▶️ Como Executar
+
+Siga os passos abaixo para rodar o projeto localmente:
+
+1. **Clone o repositório:**
+
    ```bash
    git clone https://github.com/Acesso-Livre/front-end_acesso-livre.git
    ```
 
+2. **Acesse a pasta do projeto:**
 
-Acesse a pasta do projeto:
+   ```bash
+   cd front-end_acesso-livre
+   ```
 
-cd front-end_acesso-livre
+3. **Instale as dependências:**
 
+   ```bash
+   npm install
+   ```
 
-Abra o arquivo index.html no navegador
+   > **Nota:** É necessário ter o [Node.js](https://nodejs.org/) instalado.
 
-✔️ Não é necessário instalar dependências ou rodar servidor local.
+4. **Inicie o servidor de desenvolvimento:**
 
-👨‍💻 Contribuição
+   ```bash
+   npm run dev
+   ```
 
-Contribuições são sempre bem-vindas 🚀
+5. **Acesse no navegador:**
+   O projeto estará rodando em `http://localhost:5173`.
 
-Para contribuir com o projeto, siga os passos abaixo:
+---
 
-Faça um fork do repositório
+## 👥 Contribuidores
 
-Crie uma nova branch:
+<a href="https://github.com/Acesso-Livre/front-end_acesso-livre/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Acesso-Livre/front-end_acesso-livre" />
+</a>
 
-```bash
-git checkout -b feature/minha-feature
-```
+---
 
-Commit suas alterações:
-```bash
-git commit -m "Minha nova feature"
-```
-
-Envie para o repositório remoto:
-```bash
-git push origin feature/minha-feature
-```
-
-Abra um Pull Request
-
-👥 Equipe
-
-José Henrique Araújo Ravani 
-
-Francisco Simão
-
-Kauan Bento
-
-Lucas Souza
-
-Luís Roberto
-
-Pedro Wandrey
-
-Projeto orientado pelo professor: Fabio Oliveira
-
-
-
-
-
+<p align="center">
+  Orientado pelo Prof. Fabio Oliveira
+</p>
