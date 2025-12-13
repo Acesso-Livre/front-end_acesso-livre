@@ -127,6 +127,24 @@ async function loadPendingComments() {
       ? new Date(comment.created_at).toLocaleDateString("pt-BR")
       : "";
 
+    // Renderizar ícones de acessibilidade do comentário
+    let iconsHtml = "";
+    const commentIcons = comment.comment_icons || [];
+    if (commentIcons.length > 0) {
+      iconsHtml = `
+        <div class="comment-icons-row">
+          ${commentIcons.map(icon => `
+            <img 
+              src="${icon.icon_url || icon.image_url || icon.image}" 
+              alt="${icon.name}" 
+              title="${icon.name}"
+              class="comment-icon-small"
+            />
+          `).join('')}
+        </div>
+      `;
+    }
+
     card.innerHTML = `
       <div class="review-header">
         <div>
@@ -140,6 +158,8 @@ async function loadPendingComments() {
       </div>
 
       <p class="comment-text">${comment.comment}</p>
+
+      ${iconsHtml}
 
       <div class="actions">
         <button class="btn-approve" onclick="approve(${comment.id

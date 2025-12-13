@@ -66,20 +66,23 @@
                         <div class="stars">⭐⭐⭐⭐⭐</div>
                     </div>
 
-                    <!-- Abas: Informações, Avaliações, Descrição -->
+                    <!-- Abas: Informações, Descrição, Comentários -->
                     <div class="tabs">
                         <button class="tab-btn active" id="info-tab">Informações</button>
+                        <button class="tab-btn" id="description-tab">Descrição</button>
                         <button class="tab-btn" id="review-tab">Comentários</button>
                     </div>
 
                     <!-- Conteúdo das Abas -->
                     <div class="tab-content">
                         <div class="tab-pane active" id="info-content">
-                            <h3>Informações de Acessibilidade</h3>
-                            <ul>
-                                <li></li>
-                                <li></li>
-                            </ul>
+                            <!-- Conteúdo gerado dinamicamente pelo JavaScript:
+                                 - Informações de Acessibilidade (ícones) -->
+                        </div>
+
+                        <div class="tab-pane" id="description-content">
+                            <p><strong>Descrição:</strong> <span id="location-description-text">Sem descrição
+                                    disponível</span></p>
                         </div>
 
                         <div class="tab-pane" id="review-content">
@@ -149,14 +152,7 @@
                     <input type="file" id="comment-image" multiple style="display:none">
                     <ul id="file-list"></ul>
                 </div>
-                <button id="btn-add-accessibility-pin" type="button"
-                        style="margin-top: 10px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                    Adicionar Pin de Acessibilidade
-                </button>
-                <div id="accessibility-pins-selection-area" style="display: none;">
-                    <div id="pins-list-from-api"></div>
-                    <input type="hidden" id="selected-pin-id">
-                </div>
+                <button id="btn-add-accessibility-pin" type="button" style="margin-top: 10px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Adicionar Pin de Acessibilidade</button>
                 <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
                     <button type="button" class="submit-btn back-btn"
                         style="background-color: #ccc; color: #333;">Cancelar</button>

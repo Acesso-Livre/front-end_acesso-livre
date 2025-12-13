@@ -874,6 +874,42 @@ h1 {
 }
 
 /* Grid de Ícones de Acessibilidade (Informações) */
+
+/* Títulos das seções de informação */
+#info-content h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Seção de descrição do local */
+.location-description-section {
+  margin-bottom: 20px;
+}
+
+.location-description-section p {
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Estilo para a aba Descrição */
+#description-content {
+  padding: 8px 0;
+}
+
+#location-description-text {
+  color: #374151;
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
 .accessibility-icons-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
