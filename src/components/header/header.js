@@ -62,6 +62,55 @@ export function initHeader() {
             }
         });
     }
+
+    // Copy email functionality
+    const emailCopyElement = document.getElementById("email-copy");
+    if (emailCopyElement) {
+        emailCopyElement.addEventListener("click", async () => {
+            const email = "acessolivreifbaeun@gmail.com";
+            
+            try {
+                // Try using the modern Clipboard API first
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(email);
+                } else {
+                    // Fallback for older browsers
+                    const textArea = document.createElement("textarea");
+                    textArea.value = email;
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-999999px";
+                    textArea.style.top = "-999999px";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    document.execCommand('copy');
+                    textArea.remove();
+                }
+                
+                // Show feedback to user
+                const originalText = emailCopyElement.textContent;
+                emailCopyElement.textContent = "Email copiado!";
+                emailCopyElement.style.color = "#28a745"; // Green color for success
+                
+                setTimeout(() => {
+                    emailCopyElement.textContent = originalText;
+                    emailCopyElement.style.color = "";
+                }, 2000);
+                
+            } catch (err) {
+                console.error('Failed to copy email: ', err);
+                // Show error feedback
+                const originalText = emailCopyElement.textContent;
+                emailCopyElement.textContent = "Erro ao copiar";
+                emailCopyElement.style.color = "#dc3545"; // Red color for error
+                
+                setTimeout(() => {
+                    emailCopyElement.textContent = originalText;
+                    emailCopyElement.style.color = "";
+                }, 2000);
+            }
+        });
+    }
 }
 
 // Scroll effect
