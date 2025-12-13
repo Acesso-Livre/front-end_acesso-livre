@@ -378,7 +378,12 @@ async function loadLocationsList() {
 // 1.5 Visualizar detalhes do local em modal
 async function viewLocationDetails(locationId) {
   try {
-    const location = await window.adminApi.getLocation(locationId);
+    // Buscar local e comentários em paralelo
+    const [location, commentsResponse, iconsResponse] = await Promise.all([
+      window.adminApi.getLocation(locationId),
+      window.adminApi.getCommentsByLocation(locationId),
+      window.adminApi.getCommentIcons()
+    ]);
 
     // Processar imagens - suporta arrays de strings ou objetos
     let images = [];
@@ -426,27 +431,69 @@ async function viewLocationDetails(locationId) {
             `;
     }
 
-    // Renderizar itens de acessibilidade
-    let accessibilityHtml = "";
-    if (
-      location.accessibility_items &&
-      location.accessibility_items.length > 0
-    ) {
-      accessibilityHtml = location.accessibility_items
-        .map(
-          (item) => `
-                <li>
-                    ${item.image
-              ? `<img src="${item.image}" alt="${item.name}" style="width: 20px; height: 20px; margin-right: 8px;">`
-              : ""
+    // Extrair IDs de ícones dos comentários
+    const comments = commentsResponse?.comments || commentsResponse || [];
+    const commentsIconsIds = new Set();
+
+    if (Array.isArray(comments)) {
+      comments.forEach(comment => {
+        // Verificar comment_icon_ids (IDs diretos)
+        if (comment.comment_icon_ids && Array.isArray(comment.comment_icon_ids)) {
+          comment.comment_icon_ids.forEach(id => commentsIconsIds.add(id));
+        }
+        // Verificar comment_icons (Objetos ou Array misto)
+        let icons = comment.comment_icons;
+        if (typeof icons === 'string') {
+          icons.split(',').forEach(id => commentsIconsIds.add(parseInt(id.trim())));
+        } else if (Array.isArray(icons)) {
+          icons.forEach(icon => {
+            if (typeof icon === 'object' && icon.id) {
+              commentsIconsIds.add(icon.id);
+            } else if (typeof icon === 'number') {
+              commentsIconsIds.add(icon);
             }
-                    ${item.name}
-                </li>
-            `
-        )
-        .join("");
+          });
+        }
+      });
+    }
+
+    // Processar ícones disponíveis
+    let allIcons = [];
+    if (Array.isArray(iconsResponse)) {
+      allIcons = iconsResponse;
+    } else if (iconsResponse?.comment_icons) {
+      allIcons = iconsResponse.comment_icons;
+    } else if (iconsResponse?.icons) {
+      allIcons = iconsResponse.icons;
+    }
+
+    // Filtrar ícones que estão nos comentários
+    const selectedIcons = allIcons.filter(icon => commentsIconsIds.has(icon.id));
+
+    // Placeholder SVG para quando imagem não carregar
+    const placeholderSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
+
+    // Renderizar itens de acessibilidade no mesmo padrão do mapa
+    let accessibilityHtml = "";
+    if (selectedIcons.length > 0) {
+      accessibilityHtml = `
+        <div class="accessibility-icons-grid">
+          ${selectedIcons.map(item => `
+            <div class="accessibility-icon-item">
+              <img 
+                src="${item.icon_url || item.image || placeholderSvg}" 
+                alt="${item.name}" 
+                title="${item.name}"
+                class="accessibility-icon-img"
+                onerror="this.onerror=null; this.src='${placeholderSvg}'; this.classList.add('icon-placeholder');"
+              />
+              <span class="accessibility-icon-name">${item.name}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
     } else {
-      accessibilityHtml = "<li>Nenhum item de acessibilidade informado</li>";
+      accessibilityHtml = "<p style='color: #999; text-align: center; padding: 20px;'>Nenhum item de acessibilidade informado</p>";
     }
 
     const modalHtml = `
@@ -476,9 +523,7 @@ async function viewLocationDetails(locationId) {
                     <div class="detail-tab-content">
                         <div class="detail-tab-pane active" id="info-pane">
                             <h3>Acessibilidade</h3>
-                            <ul class="accessibility-list">
-                                ${accessibilityHtml}
-                            </ul>
+                            ${accessibilityHtml}
                         </div>
                         
                         <div class="detail-tab-pane" id="description-pane">
@@ -698,25 +743,26 @@ async function openLocationForm(locationId = null) {
                 </div>
             </div>
 
+            ${location ? `
             <div class="form-group">
               <label>Imagens do Local</label>
               <div class="location-images-carousel">
                     ${(() => {
-      // Processar imagens existentes
-      let existingImages = [];
-      if (location && Array.isArray(location.images)) {
-        existingImages = location.images.map((img) => {
-          if (typeof img === 'string') return { url: img, id: null };
-          if (img && typeof img === 'object') return { url: img.url, id: img.id };
-          return null;
-        }).filter(img => img && img.url);
-      }
+        // Processar imagens existentes
+        let existingImages = [];
+        if (location && Array.isArray(location.images)) {
+          existingImages = location.images.map((img) => {
+            if (typeof img === 'string') return { url: img, id: null };
+            if (img && typeof img === 'object') return { url: img.url, id: img.id };
+            return null;
+          }).filter(img => img && img.url);
+        }
 
-      if (existingImages.length === 0) {
-        return '<p class="no-images-msg">Nenhuma imagem cadastrada</p>';
-      }
+        if (existingImages.length === 0) {
+          return '<p class="no-images-msg">Nenhuma imagem cadastrada</p>';
+        }
 
-      return `
+        return `
                         <div id="edit-location-carousel" class="swiper edit-location-carousel">
                           <div class="swiper-wrapper">
                             ${existingImages.map((img, index) => `
@@ -739,64 +785,44 @@ async function openLocationForm(locationId = null) {
                           <div class="swiper-pagination"></div>
                         </div>
                       `;
-    })()}
+      })()}
                 </div>
             </div>
+            ` : ''}
 
+            ${location ? `
             <div class="form-group">
-                <label>Itens de Acessibilidade</label>
+                <label>Itens de Acessibilidade <span style="font-weight: normal; color: #999; font-size: 12px;">(baseado nos comentários)</span></label>
                 
-                <div class="accessibility-items-grid">
-                    ${accessibilityItems
-      .map(
-        (item, index) => {
-          let itemId, itemName, itemImage;
+                <div class="accessibility-icons-grid">
+                    ${selectedAccessibilityItemIds.length > 0
+        ? selectedAccessibilityItemIds.map(iconId => {
+          // Encontrar o ícone correspondente na lista de todos os ícones
+          const item = accessibilityItems.find(i => i.id == iconId);
+          if (!item) return '';
 
-          if (typeof item === 'object' && item !== null) {
-            // Objeto normal
-            itemId = item.id;
-            itemName = item.name || item.title || 'Item ' + item.id;
-            // Adicionado suporte para icon_url
-            itemImage = item.image || item.icon || item.icon_url || item.image_url || null;
-          } else if (typeof item === 'string') {
-            // String (provavelmente URL) - Fallback
-            itemId = item; // Usar a própria string como ID
-            itemName = 'Item ' + (index + 1);
-            itemImage = item;
-          } else {
-            return ''; // Ignorar item inválido
-          }
-
-          // Verificação mais robusta (usa 'some' e '==' para lidar com string vs number)
-          const isChecked = selectedAccessibilityItemIds.some(selected =>
-            (selected == itemId) || (selected === itemImage)
-          );
-
-          // Escapar ID para uso em atributo HTML
-          const safeId = String(itemId).replace(/[^a-zA-Z0-9-_]/g, '_');
+          const itemName = item.name || item.title || 'Item';
+          const itemImage = item.icon_url || item.image || item.icon || null;
+          const placeholderSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
 
           return `
-            <label class="accessibility-icon-item ${isChecked ? 'selected' : ''}" for="acc-${safeId}">
-              <input type="checkbox" id="acc-${safeId}" value="${itemId}" ${isChecked ? "checked" : ""} 
-                onchange="this.parentElement.classList.toggle('selected', this.checked)">
-              
-              ${itemImage
-              ? `<img src="${itemImage}" alt="${itemName}" class="accessibility-icon-img">`
-              : `<div class="accessibility-icon-img icon-placeholder"></div>`
-            }
-              
-              <span class="accessibility-icon-name">${itemName}</span>
-            </label>
-          `;
-        }
-      )
-      .join("")}
-                    ${accessibilityItems.length === 0
-      ? '<p style="color: #999; margin: 0; text-align: center;">Nenhum item disponível</p>'
-      : ""
-    }
+                            <div class="accessibility-icon-item">
+                              <img 
+                                src="${itemImage || placeholderSvg}" 
+                                alt="${itemName}" 
+                                title="${itemName}"
+                                class="accessibility-icon-img"
+                                onerror="this.onerror=null; this.src='${placeholderSvg}'; this.classList.add('icon-placeholder');"
+                              />
+                              <span class="accessibility-icon-name">${itemName}</span>
+                            </div>
+                          `;
+        }).join('')
+        : '<p style="color: #999; margin: 0; text-align: center; grid-column: 1 / -1; padding: 20px;">Nenhum item de acessibilidade nos comentários</p>'
+      }
                 </div>
             </div>
+            ` : ''}
 
             <div class="form-actions">
                 <button type="submit" class="btn-submit">${location ? "Salvar Alterações" : "Criar Local"}</button>
