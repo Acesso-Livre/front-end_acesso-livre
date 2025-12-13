@@ -13,7 +13,7 @@ body {
 
 /* Navbar */
 .navbar {
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   right: 0;
@@ -101,7 +101,9 @@ body {
   align-items: center;
   justify-content: center;
   transform-origin: center;
-  transition: 0.12s ease;
+  transition: transform 0.12s ease;
+  /* scale according to map zoom via CSS variable set in JS */
+  transform: scale(var(--pin-scale, 1));
   cursor: pointer;
 }
 
@@ -130,7 +132,7 @@ body {
 }
 
 .pin-marker:hover {
-  transform: scale(1.15);
+  transform: scale(calc(var(--pin-scale, 1) * 1.15));
 }
 
 .pin-with-label {

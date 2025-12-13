@@ -71,7 +71,7 @@ async function renderRecentComments() {
 
 // Inicialização
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadComponent(headerHtml, "body-start", "header");
+  await loadComponent(headerHtml, ".blue-block-main", "header");
   await loadComponent(footerHtml, "body-end", "footer");
   initHeader(); // Inicializa os event listeners dos modais após carregar os componentes
   renderRecentComments();
