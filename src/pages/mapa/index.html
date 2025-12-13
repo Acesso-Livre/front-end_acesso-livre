@@ -132,28 +132,34 @@
         <div id="add-comment-body">
             <h2>Adicionar Comentário</h2>
             <form id="comment-form">
-                <label for="user-name">Nome:</label>
-                <input type="text" id="user-name" placeholder="Seu nome" required>
+                <div class="form-group">
+                    <label for="user-name">Nome:</label>
+                    <input type="text" id="user-name" class="form-control" placeholder="Seu nome" required>
+                </div>
 
-                <label for="rating">Avaliação:</label>
-                <div class="star-rating">
-                    <span class="star" data-value="1">☆</span>
-                    <span class="star" data-value="2">☆</span>
-                    <span class="star" data-value="3">☆</span>
-                    <span class="star" data-value="4">☆</span>
-                    <span class="star" data-value="5">☆</span>
+                <div class="form-group">
+                    <label for="rating">Avaliação:</label>
+                    <div class="star-rating">
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
+                    </div>
                 </div>
                 <input type="hidden" id="rating" name="rating" required>
 
-                <label for="comment-text">Comentário:</label>
-                <textarea id="comment-text" placeholder="Digite seu comentário" required></textarea>
+                <div class="form-group">
+                    <label for="comment-text">Comentário:</label>
+                    <textarea id="comment-text" class="form-control" placeholder="Digite seu comentário" required></textarea>
+                </div>
                 <div id="image-box">
-                    <button id="btn-add-image" type="button">Adicionar imagem</button>
+                    <button id="btn-add-image" class="btn btn-secondary" type="button">Adicionar imagem</button>
                     <input type="file" id="comment-image" multiple style="display:none">
                     <ul id="file-list"></ul>
                 </div>
-                <button id="btn-add-accessibility-pin" type="button"
-                    style="margin-top: 10px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Adicionar
+                <button id="btn-add-accessibility-pin" class="btn btn-primary" type="button"
+                    style="margin-top: 10px;">Adicionar
                     Pin de Acessibilidade</button>
 
                 <!-- Área de ícones selecionados -->
@@ -169,9 +175,8 @@
                     <input type="hidden" id="selected-pin-ids" value="">
                 </div>
                 <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
-                    <button type="button" class="submit-btn back-btn"
-                        style="background-color: #ccc; color: #333;">Cancelar</button>
-                    <button type="submit" class="submit-btn">Enviar</button>
+                    <button type="button" class="btn btn-secondary back-btn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary submit-btn">Enviar</button>
                 </div>
             </form>
         </div>

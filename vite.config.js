@@ -24,5 +24,11 @@ export default defineConfig({
   },
   server: {
     open: true,
+    proxy: {
+      '/api': {
+        target: 'https://acesso-livre-api.onrender.com', // API Backend
+        changeOrigin: true,
+      }
+    }
   },
 });

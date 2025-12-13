@@ -1,9 +1,14 @@
 /* map.js
    Responsabilidade: mapa, pins, modal, abas, formulários, interações.
-   Usa window.api.* para dados.
+   Usa locationService e commentService.
 */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { locationService } from "../../services/location-service.js";
+import { commentService } from "../../services/comment-service.js";
+import { resolveImageUrl } from "../../utils/image-utils.js";
+import { detectTypeFromName, getColorForType } from "../../utils/location-utils.js";
+import { showAlert } from "../../utils/modal.js";
+
 const MODAL_IDS = {
   infoModal: "infoModal",
   addCommentModal: "addCommentModal",
@@ -75,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Função para criar ícone de pin
   function makePinIcon(color = "#FF0000", tipo = "default", label = "") {
-    console.log("Making icon for tipo:", tipo, "name:", label);
+    // console.log("Making icon for tipo:", tipo, "name:", label);
 
     const imagePath = getImagePath(label);
     let iconHtml;
@@ -121,22 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===== FUNÇÃO HELPER: Resolver IDs de imagem para URLs =====
-  // Se o backend retornar imagens com IDs, esta função converte para URLs
-  function resolveImageUrl(image) {
-    // Se for string (URL já resolvida)
-    if (typeof image === 'string') {
-      return image;
-    }
-    // Se for objeto com url (compatibilidade com formato atual)
-    if (image && typeof image === 'object' && image.url) {
-      return image.url;
-    }
-    // Se for objeto com id (novo formato)
-    if (image && typeof image === 'object' && image.id) {
-      return `${API_BASE_URL}/images/${image.id}`;
-    }
-    return null;
-  }
+  // Helper importado de image-utils.js (resolveImageUrl)
+
 
   // ===== FUNÇÃO HELPER: Renderizar carrossel de imagens =====
   // Centraliza a lógica de exibição de imagens para reutilização
@@ -258,11 +249,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         // Busca comentários uma única vez
-        const commentsResponse = await fetch(
-          `${API_BASE_URL}/comments/${locationData.id}/comments`
-        );
-        const commentsData = await commentsResponse.json();
-        const comments = commentsData.comments || [];
+        const commentsResponse = await commentService.getByLocation(locationData.id);
+        const comments = commentsResponse.comments || [];
 
         // A. Renderizar Lista de Comentários
         commentsList.innerHTML = "";
@@ -400,58 +388,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // =====================================
-  // FUNÇÃO PARA DETECTAR O TIPO PELO NAME
-  // =====================================
-  function detectTypeFromName(name) {
-    const n = name.toLowerCase();
-
-    if (n.includes("estacionamento")) return "estacionamento";
-    if (n.includes("bloco")) return "bloco";
-    if (n.includes("quadra de areia")) return "quadra_areia";
-    if (n.includes("quadra")) return "quadra";
-    if (n.includes("campo")) return "campo";
-    if (n.includes("cantina")) return "cantina";
-    if (n.includes("biblioteca")) return "biblioteca";
-    if (n.includes("audit")) return "auditorio";
-    if (n.includes("cores")) return "cores";
-    if (n.includes("entrada")) return "entrada";
-
-    return "default";
-  }
-
-  // Render de pins (chama window.api.getAllLocations)
+  // Render de pins (chama locationService.getAll)
   async function renderPinsOnMap(map, W, H) {
     // Busca locations via API
-    const pins = await window.api.getAllLocations();
+    const pins = await locationService.getAll();
     // Salva no global para outras partes que precisarem (não sobrescrever)
     window.pins = pins || [];
 
-    console.log("PINS RECEBIDOS:", pins);
+    // console.log("PINS RECEBIDOS:", pins);
 
     pins.forEach((p) => {
       const tipo = detectTypeFromName(p.name);
+      const color = getColorForType(tipo);
 
       const top = parseFloat(p.top) || 0;
       const left = parseFloat(p.left) || 0;
       const x = (left / 100) * W;
       const y = (top / 100) * H;
-
-      const corMap = {
-        estacionamento: "#FF0000",
-        bloco: "#00FF00",
-        campo: "#0000FF",
-        quadra: "#FFFF00",
-        quadra_areia: "#FFA500",
-        biblioteca: "#800080",
-        cantina: "#00FFFF",
-        auditorio: "#FFC0CB",
-        cores: "#808080",
-        entrada: "#000000",
-        default: "#000000",
-      };
-
-      const color = corMap[tipo] || corMap.default;
 
       const marker = L.marker([y, x], {
         icon: makePinIcon(color, tipo, p.name),
@@ -637,10 +590,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!commentsList) return;
     commentsList.innerHTML = "<p>Carregando comentários...</p>";
     try {
-      const comments = await window.api.getApprovedCommentsForLocation(
-        locationId
-      );
-      if (comments.length === 0) {
+      const response = await commentService.getApprovedByLocation(locationId);
+      const comments = response.comments || response; // Adaptar conforme retorno
+      if (!comments || comments.length === 0) {
         commentsList.innerHTML = "<p>Nenhum comentário ainda.</p>";
       } else {
         commentsList.innerHTML = comments
@@ -668,67 +620,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Helper: mostra um modal simples (estilo alert) com mensagem e botão OK
-  function showMessageModal(message, isError = false) {
-    // Remover se já existir
-    const existing = document.getElementById("message-modal");
-    if (existing) existing.remove();
-
-    const overlay = document.createElement("div");
-    overlay.id = "message-modal";
-    overlay.style.position = "fixed";
-    overlay.style.left = 0;
-    overlay.style.top = 0;
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.display = "flex";
-    overlay.style.alignItems = "center";
-    overlay.style.justifyContent = "center";
-    overlay.style.backgroundColor = "rgba(0,0,0,0.45)";
-    overlay.style.zIndex = 9999;
-
-    const card = document.createElement("div");
-    card.style.background = "#fff";
-    card.style.padding = "28px";
-    card.style.borderRadius = "12px";
-    card.style.boxShadow = "0 10px 30px rgba(0,0,0,0.18)";
-    // Tornar o card quadrado e um pouco maior
-    card.style.width = "min(300px, 92%)";
-    card.style.height = "min(300px, 92%)";
-    card.style.display = "flex";
-    card.style.flexDirection = "column";
-    card.style.alignItems = "center";
-    card.style.justifyContent = "center";
-    card.style.textAlign = "center";
-
-    const msg = document.createElement("p");
-    msg.textContent = message;
-    msg.style.margin = "0 0 22px 0";
-    msg.style.fontSize = "20px";
-    msg.style.lineHeight = "1.3";
-    msg.style.color = isError ? "#b91c1c" : "#064e3b";
-    msg.style.fontWeight = "700";
-
-    const btn = document.createElement("button");
-    btn.textContent = "OK";
-    btn.style.padding = "12px 22px";
-    btn.style.border = "none";
-    btn.style.borderRadius = "10px";
-    btn.style.cursor = "pointer";
-    btn.style.background = isError ? "#ef4444" : "#10b981";
-    btn.style.color = "#fff";
-    btn.style.fontSize = "16px";
-    btn.style.fontWeight = "700";
-
-    btn.addEventListener("click", () => {
-      overlay.remove();
-    });
-
-    card.appendChild(msg);
-    card.appendChild(btn);
-    overlay.appendChild(card);
-    document.body.appendChild(overlay);
-  }
+  // Helper: showMessageModal removido, usar showAlert
+  // (Código removido)
 
   // Array para armazenar pins de acessibilidade adicionados nesta sessão
   let sessionAddedPins = [];
@@ -812,10 +705,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // 3. Buscar ícones da API
       let accessibilityIcons = [];
       try {
-        if (window.api && typeof window.api.getCommentIcons === 'function') {
-          accessibilityIcons = await window.api.getCommentIcons();
-        } else {
-          throw new Error("window.api.getCommentIcons não está definido.");
+        try {
+          accessibilityIcons = await commentService.getIcons();
+        } catch (error) {
+          throw new Error("Erro ao buscar ícones: " + error.message);
         }
       } catch (error) {
         console.error("Erro ao carregar pins de acessibilidade:", error);
@@ -1025,12 +918,12 @@ document.addEventListener("DOMContentLoaded", () => {
       imgInput.addEventListener("change", () => {
         for (const file of imgInput.files) {
           if (file.size > 10485760) { // 10MB limit
-            showMessageModal("Imagem muito grande. O tamanho máximo é 10MB.", true);
+            showAlert("Imagem muito grande. O tamanho máximo é 10MB.", "Erro");
             continue;
           }
           if (!isAllowedImageFile(file)) {
             const fileExtension = file.name.split('.').pop().toUpperCase();
-            showMessageModal(`Arquivo rejeitado: "${file.name}"\n\nFormato ".${fileExtension}" não é permitido.\n\nUse apenas: PNG, JPG, JPEG, WEBP, HEIC ou HEIF.`, true);
+            showMessageModal(`Arquivo rejeitado: "${file.name}"\n\nFormato ".${fileExtension}" não é permitido.\n\nUse apenas: PNG, JPG, JPEG, WEBP, HEIC ou HEIF.`, "Erro");
             continue;
           }
           selectedImages.push(file);
@@ -1110,11 +1003,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // NÃO sobrescrever window.pins — apenas chamar a API para enviar comentário
-        const result = await window.api.postComment(commentData);
+        const result = await commentService.create(commentData);
         if (result) {
-          showMessageModal("Comentário enviado para aprovação!");
+          showAlert("Comentário enviado para aprovação!", "Sucesso");
         } else {
-          showMessageModal("Erro ao enviar comentário. Tente novamente.", true);
+          showAlert("Erro ao enviar comentário. Tente novamente.", "Erro");
           return;
         }
 

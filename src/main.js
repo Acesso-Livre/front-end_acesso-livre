@@ -4,7 +4,7 @@ import footerHtml from "./components/footer/footer.html?raw";
 import "./components/header/header.css";
 import headerHtml from "./components/header/header.html?raw";
 import { initHeader } from "./components/header/header.js";
-import { fetchRecentComments } from "./pages/mapa/api.js";
+import { commentService } from "./services/comment-service.js";
 
 // Carregar componentes dinamicamente
 async function loadComponent(html, position = "body-end", componentName = "") {
@@ -31,7 +31,7 @@ async function renderRecentComments() {
   if (!container) return;
 
   try {
-    const comments = await fetchRecentComments();
+    const comments = await commentService.getRecent();
 
     if (!comments || comments.length === 0) {
       container.innerHTML = "<p>Nenhuma avaliação recente.</p>";

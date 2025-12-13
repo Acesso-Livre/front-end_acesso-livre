@@ -1,6 +1,8 @@
 // src/admin/script.js - Entry point para página admin
-import "./api.js";
-// Importa o handler global de erros (mostra modal amigável em caso de falhas)
+import { locationService } from "../../services/location-service.js";
+import { commentService } from "../../services/comment-service.js";
+import { resolveImageUrl } from "../../utils/image-utils.js";
+import { showModal, showAlert } from "../../utils/modal.js";
 import "../../utils/error-handler.js";
 
 // ==========================
@@ -65,7 +67,7 @@ async function loadPendingComments() {
   container.innerHTML =
     '<div class="loading-container"><div class="loading-spinner"></div></div>';
 
-  const result = await window.adminApi.getPendingComments();
+  const result = await commentService.getPending();
   console.log("API retornou:", result);
 
   // Extrair array de comentários (pode estar em result.comments ou ser um array direto)
@@ -93,7 +95,7 @@ async function loadPendingComments() {
       await Promise.all(
         Array.from(missingLocationIds).map(async (id) => {
           try {
-            const loc = await window.adminApi.getLocation(id);
+            const loc = await locationService.getById(id);
             locationNameById[id] = loc && loc.name ? loc.name : "Local desconhecido";
           } catch (err) {
             locationNameById[id] = "Local desconhecido";
@@ -162,12 +164,12 @@ async function loadPendingComments() {
       ${iconsHtml}
 
       <div class="actions">
-        <button class="btn-approve" onclick="approve(${comment.id
+        <button class="btn btn-success" onclick="approve(${comment.id
       })">Aprovar</button>
-        <button class="btn-reject" onclick="reject(${comment.id
+        <button class="btn btn-danger" onclick="reject(${comment.id
       })">Rejeitar</button>
         ${hasImages
-        ? `<button class="btn-photos" onclick="viewPhotos(decodeURIComponent('${encodeURIComponent(
+        ? `<button class="btn btn-warning" onclick="viewPhotos(decodeURIComponent('${encodeURIComponent(
           JSON.stringify(images)
         )}'))">Fotos</button>`
         : ""
@@ -187,44 +189,29 @@ window.approve = async function (id) {
     title: "Aprovar Comentário",
     message: "Deseja aprovar e publicar este comentário?",
     onConfirm: async () => {
-      await window.adminApi.approveComment(id);
+      await commentService.approve(id);
       loadPendingComments();
     }
   });
 };
 
 window.reject = async function (id) {
-  showConfirmation({
-    title: "Rejeitar Comentário",
-    message: "Tem certeza que deseja rejeitar este comentário?",
-    confirmText: "Rejeitar",
-    isDestructive: true,
-    onConfirm: async () => {
-      await window.adminApi.rejectComment(id);
-      loadPendingComments();
+  showModal(
+    "Rejeitar Comentário",
+    "Tem certeza que deseja rejeitar este comentário?",
+    {
+      confirmText: "Rejeitar",
+      isDestructive: true,
+      onConfirm: async () => {
+        await commentService.reject(id);
+        loadPendingComments();
+      }
     }
-  });
+  );
 };
 
-// ==========================
-// FUNÇÃO HELPER: Resolver IDs de imagem para URLs
-// ==========================
-function resolveImageUrl(image) {
-  // Se for string (URL já resolvida)
-  if (typeof image === 'string') {
-    return image;
-  }
-  // Se for objeto com url (compatibilidade com formato atual)
-  if (image && typeof image === 'object' && image.url) {
-    return image.url;
-  }
-  // Se for objeto com id (novo formato)
-  if (image && typeof image === 'object' && image.id) {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-    return `${API_BASE_URL}/images/${image.id}`;
-  }
-  return null;
-}
+// Função helper resolveImageUrl agora importada de utils
+// (Código removido)
 
 // ==========================
 // MODAL DE FOTOS COM SWIPER
@@ -327,7 +314,7 @@ async function loadLocationsList() {
     '<div class="loading-container"><div class="loading-spinner"></div></div>';
 
   try {
-    const response = await window.adminApi.getLocations();
+    const response = await locationService.getAll();
 
     // Extrair array de locais (pode estar em response.locations ou ser um array direto)
     const locations = Array.isArray(response)
@@ -349,7 +336,7 @@ async function loadLocationsList() {
     locations.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'pt-BR'));
 
     let html =
-      '<button class="btn-create" onclick="openLocationForm()">+ Criar Novo Local</button>';
+      '<button class="btn btn-success" onclick="openLocationForm()">+ Criar Novo Local</button>';
     html += '<div class="locations-grid">';
 
     locations.forEach((location) => {
@@ -406,9 +393,9 @@ async function viewLocationDetails(locationId) {
   try {
     // Buscar local e comentários em paralelo
     const [location, commentsResponse, iconsResponse] = await Promise.all([
-      window.adminApi.getLocation(locationId),
-      window.adminApi.getCommentsByLocation(locationId),
-      window.adminApi.getCommentIcons()
+      locationService.getById(locationId),
+      commentService.getByLocation(locationId),
+      commentService.getIcons()
     ]);
 
     // Processar imagens - suporta arrays de strings ou objetos
@@ -524,7 +511,7 @@ async function viewLocationDetails(locationId) {
 
     const modalHtml = `
             <div class="modal-view-location">
-                <button class="close-detail-modal" onclick="backToLocationsList()">← Voltar</button>
+                <button class="btn btn-secondary close-detail-modal" onclick="backToLocationsList()" style="margin-bottom: 15px;">← Voltar</button>
                 
                 <div class="swiper detail-swiper">
                     <div class="swiper-wrapper">
@@ -567,8 +554,8 @@ async function viewLocationDetails(locationId) {
                     </div>
                     
                     <div class="detail-actions">
-                        <button class="btn-edit" onclick="openLocationForm(${location.id})">Editar</button>
-                        <button class="btn-delete" onclick="confirmDeleteLocation(${location.id})">Excluir</button>
+                        <button class="btn btn-primary" onclick="openLocationForm(${location.id})">Editar</button>
+                        <button class="btn btn-danger" onclick="confirmDeleteLocation(${location.id})">Excluir</button>
                     </div>
                 </section>
             </div>
@@ -636,8 +623,8 @@ async function openLocationForm(locationId = null) {
 
       // Buscar local e comentários em paralelo
       const [loc, commentsResponse] = await Promise.all([
-        window.adminApi.getLocation(locationId),
-        window.adminApi.getCommentsByLocation(locationId)
+        locationService.getById(locationId),
+        commentService.getByLocation(locationId)
       ]);
       location = loc;
 
@@ -717,35 +704,32 @@ async function openLocationForm(locationId = null) {
         <form class="location-form" id="locationForm">
             <div class="form-group">
                 <label for="locName">Nome *</label>
-                <input type="text" id="locName" name="name" required value="${location?.name || ""
+                <input type="text" id="locName" name="name" class="form-control" required value="${location?.name || ""
     }" />
             </div>
 
             <div class="form-group">
                 <label for="locDescription">Descrição</label>
-                <textarea id="locDescription" name="description">${location?.description || ""
+                <textarea id="locDescription" name="description" class="form-control">${location?.description || ""
     }</textarea>
             </div>
 
             <div class="position-inputs-grid">
                 <div class="form-group">
                     <label for="locTop">Posição Y (top)</label>
-                    <input type="number" id="locTop" name="top" step="0.01" value="${location?.top || ""
+                    <input type="number" id="locTop" name="top" step="0.01" class="form-control" value="${location?.top || ""
     }" />
                 </div>
 
                 <div class="form-group">
                     <label for="locLeft">Posição X (left)</label>
-                    <input type="number" id="locLeft" name="left" step="0.01" value="${location?.left || ""}" />
+                    <input type="number" id="locLeft" name="left" step="0.01" class="form-control" value="${location?.left || ""}" />
                 </div>
             </div>
             
             <div class="form-group" style="margin-top: 5px;">
-                <button type="button" id="btnOpenMapPicker" class="btn-map-picker" style="
-                    display: flex; align-items: center; gap: 8px; padding: 10px 16px;
-                    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-                    color: white; border: none; border-radius: 8px; cursor: pointer;
-                    font-size: 14px; font-weight: 500; transition: all 0.2s;
+                <button type="button" id="btnOpenMapPicker" class="btn btn-primary" style="
+                    display: flex; align-items: center; gap: 8px;
                 ">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -785,7 +769,7 @@ async function openLocationForm(locationId = null) {
                               <div class="swiper-slide">
                                 <div class="carousel-image-item" data-image-id="${img.id || ''}" data-image-url="${img.url}">
                                   <img src="${img.url}" alt="Imagem ${index + 1}">
-                                  <button type="button" class="btn-delete-image" onclick="deleteLocationImage('${img.id}', this)" ${!img.id ? 'disabled title="Imagem sem ID"' : ''}>
+                                  <button type="button" class="btn btn-danger btn-sm" style="position:absolute; top:5px; right:5px; padding:5px; font-size:12px;" onclick="deleteLocationImage('${img.id}', this)" ${!img.id ? 'disabled title="Imagem sem ID"' : ''}>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                       <polyline points="3 6 5 6 21 6"></polyline>
                                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -809,8 +793,8 @@ async function openLocationForm(locationId = null) {
 
 
             <div class="form-actions">
-                <button type="submit" class="btn-submit">${location ? "Salvar Alterações" : "Criar Local"}</button>
-                <button type="button" class="btn-cancel" onclick="loadLocationsList()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">${location ? "Salvar Alterações" : "Criar Local"}</button>
+                <button type="button" class="btn btn-secondary" onclick="loadLocationsList()">Cancelar</button>
             </div>
         </form>
     `;
@@ -855,92 +839,99 @@ async function openLocationForm(locationId = null) {
     .addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // Funcao de salvar para ser chamada apos confirmacao
-      const saveAction = async () => {
-        // Coletar dados do formulário
-        const formData = new FormData(e.target);
-        const data = {
-          name: formData.get("name"),
-          description: formData.get("description") || "",
-          top: formData.get("top") ? parseFloat(formData.get("top")) : null,
-          left: formData.get("left") ? parseFloat(formData.get("left")) : null,
-        };
+      // Submit handler with visual feedback
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerText;
 
-        // Nota: Imagens são gerenciadas via carrossel (exclusão individual)
-
-        // Coletar IDs de acessibilidade selecionados
-        const selectedCheckboxes = document.querySelectorAll(
-          '.accessibility-items-grid input[type="checkbox"]:checked'
-        );
-        data.accessibility_items = Array.from(selectedCheckboxes).map((cb) =>
-          parseInt(cb.value)
-        );
-
+      // Inner save function
+      const executeSave = async () => {
         try {
+          submitBtn.disabled = true;
+          submitBtn.innerText = location ? "Salvando..." : "Criando...";
+
+          // Coletar dados do formulário
+          const formData = new FormData(e.target);
+          const data = {
+            name: formData.get("name"),
+            description: formData.get("description") || "",
+            top: formData.get("top") ? parseFloat(formData.get("top")) : null,
+            left: formData.get("left") ? parseFloat(formData.get("left")) : null,
+          };
+
+          // Coletar IDs de acessibilidade selecionados
+          const selectedCheckboxes = document.querySelectorAll(
+            '.accessibility-items-grid input[type="checkbox"]:checked'
+          );
+          data.accessibility_items = Array.from(selectedCheckboxes).map((cb) =>
+            parseInt(cb.value)
+          );
+
           if (location) {
             // Atualizar local existente
-            await window.adminApi.updateLocation(location.id, data);
+            await locationService.update(location.id, data);
             showAlert("Local atualizado com sucesso!", "Sucesso");
           } else {
             // Criar novo local
-            const created = await window.adminApi.createLocation(data);
-            console.log("Resposta CreateLocation:", created);
+            const created = await locationService.create(data);
 
             const createdId = created?.id || (created?.location && created.location.id) || created?.location_id || created?.data?.id || created?.data?.location_id;
 
             if (!created) {
               throw new Error('Falha na comunicação com a API (resposta vazia)');
             }
+            // Validar se realmente criou (algum ID deve existir)
             if (!createdId) {
-              console.warn("Local criado mas ID não encontrado na resposta:", created);
-              showAlert("Local criado, mas houve uma incerteza na resposta do servidor. A lista será recarregada.", "Aviso");
-              loadLocationsList();
-              return;
+              console.warn("Local criado mas estrutura de resposta imprevista:", created);
+              // Mesmo assim recarrega, pois pode ter funcionado
+            } else {
+              // Atualiza a variável de local para que upload use o location_id se fosse ter upload sequencial (mas aqui recarrega list)
             }
-            // Atualiza a variável de local para que upload use o location_id
-            const createdObj = created?.location || created?.data || created;
-            createdObj.id = createdId;
-            location = createdObj;
-
             showAlert("Local criado com sucesso!", "Sucesso");
           }
           loadLocationsList();
         } catch (error) {
           console.error("Erro ao salvar local:", error);
           showAlert(`Erro ao salvar local: ${error.message || error}`, "Erro");
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+          }
         }
       };
 
-      showConfirmation({
-        title: location ? "Salvar Alterações" : "Criar Local",
-        message: "Confirma os dados inseridos para este local?",
-        confirmText: location ? "Salvar" : "Criar",
-        onConfirm: saveAction
-      });
+      // Se for edição, pede confirmação? Ou sempre salva direto?
+      // Padrão UX: Salvar/Criar direto não costuma pedir confirmação.
+      // Apenas ações destrutivas ou grandes alterações.
+      // Vou executar direto para agilizar, mas mantendo a consistência visual.
+      executeSave();
+
     });
 }
 
 // 3. Confirmar e deletar local
-// 3. Confirmar e deletar local
 async function confirmDeleteLocation(id) {
-  showConfirmation({
-    title: "Excluir Local",
-    message: "Tem certeza que deseja excluir este local? Esta ação não pode ser desfeita.",
-    confirmText: "Excluir",
-    isDestructive: true,
-    onConfirm: async () => {
-      try {
-        await window.adminApi.deleteLocation(id);
-        showAlert("Local excluído com sucesso!", "Sucesso");
-        loadLocationsList();
-      } catch (error) {
-        console.error("Erro ao excluir local:", error);
-        showAlert("Erro ao excluir local. Tente novamente.", "Erro");
+  showModal(
+    "Excluir Local",
+    "Tem certeza que deseja excluir este local? Esta ação não pode ser desfeita.",
+    {
+      confirmText: "Excluir",
+      isDestructive: true,
+      onConfirm: async () => {
+        try {
+          await locationService.delete(id);
+          showAlert("Local excluído com sucesso!", "Sucesso");
+          loadLocationsList();
+        } catch (error) {
+          console.error("Erro ao excluir local:", error);
+          showAlert(`Erro ao excluir local: ${error.message || error}`, "Erro");
+        }
       }
     }
-  });
+  );
 }
 
+// 4. Deletar imagem de local
 // 4. Deletar imagem de local
 async function deleteLocationImage(imageId, buttonElement) {
   if (!imageId || imageId === 'null' || imageId === 'undefined') {
@@ -948,150 +939,74 @@ async function deleteLocationImage(imageId, buttonElement) {
     return;
   }
 
-  showConfirmation({
-    title: "Excluir Imagem",
-    message: "Deseja realmente remover esta imagem do local?",
-    confirmText: "Excluir",
-    isDestructive: true,
-    onConfirm: async () => {
-      // Desabilitar botão durante operação
-      if (buttonElement) {
-        buttonElement.disabled = true;
-        buttonElement.innerHTML = '<span class="loading-spinner-small"></span> Excluindo...';
-      }
+  showModal(
+    "Excluir Imagem",
+    "Deseja realmente remover esta imagem do local?",
+    {
+      confirmText: "Excluir",
+      isDestructive: true,
+      onConfirm: async () => {
+        // Desabilitar botão durante operação
+        if (buttonElement) {
+          buttonElement.disabled = true;
+          buttonElement.innerHTML = '<span class="loading-spinner-small"></span> Excluindo...';
+        }
 
-      try {
-        const success = await window.adminApi.deleteLocationImage(imageId);
+        try {
+          const success = await commentService.deleteImage(imageId);
 
-        if (success) {
-          // Remover slide do carrossel
-          const slide = buttonElement?.closest('.swiper-slide');
-          if (slide) {
-            slide.remove();
+          if (success) {
+            // Remover slide do carrossel
+            const slide = buttonElement?.closest('.swiper-slide');
+            if (slide) {
+              slide.remove();
 
-            // Atualizar Swiper
-            if (window.editLocationCarousel) {
-              window.editLocationCarousel.update();
-            }
+              // Atualizar Swiper
+              if (window.editLocationCarousel) {
+                window.editLocationCarousel.update();
+              }
 
-            // Se não houver mais imagens, mostrar mensagem
-            const remainingSlides = document.querySelectorAll('#edit-location-carousel .swiper-slide');
-            if (remainingSlides.length === 0) {
-              const carousel = document.getElementById('location-images-carousel');
-              if (carousel) {
-                carousel.innerHTML = '<p class="no-images-msg">Nenhuma imagem cadastrada</p>';
+              // Se não houver mais imagens, mostrar mensagem
+              const remainingSlides = document.querySelectorAll('#edit-location-carousel .swiper-slide');
+              if (remainingSlides.length === 0) {
+                const carousel = document.getElementById('location-images-carousel');
+                if (carousel) {
+                  carousel.innerHTML = '<p class="no-images-msg">Nenhuma imagem cadastrada</p>';
+                }
               }
             }
+
+            showAlert("Imagem excluída com sucesso!", "Sucesso");
+          } else {
+            throw new Error("Falha ao excluir imagem");
           }
+        } catch (error) {
+          console.error("Erro ao excluir imagem:", error);
+          showAlert("Erro ao excluir imagem. Tente novamente.", "Erro");
 
-          showAlert("Imagem excluída com sucesso!", "Sucesso");
-        } else {
-          throw new Error("Falha ao excluir imagem");
-        }
-      } catch (error) {
-        console.error("Erro ao excluir imagem:", error);
-        showAlert("Erro ao excluir imagem. Tente novamente.", "Erro");
-
-        // Restaurar botão
-        if (buttonElement) {
-          buttonElement.disabled = false;
-          buttonElement.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              <line x1="10" y1="11" x2="10" y2="17"></line>
-              <line x1="14" y1="11" x2="14" y2="17"></line>
-            </svg>
-            Excluir
-          `;
+          // Restaurar botão
+          if (buttonElement) {
+            buttonElement.disabled = false;
+            buttonElement.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                Excluir
+              `;
+          }
         }
       }
     }
-  });
+  );
 }
 
 // ==========================
 // FUNÇÃO HELPER: SHOW CONFIRMATION
 // ==========================
-function showConfirmation({ title, message, confirmText = "Confirmar", cancelText = "Cancelar", isDestructive = false, onConfirm }) {
-  const modal = document.getElementById('confirmationModal');
-  const titleEl = document.getElementById('confirmTitle');
-  const messageEl = document.getElementById('confirmMessage');
-  const confirmBtn = document.getElementById('btnConfirmAction');
-  const cancelBtn = document.getElementById('btnCancelConfirm');
-
-  if (!modal || !confirmBtn || !cancelBtn) {
-    console.error("Modal elements not found!");
-    // Fallback if modal is missing for some reason
-    if (confirm(message)) {
-      onConfirm();
-    }
-    return;
-  }
-
-  // Set content
-  // Set content
-  titleEl.textContent = title;
-  messageEl.textContent = message;
-  confirmBtn.textContent = confirmText;
-
-  if (cancelText) {
-    cancelBtn.textContent = cancelText;
-    cancelBtn.style.display = 'inline-block'; // or flex item default
-  } else {
-    cancelBtn.style.display = 'none';
-  }
-
-  // Set style
-  if (isDestructive) {
-    confirmBtn.classList.add('destructive');
-  } else {
-    confirmBtn.classList.remove('destructive');
-  }
-
-  // Show modal
-  modal.style.display = 'flex';
-
-  // Event Handlers
-  const close = () => {
-    modal.style.display = 'none';
-    cleanup();
-  };
-
-  const handleConfirm = () => {
-    onConfirm();
-    close();
-  };
-
-  const handleOutsideClick = (e) => {
-    if (e.target === modal) {
-      close();
-    }
-  };
-
-  // Bind events
-  confirmBtn.onclick = handleConfirm;
-  cancelBtn.onclick = close;
-  window.addEventListener('click', handleOutsideClick);
-
-  // Cleanup to avoid multiple listeners
-  function cleanup() {
-    confirmBtn.onclick = null;
-    cancelBtn.onclick = null;
-    window.removeEventListener('click', handleOutsideClick);
-  }
-}
-
-// Helper para Alertas simples (substituindo o alert nativo)
-function showAlert(message, title = "Aviso") {
-  showConfirmation({
-    title: title,
-    message: message,
-    confirmText: "OK",
-    cancelText: null,
-    onConfirm: () => { }
-  });
-}
+// Funções Helpers showConfirmation e showAlert removidas daqui pois são importadas de utils
 
 // Expor funções globalmente para chamadas inline
 window.openLocationForm = openLocationForm;
@@ -1140,7 +1055,7 @@ function openMapPicker() {
     const img = new Image();
 
     // Iniciar busca de locais existentes (referência visual) IMEDIATAMENTE
-    const locationsPromise = window.adminApi.getLocations().catch(err => {
+    const locationsPromise = locationService.getAll().catch(err => {
       console.error("Erro ao pré-carregar locais no map picker:", err);
       return [];
     });
