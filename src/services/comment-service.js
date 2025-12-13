@@ -41,10 +41,26 @@ export const commentService = {
 
     async create(data) {
         try {
-            const response = await apiClient.post("/comments/", data);
+            let body = data;
+            // Check if there are images to upload
+            if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+                const formData = new FormData();
+                for (const key in data) {
+                    if (key === "images") {
+                        data.images.forEach((image) => {
+                            formData.append("images", image);
+                        });
+                    } else if (data[key] !== undefined && data[key] !== null) {
+                        formData.append(key, data[key]);
+                    }
+                }
+                body = formData;
+            }
+
+            const response = await apiClient.post("/comments/", body);
             return response;
         } catch (error) {
-
+            console.error("Erro ao criar comentário:", error);
             return null;
         }
     },

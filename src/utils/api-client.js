@@ -6,10 +6,11 @@ class ApiClient {
         this.baseUrl = baseUrl;
     }
 
-    getHeaders() {
-        const headers = {
-            "Content-Type": "application/json",
-        };
+    getHeaders(isFormData = false) {
+        const headers = {};
+        if (!isFormData) {
+            headers["Content-Type"] = "application/json";
+        }
         const token = sessionStorage.getItem("authToken");
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
@@ -19,10 +20,12 @@ class ApiClient {
 
     async request(endpoint, options = {}) {
         const url = `${this.baseUrl}${endpoint}`;
+        const isFormData = options.body instanceof FormData;
+
         const config = {
             ...options,
             headers: {
-                ...this.getHeaders(),
+                ...this.getHeaders(isFormData),
                 ...options.headers,
             },
         };
@@ -85,14 +88,14 @@ class ApiClient {
     post(endpoint, body) {
         return this.request(endpoint, {
             method: "POST",
-            body: JSON.stringify(body),
+            body: body instanceof FormData ? body : JSON.stringify(body),
         });
     }
 
     patch(endpoint, body) {
         return this.request(endpoint, {
             method: "PATCH",
-            body: JSON.stringify(body),
+            body: body instanceof FormData ? body : JSON.stringify(body),
         });
     }
 
