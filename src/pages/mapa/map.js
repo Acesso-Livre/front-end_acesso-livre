@@ -506,16 +506,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnMap = document.querySelector(".btn-map-custom");
 
     // Ao clicar no botão do mapa
-    L.DomEvent.on(btnMap, "click", function (e) {
-      this.style.display = "none"; // desaparece o botão
-      btnModal.style.display = "block"; // mostra o modal
-    });
+    if (btnMap) {
+      L.DomEvent.on(btnMap, "click", function (e) {
+        this.style.display = "none"; // desaparece o botão
+        if (btnModal) {
+          btnModal.style.display = "block"; // mostra o modal
+        }
+      });
+    }
 
     // Fecha o modal ao clicar em qualquer lugar do mapa
     map.on("click", () => {
-      if (btnModal.style.display === "block") {
+      if (btnModal && btnModal.style.display === "block") {
         btnModal.style.display = "none"; // esconde o modal
-        btnMap.style.display = "block"; // reaparece o botão
+        if (btnMap) {
+          btnMap.style.display = "block"; // reaparece o botão
+        }
       }
     });
 
