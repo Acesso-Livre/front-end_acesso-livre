@@ -91,7 +91,7 @@ export function mostrarErroParaUsuario(friendlyMessage = 'Ops, algo deu errado, 
     if (closeBtn) closeBtn.focus();
   } catch (e) {
     // Se o modal quebrar por algum motivo, ainda assim logar
-    console.error('Falha ao mostrar modal de erro:', e);
+
   }
 }
 
@@ -104,7 +104,7 @@ export function executarSeguranca(fn) {
     try {
       return await fn.apply(this, args);
     } catch (err) {
-      console.error('Erro capturado por executarSeguranca:', err);
+
       mostrarErroParaUsuario('Ops, algo deu errado durante a operação.', err);
       // Re-lançar para que o chamador também possa tratar, se desejar
       throw err;
@@ -151,13 +151,13 @@ window.addEventListener('error', (event) => {
     const err = event.error || { message: event.message, filename: event.filename, lineno: event.lineno };
     if (shouldIgnoreError(err) || isUserFacingError(err)) {
       // Apenas logar silenciosamente e não mostrar modal
-      console.warn('Ignorado error global:', err.message || err);
+
       return;
     }
-    console.error('window.error captured:', err);
+
     mostrarErroParaUsuario('Ops, algo inesperado aconteceu. Relate se precisar.', err);
   } catch (e) {
-    console.error('Erro no handler global de error:', e);
+
   }
 });
 
@@ -165,13 +165,13 @@ window.addEventListener('unhandledrejection', (event) => {
   try {
     const reason = event.reason;
     if (shouldIgnoreError(reason) || isUserFacingError(reason)) {
-      console.warn('Ignorado unhandled rejection:', reason);
+
       return;
     }
-    console.error('UnhandledRejection captured:', reason);
+
     mostrarErroParaUsuario('Ocorreu um erro não tratado em uma operação assíncrona.', reason);
   } catch (e) {
-    console.error('Erro no handler global de unhandledrejection:', e);
+
   }
 });
 

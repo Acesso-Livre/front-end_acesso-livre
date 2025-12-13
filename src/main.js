@@ -19,9 +19,9 @@ async function loadComponent(html, position = "body-end", componentName = "") {
     else if (position === "body-end") document.body.append(element);
     else document.querySelector(position)?.append(element);
 
-    console.log(`${componentName} carregado com sucesso`);
+
   } catch (err) {
-    console.error(`Erro ao carregar ${componentName}:`, err);
+
   }
 }
 
@@ -64,7 +64,7 @@ async function renderRecentComments() {
       })
       .join("");
   } catch (error) {
-    console.error("Erro ao carregar comentários:", error);
+
     container.innerHTML = "<p>Erro ao carregar avaliações.</p>";
   }
 }

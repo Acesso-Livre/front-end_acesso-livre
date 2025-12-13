@@ -7,7 +7,7 @@ export const commentService = {
             const response = await apiClient.get(`/comments/pending?skip=${skip}&limit=${limit}`);
             return Array.isArray(response) ? response : (response?.comments || []);
         } catch (error) {
-            console.error("Erro ao carregar comentários pendentes:", error);
+
             return [];
         }
     },
@@ -17,7 +17,7 @@ export const commentService = {
             const response = await apiClient.get(`/comments/${locationId}/comments`);
             return response; // Usually returns object with comments array
         } catch (error) {
-            console.error(`Erro ao buscar comentários do local ${locationId}:`, error);
+
             return { comments: [] };
         }
     },
@@ -44,7 +44,7 @@ export const commentService = {
             const response = await apiClient.post("/comments/", data);
             return response;
         } catch (error) {
-            console.error("Erro ao criar comentário:", error);
+
             return null;
         }
     },
@@ -53,7 +53,7 @@ export const commentService = {
         try {
             return await apiClient.get("/comments/icons/");
         } catch (error) {
-            console.error("Erro ao buscar ícones de comentários:", error);
+
             return [];
         }
     },
@@ -63,7 +63,7 @@ export const commentService = {
             const response = await apiClient.get("/comments/recent/");
             return Array.isArray(response) ? response : (response?.comments || []);
         } catch (error) {
-            console.error("Erro ao buscar comentários recentes:", error);
+
             return [];
         }
     },
@@ -73,7 +73,7 @@ export const commentService = {
             await apiClient.delete(`/comments/images/${imageId}`);
             return true;
         } catch (error) {
-            console.error(`Erro ao deletar imagem ${imageId}:`, error);
+
             return false;
         }
     }

@@ -8,7 +8,7 @@ export const locationService = {
             // Handle both direct array or object with locations property
             return Array.isArray(response) ? response : (response?.locations || []);
         } catch (error) {
-            console.error("Erro ao buscar locais:", error);
+
             return [];
         }
     },
@@ -17,7 +17,7 @@ export const locationService = {
         try {
             return await apiClient.get(`/locations/${id}`);
         } catch (error) {
-            console.error(`Erro ao buscar local ${id}:`, error);
+
             return null;
         }
     },
@@ -26,7 +26,7 @@ export const locationService = {
         try {
             return await apiClient.post("/locations/", data);
         } catch (error) {
-            console.error("Erro ao criar local:", error);
+
             throw error;
         }
     },
@@ -35,7 +35,7 @@ export const locationService = {
         try {
             return await apiClient.patch(`/locations/${id}`, data);
         } catch (error) {
-            console.error(`Erro ao atualizar local ${id}:`, error);
+
             throw error;
         }
     },
@@ -44,7 +44,7 @@ export const locationService = {
         try {
             return await apiClient.delete(`/locations/${id}`);
         } catch (error) {
-            console.error(`Erro ao deletar local ${id}:`, error);
+
             throw error;
         }
     },
@@ -53,7 +53,7 @@ export const locationService = {
         try {
             return await apiClient.get("/locations/accessibility-items/");
         } catch (error) {
-            console.error("Erro ao buscar itens de acessibilidade:", error);
+
             return [];
         }
     },
@@ -62,7 +62,7 @@ export const locationService = {
         try {
             return await apiClient.post("/locations/accessibility-items/", data);
         } catch (error) {
-            console.error("Erro ao criar item de acessibilidade:", error);
+
             throw error;
         }
     }

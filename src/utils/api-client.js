@@ -1,5 +1,4 @@
 // src/utils/api-client.js
-// src/utils/api-client.js
 const API_BASE_URL = import.meta.env.DEV ? '/api' : import.meta.env.VITE_API_BASE_URL;
 
 class ApiClient {
@@ -30,7 +29,6 @@ class ApiClient {
 
         try {
             const response = await fetch(url, config);
-            console.log(`DEBUG: [${options.method || 'GET'}] ${endpoint} -> Status: ${response.status}`);
 
             if (response.status === 401 || response.status === 403) {
                 sessionStorage.removeItem("authToken");
@@ -59,7 +57,7 @@ class ApiClient {
                     data = text ? { message: text } : null;
                 }
             } catch (e) {
-                console.warn("Failed to parse response JSON:", e);
+
                 data = { message: text };
             }
 
@@ -75,12 +73,7 @@ class ApiClient {
 
             return data;
         } catch (error) {
-            console.error(`API Request Error [${options.method || 'GET'} ${endpoint}]:`, error);
-            // DEBUG: Log full details
-            console.log("DEBUG: Request URL:", url);
-            console.log("DEBUG: Request Method:", options.method || 'GET');
-            if (error.status) console.log("DEBUG: Response Status:", error.status);
-            if (error.data) console.log("DEBUG: Response Data:", error.data);
+
             throw error;
         }
     }

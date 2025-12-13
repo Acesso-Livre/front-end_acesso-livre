@@ -63,7 +63,7 @@ export const authApi = {
 
             return data;
         } catch (err) {
-            console.error("Erro ao fazer login:", err);
+
             // É melhor relançar o erro para que o componente possa tratar a falha
             throw err;
         }
@@ -96,7 +96,7 @@ export const authApi = {
             const data = await response.json();
             return data;
         } catch (err) {
-            console.error("Erro ao validar token:", err);
+
             // Relançar um erro aqui não é ideal, pois a função retorna {valid: false}
             return { valid: false };
         }
@@ -127,7 +127,7 @@ export const authApi = {
             return await response.json();
 
         } catch (err) {
-            console.error("Erro no authApi.forgotPassword:", err);
+
             // Relançar o erro é essencial para que a UI saiba o que exibir
             throw err;
         }

@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const token = sessionStorage.getItem("authToken");
 
   if (!token) {
-    console.warn("Sem token → redirecionando ao login");
+
     window.location.href = "/pages/auth/";
     return;
   }
@@ -68,11 +68,11 @@ async function loadPendingComments() {
     '<div class="loading-container"><div class="loading-spinner"></div></div>';
 
   const result = await commentService.getPending();
-  console.log("API retornou:", result);
+
 
   // Extrair array de comentários (pode estar em result.comments ou ser um array direto)
   const list = Array.isArray(result) ? result : result?.comments || [];
-  console.log("Lista de comentários:", list);
+
 
   if (list.length === 0) {
     container.innerHTML = "<p>Nenhum comentário pendente ✨</p>";
@@ -103,7 +103,7 @@ async function loadPendingComments() {
         })
       );
     } catch (e) {
-      console.error("Erro ao buscar nomes de locais:", e);
+
     }
   }
 
@@ -320,7 +320,7 @@ async function loadLocationsList() {
     const locations = Array.isArray(response)
       ? response
       : response?.locations || [];
-    console.log("Locais carregados:", locations);
+
 
     // Se não houver locais
     if (!locations || locations.length === 0) {
@@ -382,7 +382,7 @@ async function loadLocationsList() {
     html += "</div>";
     container.innerHTML = html;
   } catch (error) {
-    console.error("Erro ao carregar locais:", error);
+
     container.innerHTML =
       '<p style="color: red;">Erro ao carregar locais. Tente novamente.</p>';
   }
@@ -598,7 +598,7 @@ async function viewLocationDetails(locationId) {
       });
     }, 100);
   } catch (error) {
-    console.error("Erro ao carregar detalhes do local:", error);
+
   }
 }
 
@@ -632,7 +632,7 @@ async function openLocationForm(locationId = null) {
       const comments = commentsResponse?.comments || commentsResponse || [];
 
 
-      console.log("Comentários do local:", comments);
+
 
       // Extrair IDs de ícones dos comentários
       const commentsIconsIds = new Set();
@@ -664,35 +664,22 @@ async function openLocationForm(locationId = null) {
       }
 
       selectedAccessibilityItemIds = Array.from(commentsIconsIds);
-      console.log("IDs de ícones extraídos dos comentários:", selectedAccessibilityItemIds);
 
-      // Update Debug Info
-      const debugEl = document.getElementById('api-debug-info');
-      if (debugEl) {
-        const debugData = {
-          extractedIds: selectedAccessibilityItemIds,
-          availableItems: accessibilityItems.map(i => ({ id: i.id, name: i.name })),
-          commentsSample: comments.length > 0 ? {
-            id: comments[0].id,
-            icons: comments[0].comment_icons,
-            iconIds: comments[0].comment_icon_ids
-          } : 'No comments'
-        };
-        debugEl.textContent = "Debug Selection: " + JSON.stringify(debugData, null, 2);
-        debugEl.style.display = 'block';
-      }
 
-      // Fallback: Se não achou nos comentários, verificar no próprio local (retrocompatibilidade)
-      if (selectedAccessibilityItemIds.length === 0 && location && location.accessibility_items) {
-        if (location.accessibility_items.length > 0 && typeof location.accessibility_items[0] === 'object') {
-          selectedAccessibilityItemIds = location.accessibility_items.map(item => item.id);
-        } else {
-          selectedAccessibilityItemIds = location.accessibility_items;
-        }
+
+      // debugEl removed
+    }
+
+    // Fallback: Se não achou nos comentários, verificar no próprio local (retrocompatibilidade)
+    if (selectedAccessibilityItemIds.length === 0 && location && location.accessibility_items) {
+      if (location.accessibility_items.length > 0 && typeof location.accessibility_items[0] === 'object') {
+        selectedAccessibilityItemIds = location.accessibility_items.map(item => item.id);
+      } else {
+        selectedAccessibilityItemIds = location.accessibility_items;
       }
     }
   } catch (error) {
-    console.error("Erro ao carregar dados:", error);
+
     showAlert("Erro ao carregar dados do formulário", "Erro");
     return;
   }
@@ -881,7 +868,7 @@ async function openLocationForm(locationId = null) {
             }
             // Validar se realmente criou (algum ID deve existir)
             if (!createdId) {
-              console.warn("Local criado mas estrutura de resposta imprevista:", created);
+
               // Mesmo assim recarrega, pois pode ter funcionado
             } else {
               // Atualiza a variável de local para que upload use o location_id se fosse ter upload sequencial (mas aqui recarrega list)
@@ -890,7 +877,7 @@ async function openLocationForm(locationId = null) {
           }
           loadLocationsList();
         } catch (error) {
-          console.error("Erro ao salvar local:", error);
+
           showAlert(`Erro ao salvar local: ${error.message || error}`, "Erro");
         } finally {
           if (submitBtn) {
@@ -923,7 +910,7 @@ async function confirmDeleteLocation(id) {
           showAlert("Local excluído com sucesso!", "Sucesso");
           loadLocationsList();
         } catch (error) {
-          console.error("Erro ao excluir local:", error);
+
           showAlert(`Erro ao excluir local: ${error.message || error}`, "Erro");
         }
       }
@@ -981,7 +968,7 @@ async function deleteLocationImage(imageId, buttonElement) {
             throw new Error("Falha ao excluir imagem");
           }
         } catch (error) {
-          console.error("Erro ao excluir imagem:", error);
+
           showAlert("Erro ao excluir imagem. Tente novamente.", "Erro");
 
           // Restaurar botão
@@ -1031,7 +1018,7 @@ function openMapPicker() {
   const cancelBtn = document.getElementById('cancelMapPicker');
 
   if (!modal || !container) {
-    console.error('Elementos do Map Picker não encontrados');
+
     return;
   }
 
@@ -1056,7 +1043,7 @@ function openMapPicker() {
 
     // Iniciar busca de locais existentes (referência visual) IMEDIATAMENTE
     const locationsPromise = locationService.getAll().catch(err => {
-      console.error("Erro ao pré-carregar locais no map picker:", err);
+
       return [];
     });
 
@@ -1179,7 +1166,7 @@ function openMapPicker() {
           });
         }
       } catch (err) {
-        console.error("Erro ao carregar locais de referência no map picker:", err);
+
       }
     };
 

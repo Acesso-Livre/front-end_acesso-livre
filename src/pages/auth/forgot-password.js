@@ -60,12 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const email = emailInput.value.trim();
 
         try {
-                // Debug: informar no console que o envio foi iniciado
-                console.log("[forgot-password] enviando pedido para recuperar senha. email:", email);
-
-                // A chamada à função de API robusta que você revisou
-                const forgotResult = await authApi.forgotPassword(email);
-                console.log("[forgot-password] resposta da API:", forgotResult);
+            const forgotResult = await authApi.forgotPassword(email);
 
             // Sucesso: Esconde o formulário e mostra a mensagem de sucesso
             forgotPasswordForm.style.display = "none";
@@ -74,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         } catch (error) {
-            console.error("Erro ao tentar recuperar senha:", error);
+
             errorMessage.textContent = error.message;
             errorMessage.style.display = "block";
 

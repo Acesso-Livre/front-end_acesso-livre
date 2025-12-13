@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Função para criar ícone de pin
   function makePinIcon(color = "#FF0000", tipo = "default", label = "") {
-    // console.log("Making icon for tipo:", tipo, "name:", label);
+
 
     const imagePath = getImagePath(label);
     let iconHtml;
@@ -375,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         infoContent.innerHTML = infoHtml;
       } catch (error) {
-        console.error("Erro ao carregar dados do local:", error);
+
         commentsList.innerHTML = "<p>Erro ao carregar comentários.</p>";
       }
 
@@ -384,7 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // =========================
       // document.getElementById("infoModal").style.display = "block";
     } catch (error) {
-      console.error("Erro ao abrir modal:", error);
+
     }
   }
 
@@ -395,7 +395,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Salva no global para outras partes que precisarem (não sobrescrever)
     window.pins = pins || [];
 
-    // console.log("PINS RECEBIDOS:", pins);
+
 
     pins.forEach((p) => {
       const tipo = detectTypeFromName(p.name);
@@ -518,7 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   img.onerror = () => {
-    console.error("Erro ao carregar a imagem do mapa:", imgUrl);
+
     alert("Erro ao carregar a imagem do mapa. Verifique o caminho.");
   };
 
@@ -615,7 +615,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .join("");
       }
     } catch (error) {
-      console.error("Erro ao carregar comentários:", error);
+
       commentsList.innerHTML = "<p>Erro ao carregar comentários.</p>";
     }
   }
@@ -695,7 +695,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (!pinsListContainer) {
-        console.error("Elemento #pins-list-from-api não encontrado");
+
         return;
       }
 
@@ -711,8 +711,8 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error("Erro ao buscar ícones: " + error.message);
         }
       } catch (error) {
-        console.error("Erro ao carregar pins de acessibilidade:", error);
-        pinsListContainer.innerHTML = '<div style="color: red; text-align: center; padding: 20px;">Erro ao carregar os pins. Verifique o console.</div>';
+
+        pinsListContainer.innerHTML = '<div style="color: red; text-align: center; padding: 20px;">Erro ao carregar os pins.</div>';
         return;
       }
 

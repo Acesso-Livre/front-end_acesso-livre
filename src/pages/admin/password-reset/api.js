@@ -8,9 +8,9 @@
 // inválidas a `import` que causariam SyntaxError.
 const API_BASE_URL =
   typeof import.meta !== "undefined" &&
-  import.meta &&
-  import.meta.env &&
-  import.meta.env.VITE_API_BASE_URL
+    import.meta &&
+    import.meta.env &&
+    import.meta.env.VITE_API_BASE_URL
     ? import.meta.env.VITE_API_BASE_URL
     : window.__API_BASE_URL__ || "";
 
@@ -94,7 +94,7 @@ export const passwordResetApi = {
       // Retorna a resposta (geralmente uma mensagem de sucesso)
       return await response.json();
     } catch (err) {
-      console.error("Erro no passwordResetApi.resetPassword:", err);
+
 
       // Se for um erro de rede ou conexão
       if (err.name === "TypeError" && err.message.includes("fetch")) {

@@ -162,14 +162,14 @@ document.addEventListener("DOMContentLoaded", function () {
     setButtonLoading(true);
 
     try {
-      console.log("[password-reset] Enviando requisição para redefinir senha");
+
 
       const result = await window.passwordResetApi.resetPassword(
         email,
         newPassword,
         token
       );
-      console.log("[password-reset] Resposta da API:", result);
+
 
       showSuccess();
 
@@ -178,10 +178,10 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "/pages/auth/?reset=success";
       }, 2000);
     } catch (error) {
-      console.error("Erro ao redefinir senha:", error);
+
       showError(
         error.message ||
-          "Ocorreu um erro ao redefinir a senha. Tente novamente."
+        "Ocorreu um erro ao redefinir a senha. Tente novamente."
       );
     } finally {
       setButtonLoading(false);

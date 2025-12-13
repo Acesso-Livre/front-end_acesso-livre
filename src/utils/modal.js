@@ -57,7 +57,7 @@ export function showModal(title, message, { onConfirm = null, isDestructive = fa
             try {
                 await onConfirm();
             } catch (e) {
-                console.error("Modal action failed:", e);
+
                 // Re-enable if failed and we want to allow retry?
                 // But usually onConfirm handles its own alerts.
             }

@@ -68,7 +68,7 @@ export function initHeader() {
     if (emailCopyElement) {
         emailCopyElement.addEventListener("click", async () => {
             const email = "acessolivreifbaeun@gmail.com";
-            
+
             try {
                 // Try using the modern Clipboard API first
                 if (navigator.clipboard && window.isSecureContext) {
@@ -86,24 +86,24 @@ export function initHeader() {
                     document.execCommand('copy');
                     textArea.remove();
                 }
-                
+
                 // Show feedback to user
                 const originalText = emailCopyElement.textContent;
                 emailCopyElement.textContent = "Email copiado!";
                 emailCopyElement.style.color = "#28a745"; // Green color for success
-                
+
                 setTimeout(() => {
                     emailCopyElement.textContent = originalText;
                     emailCopyElement.style.color = "";
                 }, 2000);
-                
+
             } catch (err) {
-                console.error('Failed to copy email: ', err);
+
                 // Show error feedback
                 const originalText = emailCopyElement.textContent;
                 emailCopyElement.textContent = "Erro ao copiar";
                 emailCopyElement.style.color = "#dc3545"; // Red color for error
-                
+
                 setTimeout(() => {
                     emailCopyElement.textContent = originalText;
                     emailCopyElement.style.color = "";

@@ -52,7 +52,7 @@ document
       if (window.mostrarErroParaUsuario) {
         window.mostrarErroParaUsuario('Ops, algo deu errado ao tentar entrar.', err);
       } else {
-        console.error(err);
+
       }
     }
   });
