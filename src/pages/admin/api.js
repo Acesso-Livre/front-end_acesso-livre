@@ -1,6 +1,18 @@
 // src/admin/api.js
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// Helper para verificar resposta e redirecionar se token expirado
+function checkAuthResponse(response) {
+    if (response.status === 401 || response.status === 403) {
+        // Token expirado ou inválido - limpar e redirecionar
+        sessionStorage.removeItem("authToken");
+        alert("Sessão expirada. Faça login novamente.");
+        window.location.href = "/src/pages/auth/";
+        throw new Error("Token expirado");
+    }
+    return response;
+}
+
 export const adminApi = {
     // Buscar comentários pendentes
     async getPendingComments() {
@@ -11,6 +23,7 @@ export const adminApi = {
                     "Authorization": "Bearer " + sessionStorage.getItem("authToken")
                 },
             });
+            checkAuthResponse(response);
             if (!response.ok) throw new Error("Erro ao carregar comentários pendentes");
             return await response.json();
         } catch (err) {
@@ -30,7 +43,7 @@ export const adminApi = {
                     "Authorization": "Bearer " + sessionStorage.getItem("authToken")
                 }
             });
-
+            checkAuthResponse(response);
             console.log("Resposta approveComment:", response);
             return await response.json();
         } catch (err) {
@@ -49,7 +62,7 @@ export const adminApi = {
                     "Authorization": "Bearer " + sessionStorage.getItem("authToken")
                 },
             });
-
+            checkAuthResponse(response);
             return await response.json();
         } catch (err) {
             console.error(err);
@@ -69,6 +82,7 @@ export const adminApi = {
                     "Authorization": "Bearer " + sessionStorage.getItem("authToken")
                 }
             });
+            checkAuthResponse(response);
             return await response.json();
         } catch (err) {
             console.error("Erro ao buscar locais:", err);

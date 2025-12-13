@@ -290,6 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ).toLocaleDateString("pt-BR")}</span>
                       </div>
                       <div class="comment-rating">${commentStars}</div>
+                      ${c.description ? `<p class="comment-description">${c.description}</p>` : ""}
                       <p class="comment-text">${c.comment}</p>
                   </div>
                   `;

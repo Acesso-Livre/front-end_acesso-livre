@@ -122,6 +122,11 @@ async function loadPendingComments() {
       locationNameById[comment.locationId] ||
       "Local desconhecido";
 
+    // Data do comentário formatada
+    const commentDate = comment.created_at
+      ? new Date(comment.created_at).toLocaleDateString("pt-BR")
+      : "";
+
     card.innerHTML = `
       <div class="review-header">
         <div>
@@ -130,6 +135,7 @@ async function loadPendingComments() {
         </div>
         <div class="comment-meta">
           <span class="comment-rating">${comment.rating ?? ""} ⭐</span>
+          ${commentDate ? `<span class="comment-date">${commentDate}</span>` : ""}
         </div>
       </div>
 
