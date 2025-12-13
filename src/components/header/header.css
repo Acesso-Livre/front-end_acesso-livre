@@ -156,6 +156,7 @@ header nav.scrolled {
     max-width: 500px;
     position: relative;
     text-align: center;
+    color: var(--color-black);
 }
 
 .close-btn {
@@ -174,7 +175,7 @@ header nav.scrolled {
 
 .modal-content p a {
     text-decoration: none;
-    color: #007bff;
+    color: #000000;
     font-weight: bold;
 }
 
