@@ -644,7 +644,7 @@ async function openLocationForm(locationId = null) {
     }</textarea>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="position-inputs-grid">
                 <div class="form-group">
                     <label for="locTop">Posição Y (top)</label>
                     <input type="number" id="locTop" name="top" value="${location?.top || ""
@@ -653,9 +653,8 @@ async function openLocationForm(locationId = null) {
 
                 <div class="form-group">
                     <label for="locLeft">Posição X (left)</label>
-                    <input type="number" id="locLeft" name="left" value="${location?.left || ""
-    }" />
-            </div>
+                    <input type="number" id="locLeft" name="left" value="${location?.left || ""}" />
+                </div>
             </div>
 
             <div class="form-group">

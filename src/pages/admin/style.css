@@ -396,6 +396,20 @@ main {
   min-height: 80px;
 }
 
+/* Grid para inputs de posição (top/left) */
+.position-inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+@media (max-width: 480px) {
+  .position-inputs-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
 /* Checkboxes de acessibilidade */
 .accessibility-items {
   display: flex;
@@ -999,6 +1013,28 @@ main {
   line-height: 1.3;
   word-break: break-word;
   margin-top: 4px;
+}
+
+/* Responsivo para ícones no mobile */
+@media (max-width: 480px) {
+  .accessibility-items-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .accessibility-icon-item {
+    padding: 8px;
+    gap: 4px;
+  }
+
+  .accessibility-icon-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .accessibility-icon-name {
+    font-size: 11px;
+  }
 }
 
 /* Loading spinner pequeno */
