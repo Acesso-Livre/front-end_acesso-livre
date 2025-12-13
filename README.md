@@ -61,11 +61,12 @@ front-end_acesso-livre/
 └── README.md         # Documentação do projeto
 ```
 
-▶️ Como Executar o Projeto
+## ▶️ Como Executar o Projeto
 
-Clone o repositório:
-
-git clone https://github.com/Acesso-Livre/front-end_acesso-livre.git
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/Acesso-Livre/front-end_acesso-livre.git
+   ```
 
 
 Acesse a pasta do projeto:
@@ -79,24 +80,27 @@ Abra o arquivo index.html no navegador
 
 👨‍💻 Contribuição
 
-Contribuições são bem-vindas!
+Contribuições são sempre bem-vindas 🚀
 
-Faça um fork do projeto
+Para contribuir com o projeto, siga os passos abaixo:
 
-Crie uma branch:
+Faça um fork do repositório
 
+Crie uma nova branch:
+
+```bash
 git checkout -b feature/minha-feature
-
+```
 
 Commit suas alterações:
-
+```bash
 git commit -m "Minha nova feature"
+```
 
-
-Envie para o repositório:
-
+Envie para o repositório remoto:
+```bash
 git push origin feature/minha-feature
-
+```
 
 Abra um Pull Request
 
@@ -112,5 +116,6 @@ Lucas Souza
 
 Luís Roberto
 
-Projeto orientado pelo professor Fabio Oliveira.
+Projeto orientado pelo professor: Fabio Oliveira
+
 
