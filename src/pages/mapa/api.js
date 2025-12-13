@@ -89,6 +89,36 @@ export async function getAccessibilityItemById(itemId) {
     }
 }
 
+export async function getCommentIcons() {
+    try {
+        // Usar o endpoint existente de accessibility-items
+        const accessibilityItems = await getAccessibilityItems();
+        
+        // Transformar os dados para o formato esperado pelo frontend
+        // sem mapeamento hardcoded - usar dados do banco diretamente
+        const transformedIcons = accessibilityItems.map((item, index) => {
+            // Tentar múltiplos campos possíveis para URL da imagem
+            const iconUrl = item.image_url || item.icon_url || item.image || item.url ||
+                          // Fallback: construir URL baseada no nome do arquivo se disponível
+                          (item.filename ? `/assets/icons/${item.filename}` : null) ||
+                          // Último fallback: generic
+                          '/assets/icons/generic.svg';
+            
+            return {
+                id: item.id,
+                url: iconUrl,
+                description: item.description || item.name || `Ícone ${item.id || index + 1}`,
+                name: item.name || item.description || `Ícone ${item.id || index + 1}`
+            };
+        });
+        
+        return transformedIcons;
+    } catch (error) {
+        console.error("Erro getCommentIcons:", error);
+        return [];
+    }
+}
+
 export async function postComment(commentData) {
     try {
         const formData = new FormData();
@@ -97,6 +127,11 @@ export async function postComment(commentData) {
         formData.append('comment', commentData.comment);
         formData.append('location_id', commentData.location_id);
         formData.append('status', commentData.status);
+
+        // Adicionar accessibility_icon_id se disponível
+        if (commentData.accessibility_icon_id) {
+            formData.append('accessibility_icon_id', commentData.accessibility_icon_id);
+        }
 
         // Enviar imagens
         if (commentData.images && Array.isArray(commentData.images)) {
@@ -298,6 +333,7 @@ window.api = {
     getAccessibilityItems,
     getLocationById,
     getAccessibilityItemById,
+    getCommentIcons,
     postComment,
     getPendingComments,
     approveComment,
@@ -305,4 +341,6 @@ window.api = {
     getApprovedCommentsForLocation,
     getCommentsByLocationId,
     fetchRecentComments,
+    postAccessibilityPin,
+    getAccessibilityPinsForLocation,
 };

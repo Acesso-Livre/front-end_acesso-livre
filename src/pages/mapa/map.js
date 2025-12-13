@@ -776,83 +776,73 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Função para mostrar seleção de ícones de acessibilidade
-    function showAccessibilityIconSelection() {
-      // Remover modal existente se houver
-      const existingModal = document.getElementById("accessibility-icon-modal");
-      if (existingModal) existingModal.remove();
+    // Função para mostrar seleção de ícones de acessibilidade dentro do modal de comentário
+    async function showAccessibilityIconSelection() {
+      // 1. Tornar a seção visível
+      const pinsSelectionArea = document.getElementById("accessibility-pins-selection-area");
+      const pinsListContainer = document.getElementById("pins-list-from-api");
+      
+      if (pinsSelectionArea) {
+        pinsSelectionArea.style.display = "block";
+      }
+      
+      if (!pinsListContainer) {
+        console.error("Elemento #pins-list-from-api não encontrado");
+        return;
+      }
 
-      const overlay = document.createElement("div");
-      overlay.id = "accessibility-icon-modal";
-      overlay.style.position = "fixed";
-      overlay.style.left = 0;
-      overlay.style.top = 0;
-      overlay.style.width = "100%";
-      overlay.style.height = "100%";
-      overlay.style.display = "flex";
-      overlay.style.alignItems = "center";
-      overlay.style.justifyContent = "center";
-      overlay.style.backgroundColor = "rgba(0,0,0,0.5)";
-      overlay.style.zIndex = 10000;
+      // 2. Mostrar estado de carregamento
+      pinsListContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Carregando pins de acessibilidade...</div>';
 
-      const modalContent = document.createElement("div");
-      modalContent.style.background = "#fff";
-      modalContent.style.padding = "20px";
-      modalContent.style.borderRadius = "10px";
-      modalContent.style.maxWidth = "500px";
-      modalContent.style.width = "90%";
-      modalContent.style.maxHeight = "80vh";
-      modalContent.style.overflowY = "auto";
+      // 3. Buscar ícones da API
+      let accessibilityIcons = [];
+      try {
+        if (window.api && typeof window.api.getCommentIcons === 'function') {
+          accessibilityIcons = await window.api.getCommentIcons();
+        } else {
+          throw new Error("window.api.getCommentIcons não está definido.");
+        }
+      } catch (error) {
+        console.error("Erro ao carregar pins de acessibilidade:", error);
+        pinsListContainer.innerHTML = '<div style="color: red; text-align: center; padding: 20px;">Erro ao carregar os pins. Verifique o console.</div>';
+        return;
+      }
 
-      const title = document.createElement("h3");
-      title.textContent = "Selecione o tipo de acessibilidade";
-      title.style.marginBottom = "20px";
-      title.style.textAlign = "center";
+      // 4. Limpar contêiner e renderizar ícones
+      pinsListContainer.innerHTML = '';
 
-      const iconsContainer = document.createElement("div");
-      iconsContainer.style.display = "grid";
-      iconsContainer.style.gridTemplateColumns = "repeat(3, 1fr)";
-      iconsContainer.style.gap = "15px";
+      if (accessibilityIcons.length === 0) {
+        pinsListContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Nenhum pin de acessibilidade disponível.</div>';
+        return;
+      }
 
-      // Lista de ícones disponíveis (sem generic)
-      const accessibilityIcons = [
-        { name: "Ramp", icon: "ramp.svg", type: "ramp" },
-        { name: "Elevator", icon: "elevator.svg", type: "elevator" },
-        { name: "Wide Entrance", icon: "wide-entrance.svg", type: "wide-entrance" },
-        { name: "Parking Special", icon: "parking-special.svg", type: "parking-special" },
-        { name: "Tactile Floor", icon: "tactile-floor.svg", type: "tactile-floor" },
-        { name: "Drinking Fountain", icon: "drinking-fountain.svg", type: "drinking-fountain" },
-        { name: "Fire Extinguisher", icon: "fire-extinguisher.svg", type: "fire-extinguisher" },
-        { name: "Libras", icon: "libras.svg", type: "libras" },
-      ];
+      // Criar grid de ícones
+      const iconsGrid = document.createElement('div');
+      iconsGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; padding: 10px 0;';
 
-      accessibilityIcons.forEach((item) => {
+      accessibilityIcons.forEach((item, index) => {
+        const iconId = item.id || `item-${index}`;
         const iconDiv = document.createElement("div");
-        iconDiv.style.display = "flex";
-        iconDiv.style.flexDirection = "column";
-        iconDiv.style.alignItems = "center";
-        iconDiv.style.padding = "15px";
-        iconDiv.style.border = "2px solid #ddd";
-        iconDiv.style.borderRadius = "8px";
-        iconDiv.style.cursor = "pointer";
-        iconDiv.style.transition = "all 0.2s";
+        iconDiv.dataset.pinId = iconId;
+        iconDiv.style.cssText = `
+          display: flex; flex-direction: column; align-items: center; padding: 10px;
+          border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.2s;
+          background-color: transparent;
+        `;
 
         const img = document.createElement("img");
-        img.src = `/assets/icons/${item.icon}`;
-        img.alt = item.name;
-        img.style.width = "50px";
-        img.style.height = "50px";
-        img.style.marginBottom = "10px";
+        img.src = item.url || item.image_url || item.image || '/assets/icons/generic.svg';
+        img.alt = item.description || item.name || `Pin ID ${iconId}`;
+        img.style.cssText = "width: 50px; height: 50px; margin-bottom: 5px; object-fit: contain;";
 
         const label = document.createElement("span");
-        label.textContent = item.name;
-        label.style.fontSize = "12px";
-        label.style.textAlign = "center";
-        label.style.fontWeight = "500";
+        label.textContent = item.description || item.name || `Ícone ${index + 1}`;
+        label.style.cssText = "font-size: 12px; text-align: center; font-weight: 500;";
 
         iconDiv.appendChild(img);
         iconDiv.appendChild(label);
 
+        // Event listeners para hover effect
         iconDiv.addEventListener("mouseenter", () => {
           iconDiv.style.borderColor = "#007bff";
           iconDiv.style.backgroundColor = "#f0f8ff";
@@ -860,46 +850,50 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         iconDiv.addEventListener("mouseleave", () => {
-          iconDiv.style.borderColor = "#ddd";
-          iconDiv.style.backgroundColor = "";
-          iconDiv.style.transform = "";
+          const selectedPinId = document.getElementById("selected-pin-id").value;
+          if (selectedPinId !== iconId) {
+            iconDiv.style.borderColor = "#ddd";
+            iconDiv.style.backgroundColor = "transparent";
+            iconDiv.style.transform = "scale(1)";
+          }
         });
 
+        // Event listener para seleção
         iconDiv.addEventListener("click", () => {
-          showMessageModal(`Ícone "${item.name}" selecionado!`);
-          overlay.remove();
+          // Remover seleção anterior
+          document.querySelectorAll("#pins-list-from-api [data-pin-id]").forEach(div => {
+            div.style.borderColor = "#ddd";
+            div.style.backgroundColor = "transparent";
+            div.style.transform = "scale(1)";
+          });
+
+          // Destacar o ícone selecionado
+          iconDiv.style.borderColor = "#007bff";
+          iconDiv.style.backgroundColor = "#f0f8ff";
+          iconDiv.style.transform = "scale(1.05)";
+
+          // Salvar o ID no campo oculto
+          const selectedPinInput = document.getElementById("selected-pin-id");
+          if (selectedPinInput) {
+            selectedPinInput.value = iconId;
+          }
+
+          // Mostrar confirmação visual
+          if (typeof showMessageModal === 'function') {
+            showMessageModal(`Ícone "${item.description || item.name || 'selecionado'}" selecionado!`);
+          }
         });
 
-        iconsContainer.appendChild(iconDiv);
+        iconsGrid.appendChild(iconDiv);
       });
 
-      const closeBtn = document.createElement("button");
-      closeBtn.textContent = "Cancelar";
-      closeBtn.style.marginTop = "20px";
-      closeBtn.style.padding = "10px 20px";
-      closeBtn.style.backgroundColor = "#ccc";
-      closeBtn.style.border = "none";
-      closeBtn.style.borderRadius = "5px";
-      closeBtn.style.cursor = "pointer";
-      closeBtn.style.width = "100%";
-      closeBtn.addEventListener("click", () => overlay.remove());
-
-      modalContent.appendChild(title);
-      modalContent.appendChild(iconsContainer);
-      modalContent.appendChild(closeBtn);
-      overlay.appendChild(modalContent);
-      document.body.appendChild(overlay);
+      pinsListContainer.appendChild(iconsGrid);
     }
 
-    // Event listener para o botão de adicionar pin de acessibilidade
-    const btnAddAccessibilityPin = document.getElementById(
-      "btn-add-accessibility-pin"
-    );
+    // 5. Event listener para o botão de adicionar pin de acessibilidade
+    const btnAddAccessibilityPin = document.getElementById("btn-add-accessibility-pin");
     if (btnAddAccessibilityPin) {
-      btnAddAccessibilityPin.addEventListener(
-        "click",
-        showAccessibilityIconSelection
-      );
+      btnAddAccessibilityPin.addEventListener("click", showAccessibilityIconSelection);
     }
 
     // estrela rating
@@ -1015,6 +1009,19 @@ document.addEventListener("DOMContentLoaded", () => {
           images: selectedImages, // Passar o array de arquivos selecionados
         };
 
+        // Adicionar accessibility_icon_id se um pin foi selecionado
+        const selectedPinId = document.getElementById("selected-pin-id").value;
+        if (selectedPinId) {
+          // Verificar se é um ID numérico válido (não um fallback como "item-0")
+          const numericId = parseInt(selectedPinId);
+          if (!isNaN(numericId) && !selectedPinId.startsWith('item-')) {
+            commentData.accessibility_icon_id = numericId;
+          } else {
+            // Para IDs de fallback, usar o índice + 1 ou um valor padrão
+            commentData.accessibility_icon_id = 1;
+          }
+        }
+
         // NÃO sobrescrever window.pins — apenas chamar a API para enviar comentário
         const result = await window.api.postComment(commentData);
         if (result) {
@@ -1031,6 +1038,21 @@ document.addEventListener("DOMContentLoaded", () => {
           s.textContent = "☆";
         });
         ratingInput.value = "";
+
+        // Reset da seleção de pin de acessibilidade
+        const selectedPinInput = document.getElementById("selected-pin-id");
+        const pinsSelectionArea = document.getElementById("accessibility-pins-selection-area");
+        const pinsListContainer = document.getElementById("pins-list-from-api");
+        
+        if (selectedPinInput) {
+          selectedPinInput.value = "";
+        }
+        if (pinsSelectionArea) {
+          pinsSelectionArea.style.display = "none";
+        }
+        if (pinsListContainer) {
+          pinsListContainer.innerHTML = "";
+        }
 
         // fecha addCommentModal e reabre infoModal
         const addModal = document.getElementById(MODAL_IDS.addCommentModal);
