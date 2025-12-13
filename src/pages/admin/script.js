@@ -699,8 +699,11 @@ async function openLocationForm(locationId = null) {
             </div>
 
             <div class="form-group">
-                <label>Imagens do Local</label>
-                <div id="location-images-carousel" class="location-images-carousel">
+                <div id="image-box">
+                    <button id="btn-add-image" type="button">Adicionar imagem</button>
+                    <input type="file" id="comment-image" multiple style="display:none">
+                    <ul id="file-list"></ul>
+                </div>
                     ${(() => {
       // Processar imagens existentes
       let existingImages = [];
