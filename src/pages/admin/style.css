@@ -116,6 +116,19 @@ main {
   color: var(--text-color);
 }
 
+.comment-location {
+  color: #6b7280;
+  font-size: 13px;
+  margin-left: 6px;
+}
+
+.comment-meta {
+  color: #374151;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
 .btn-approve {
   background: var(--primary-color);
   color: var(--color-white);
