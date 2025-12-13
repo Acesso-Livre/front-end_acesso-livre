@@ -64,10 +64,19 @@ export const commentService = {
                         });
                     }
                 } else if (Array.isArray(data[key])) {
-                    // Append array items individually (e.g. comment_icon_ids)
-                    data[key].forEach((item) => {
-                        formData.append(key, item);
-                    });
+                    // Check specific keys that might need CSV format
+                    if (key === 'comment_icon_ids') {
+                        // Send as comma-separated string to ensure all IDs are passed in one field
+                        // if the backend expects a list but FormData multiple keys implies list, 
+                        // sometimes a single string "1,2,3" is safer if backend parses it.
+                        // Given the admin script reads CSV strings, this is a likely format.
+                        formData.append(key, data[key].join(','));
+                    } else {
+                        // Default behavior for other arrays
+                        data[key].forEach((item) => {
+                            formData.append(key, item);
+                        });
+                    }
                 } else {
                     formData.append(key, data[key]);
                 }

@@ -88,22 +88,18 @@ async function loadPendingComments() {
     }
   });
 
-  // Map de lookup id -> nome do local
+  // Otimização: Buscar todos os locais de uma vez em vez de N requisições
   const locationNameById = {};
   if (missingLocationIds.size > 0) {
     try {
-      await Promise.all(
-        Array.from(missingLocationIds).map(async (id) => {
-          try {
-            const loc = await locationService.getById(id);
-            locationNameById[id] = loc && loc.name ? loc.name : "Local desconhecido";
-          } catch (err) {
-            locationNameById[id] = "Local desconhecido";
-          }
-        })
-      );
-    } catch (e) {
+      const allLocations = await locationService.getAll();
+      const locationsList = Array.isArray(allLocations) ? allLocations : (allLocations?.locations || []);
 
+      locationsList.forEach(loc => {
+        locationNameById[loc.id] = loc.name;
+      });
+    } catch (e) {
+      console.error("Erro ao buscar nomes de locais:", e);
     }
   }
 
@@ -1079,11 +1075,12 @@ function openMapPicker() {
     const imgUrl = '/assets/img/map/mapa_ifba.svg';
     const img = new Image();
 
-    // Iniciar busca de locais existentes (referência visual) IMEDIATAMENTE
+    // Iniciar busca de locais existentes (referência visual)
+    // Restaurado após implementar deduplicação no service.
     const locationsPromise = locationService.getAll().catch(err => {
-
       return [];
     });
+
 
     img.onload = async () => {
       const W = img.naturalWidth;

@@ -2,14 +2,29 @@
 import { apiClient } from "../utils/api-client.js";
 
 export const locationService = {
-    async getAll() {
-        try {
-            const response = await apiClient.get("/locations/");
-            // Handle both direct array or object with locations property
-            return Array.isArray(response) ? response : (response?.locations || []);
-        } catch (error) {
+    _allLocationsPromise: null,
 
+    async getAll() {
+        if (this._allLocationsPromise) {
+            return this._allLocationsPromise;
+        }
+
+        try {
+            this._allLocationsPromise = (async () => {
+                const response = await apiClient.get("/locations/");
+                // Handle both direct array or object with locations property
+                return Array.isArray(response) ? response : (response?.locations || []);
+            })();
+
+            const result = await this._allLocationsPromise;
+            return result;
+        } catch (error) {
+            console.error(error);
             return [];
+        } finally {
+            // Limpar cache após um curto período ou imediatamente após sucesso se não quisermos cache persistente
+            // Aqui vamos manter por 5 segundos para evitar floods, mas permitir refresh
+            setTimeout(() => { this._allLocationsPromise = null; }, 5000);
         }
     },
 
