@@ -699,11 +699,11 @@ async function openLocationForm(locationId = null) {
             </div>
 
             <div class="form-group">
-                <div id="image-box">
-                    <button id="btn-add-image" type="button">Adicionar imagem</button>
-                    <input type="file" id="comment-image" multiple style="display:none location?.image value="${location?.image || ""}">
-                    <ul id="file-list"></ul>
-                </div>
+              <div id="image-box">
+                <button type="button" id="btn-add-image" class="btn-add-image">Adicionar imagem</button>
+                <input type="file" id="comment-image" multiple style="display:none">
+                <ul id="file-list"></ul>
+              </div>
                     ${(() => {
       // Processar imagens existentes
       let existingImages = [];
@@ -810,9 +810,55 @@ async function openLocationForm(locationId = null) {
 
   container.innerHTML = html;
 
+  // Upload único com suporte a location_id quando disponível
+  async function uploadSingleImage(file) {
+    if (!file) return null;
+    const fd = new FormData();
+    fd.append('image', file);
+    if (location && location.id) fd.append('location_id', location.id);
+
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+    const endpoints = [`${API_BASE_URL}/locations/images`, `${API_BASE_URL}/images`, `${API_BASE_URL}/comments/images`];
+
+    let lastErr = null;
+    for (const endpoint of endpoints) {
+      try {
+        const token = sessionStorage.getItem('authToken');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        const res = await fetch(endpoint, { method: 'POST', headers, body: fd });
+        if (!res.ok) { lastErr = new Error(`Falha ${res.status}`); continue; }
+        const body = await res.json();
+        const imgRes = body?.image || body || null;
+        const imgUrl = imgRes?.url || imgRes?.image_url || imgRes?.path || null;
+        const imgId = imgRes?.id || imgRes?.image_id || null;
+
+        // Add to edit carousel if present
+        try {
+          const carousel = document.getElementById('edit-location-carousel');
+          if (carousel) {
+            const wrapper = carousel.querySelector('.swiper-wrapper');
+            if (wrapper) {
+              const slide = document.createElement('div');
+              slide.className = 'swiper-slide';
+              slide.innerHTML = `\n                  <div class="carousel-image-item" data-image-id="${imgId || ''}" data-image-url="${imgUrl || ''}">\n                    <img src="${imgUrl || ''}" alt="Imagem enviada">\n                    <button type=\"button\" class=\"btn-delete-image\" onclick=\"deleteLocationImage('${imgId}', this)\">Excluir</button>\n                  </div>`;
+              wrapper.appendChild(slide);
+              if (window.editLocationCarousel) window.editLocationCarousel.update();
+            }
+          }
+        } catch (err) { console.warn('Erro ao adicionar slide:', err); }
+
+        return imgRes;
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+    throw lastErr || new Error('Falha ao enviar imagem');
+  }
+
   // Inicializar uploader local dentro do formulário (btn-add-image, comment-image, file-list)
+  // Armazena imagens selecionadas quando o local ainda não existe (novo local)
+  let selectedImages = [];
   (function initLocationImageBox() {
-    let selectedImages = [];
 
     function isAllowedImageFile(file) {
       const allowedExtensions = ['png', 'jpg', 'jpeg', 'webp', 'heic', 'heif'];
@@ -891,9 +937,14 @@ async function openLocationForm(locationId = null) {
         return;
       }
 
-      // Upload the single selected file immediately
+      // If editing existing location, upload immediately; otherwise queue for upload after creation
       try {
-        await uploadSingleImage(file);
+        if (!location || !location.id) {
+          selectedImages.push(file);
+          renderFileList();
+        } else {
+          await uploadSingleImage(file);
+        }
       } catch (err) {
         console.error('Erro ao enviar imagem única:', err);
         alert('Erro ao enviar imagem. Tente novamente.');
@@ -1025,8 +1076,8 @@ async function openLocationForm(locationId = null) {
 
   // Listener do formulário
   document
-    .getElementById("locationForm")
-    .addEventListener("submit", async (e) => {
+  .getElementById("locationForm")
+  .addEventListener("submit", async (e) => {
       e.preventDefault();
 
       // Funcao de salvar para ser chamada apos confirmacao
@@ -1057,7 +1108,33 @@ async function openLocationForm(locationId = null) {
             alert("Local atualizado com sucesso!");
           } else {
             // Criar novo local
-            await window.adminApi.createLocation(data);
+            const created = await window.adminApi.createLocation(data);
+            const createdId = created?.id || (created?.location && created.location.id) || created?.location_id || created?.data?.id || created?.data?.location_id;
+            if (!created || !createdId) {
+              throw new Error('Falha ao criar local');
+            }
+            // Atualiza a variável de local para que upload use o location_id
+            const createdObj = created?.location || created?.data || created;
+            createdObj.id = createdId;
+            location = createdObj;
+
+            // Se houver imagens selecionadas para upload, enviar agora
+            if (selectedImages && selectedImages.length > 0) {
+              const uploadingBtn = document.querySelector('.btn-submit');
+              if (uploadingBtn) { uploadingBtn.disabled = true; uploadingBtn.textContent = 'Criando e enviando imagens...'; }
+              for (const file of [...selectedImages]) {
+                try {
+                  await uploadSingleImage(file);
+                } catch (err) {
+                  console.error('Erro ao enviar imagem após criação:', err);
+                }
+              }
+              // limpar a lista local
+              selectedImages.length = 0;
+              const fileListEl = document.getElementById('file-list');
+              if (fileListEl) fileListEl.innerHTML = '';
+              if (uploadingBtn) { uploadingBtn.disabled = false; uploadingBtn.textContent = 'Criar Local'; }
+            }
             alert("Local criado com sucesso!");
           }
           loadLocationsList();
