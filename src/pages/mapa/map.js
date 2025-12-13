@@ -110,8 +110,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return L.divIcon({
       className: `pin-marker pin-${tipo}`,
       html: `
-      <div class="pin-label">${label}</div>
-      <div>${iconHtml}</div>
+      <div class="pin-with-label">
+        <div class="pin-label">${label}</div>
+        <div class="pin-icon">${iconHtml}</div>
+      </div>
       `,
       iconSize: [40, 40],
       iconAnchor: [20, 20],
@@ -454,11 +456,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const map = L.map("map", {
       crs: L.CRS.Simple,
       minZoom: 0,
-      maxZoom: 4,
+      maxZoom: 3,
       zoomSnap: 0.25,
       attributionControl: false,
       maxBounds: bounds,
-      maxBoundsViscosity: 1.0,
+      maxBoundsViscosity: 0,
     });
     L.imageOverlay(imgUrl, bounds).addTo(map);
     map.fitBounds(bounds);
@@ -468,7 +470,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const zoomW = Math.log2(viewport.x / W);
     const fillZoom = Math.max(zoomH, zoomW);
     map.setZoom(fillZoom);
-    map.setMinZoom(fillZoom);
+    map.setMinZoom(fillZoom - 2);
 
     // Renderiza os pins usando a API (apenas aqui)
     await renderPinsOnMap(map, W, H);
@@ -735,15 +737,15 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     if (addCommentBackBtn) {
       addCommentBackBtn.addEventListener("click", () => {
-        const infoModal = document.getElementById(MODAL_IDS.infoModal);
         const addModal = document.getElementById(MODAL_IDS.addCommentModal);
+        const infoModal = document.getElementById(MODAL_IDS.infoModal);
         if (addModal) addModal.style.display = "none";
         if (infoModal) {
           infoModal.style.display = "flex";
           setTimeout(() => {
             infoModal.scrollIntoView({ behavior: "smooth", block: "center" });
           }, 0);
-        }  
+        }
       });
     }
 
