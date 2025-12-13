@@ -91,27 +91,32 @@ export async function getAccessibilityItemById(itemId) {
 
 export async function getCommentIcons() {
     try {
-        // Usar o endpoint existente de accessibility-items
-        const accessibilityItems = await getAccessibilityItems();
-        
+        // Usar o endpoint correto de ícones de comentário
+        const url = `${API_BASE_URL}/comments/icons/`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("Erro ao fazer requisição: " + response.status);
+        }
+        const data = await response.json();
+
+        // O endpoint pode retornar um array direto ou um objeto com propriedade
+        const icons = Array.isArray(data) ? data : (data.comment_icons || data.icons || []);
+
         // Transformar os dados para o formato esperado pelo frontend
-        // sem mapeamento hardcoded - usar dados do banco diretamente
-        const transformedIcons = accessibilityItems.map((item, index) => {
+        const transformedIcons = icons.map((item, index) => {
             // Tentar múltiplos campos possíveis para URL da imagem
-            const iconUrl = item.image_url || item.icon_url || item.image || item.url ||
-                          // Fallback: construir URL baseada no nome do arquivo se disponível
-                          (item.filename ? `/assets/icons/${item.filename}` : null) ||
-                          // Último fallback: generic
-                          '/assets/icons/generic.svg';
-            
+            const iconUrl = item.icon_url || item.image_url || item.image || item.url ||
+                '/assets/icons/generic.svg';
+
             return {
                 id: item.id,
                 url: iconUrl,
+                icon_url: iconUrl,
                 description: item.description || item.name || `Ícone ${item.id || index + 1}`,
                 name: item.name || item.description || `Ícone ${item.id || index + 1}`
             };
         });
-        
+
         return transformedIcons;
     } catch (error) {
         console.error("Erro getCommentIcons:", error);
@@ -128,9 +133,9 @@ export async function postComment(commentData) {
         formData.append('location_id', commentData.location_id);
         formData.append('status', commentData.status);
 
-        // Adicionar accessibility_icon_id se disponível
-        if (commentData.accessibility_icon_id) {
-            formData.append('accessibility_icon_id', commentData.accessibility_icon_id);
+        // Adicionar comment_icon_ids se disponível (IDs separados por vírgula)
+        if (commentData.comment_icon_ids) {
+            formData.append('comment_icon_ids', commentData.comment_icon_ids);
         }
 
         // Enviar imagens

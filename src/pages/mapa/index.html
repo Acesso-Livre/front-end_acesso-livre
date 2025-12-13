@@ -152,10 +152,21 @@
                     <input type="file" id="comment-image" multiple style="display:none">
                     <ul id="file-list"></ul>
                 </div>
-                <button id="btn-add-accessibility-pin" type="button" style="margin-top: 10px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Adicionar Pin de Acessibilidade</button>
+                <button id="btn-add-accessibility-pin" type="button"
+                    style="margin-top: 10px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Adicionar
+                    Pin de Acessibilidade</button>
+
+                <!-- Área de ícones selecionados -->
+                <div id="selected-icons-area"
+                    style="display: none; margin-top: 10px; padding: 10px; background: #f0f8ff; border-radius: 8px; border: 1px solid #007bff;">
+                    <p style="margin: 0 0 8px 0; font-weight: 600; font-size: 14px; color: #333;">Ícones Selecionados:
+                    </p>
+                    <div id="selected-icons-list" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                </div>
+
                 <div id="accessibility-pins-selection-area" style="display: none;">
                     <div id="pins-list-from-api"></div>
-                    <input type="hidden" id="selected-pin-id">
+                    <input type="hidden" id="selected-pin-ids" value="">
                 </div>
                 <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
                     <button type="button" class="submit-btn back-btn"

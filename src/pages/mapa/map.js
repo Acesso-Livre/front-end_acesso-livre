@@ -796,11 +796,11 @@ document.addEventListener("DOMContentLoaded", () => {
       // 1. Tornar a seção visível
       const pinsSelectionArea = document.getElementById("accessibility-pins-selection-area");
       const pinsListContainer = document.getElementById("pins-list-from-api");
-      
+
       if (pinsSelectionArea) {
         pinsSelectionArea.style.display = "block";
       }
-      
+
       if (!pinsListContainer) {
         console.error("Elemento #pins-list-from-api não encontrado");
         return;
@@ -835,6 +835,74 @@ document.addEventListener("DOMContentLoaded", () => {
       const iconsGrid = document.createElement('div');
       iconsGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; padding: 10px 0;';
 
+      // Função para atualizar a área de ícones selecionados
+      function updateSelectedIconsArea() {
+        const selectedArea = document.getElementById("selected-icons-area");
+        const selectedList = document.getElementById("selected-icons-list");
+        const selectedIdsInput = document.getElementById("selected-pin-ids");
+
+        if (!selectedArea || !selectedList || !selectedIdsInput) return;
+
+        const selectedIds = selectedIdsInput.value ? selectedIdsInput.value.split(",").filter(id => id) : [];
+
+        if (selectedIds.length === 0) {
+          selectedArea.style.display = "none";
+          selectedList.innerHTML = "";
+          return;
+        }
+
+        selectedArea.style.display = "block";
+        selectedList.innerHTML = "";
+
+        selectedIds.forEach(id => {
+          const iconData = accessibilityIcons.find(i => String(i.id) === String(id));
+          if (!iconData) return;
+
+          const chip = document.createElement("div");
+          chip.dataset.iconId = id;
+          chip.style.cssText = `
+            display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+            background: white; border: 1px solid #007bff; border-radius: 20px;
+            font-size: 12px; color: #333;
+          `;
+
+          const iconImg = document.createElement("img");
+          iconImg.src = iconData.url || iconData.icon_url || '/assets/icons/generic.svg';
+          iconImg.style.cssText = "width: 20px; height: 20px; object-fit: contain;";
+
+          const iconName = document.createElement("span");
+          iconName.textContent = iconData.name || iconData.description || `Ícone ${id}`;
+
+          const removeBtn = document.createElement("button");
+          removeBtn.innerHTML = "×";
+          removeBtn.style.cssText = `
+            background: #ff4444; color: white; border: none; border-radius: 50%;
+            width: 18px; height: 18px; cursor: pointer; font-size: 14px; line-height: 1;
+            display: flex; align-items: center; justify-content: center;
+          `;
+          removeBtn.title = "Remover";
+          removeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            // Remover do input
+            const newIds = selectedIds.filter(i => i !== String(id));
+            selectedIdsInput.value = newIds.join(",");
+            // Atualizar visual do grid
+            const gridIcon = document.querySelector(`#pins-list-from-api [data-pin-id="${id}"]`);
+            if (gridIcon) {
+              gridIcon.style.borderColor = "#ddd";
+              gridIcon.style.backgroundColor = "transparent";
+            }
+            // Atualizar área de selecionados
+            updateSelectedIconsArea();
+          });
+
+          chip.appendChild(iconImg);
+          chip.appendChild(iconName);
+          chip.appendChild(removeBtn);
+          selectedList.appendChild(chip);
+        });
+      }
+
       accessibilityIcons.forEach((item, index) => {
         const iconId = item.id || `item-${index}`;
         const iconDiv = document.createElement("div");
@@ -859,44 +927,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Event listeners para hover effect
         iconDiv.addEventListener("mouseenter", () => {
-          iconDiv.style.borderColor = "#007bff";
-          iconDiv.style.backgroundColor = "#f0f8ff";
-          iconDiv.style.transform = "scale(1.05)";
+          const selectedIdsInput = document.getElementById("selected-pin-ids");
+          const selectedIds = selectedIdsInput?.value ? selectedIdsInput.value.split(",") : [];
+          if (!selectedIds.includes(String(iconId))) {
+            iconDiv.style.borderColor = "#007bff";
+            iconDiv.style.backgroundColor = "#f0f8ff";
+            iconDiv.style.transform = "scale(1.05)";
+          }
         });
 
         iconDiv.addEventListener("mouseleave", () => {
-          const selectedPinId = document.getElementById("selected-pin-id").value;
-          if (selectedPinId !== iconId) {
+          const selectedIdsInput = document.getElementById("selected-pin-ids");
+          const selectedIds = selectedIdsInput?.value ? selectedIdsInput.value.split(",") : [];
+          if (!selectedIds.includes(String(iconId))) {
             iconDiv.style.borderColor = "#ddd";
             iconDiv.style.backgroundColor = "transparent";
             iconDiv.style.transform = "scale(1)";
           }
         });
 
-        // Event listener para seleção
+        // Event listener para seleção/desseleção (toggle)
         iconDiv.addEventListener("click", () => {
-          // Remover seleção anterior
-          document.querySelectorAll("#pins-list-from-api [data-pin-id]").forEach(div => {
-            div.style.borderColor = "#ddd";
-            div.style.backgroundColor = "transparent";
-            div.style.transform = "scale(1)";
-          });
+          const selectedIdsInput = document.getElementById("selected-pin-ids");
+          if (!selectedIdsInput) return;
 
-          // Destacar o ícone selecionado
-          iconDiv.style.borderColor = "#007bff";
-          iconDiv.style.backgroundColor = "#f0f8ff";
-          iconDiv.style.transform = "scale(1.05)";
+          let selectedIds = selectedIdsInput.value ? selectedIdsInput.value.split(",").filter(id => id) : [];
+          const idStr = String(iconId);
 
-          // Salvar o ID no campo oculto
-          const selectedPinInput = document.getElementById("selected-pin-id");
-          if (selectedPinInput) {
-            selectedPinInput.value = iconId;
+          if (selectedIds.includes(idStr)) {
+            // Desselecionar
+            selectedIds = selectedIds.filter(id => id !== idStr);
+            iconDiv.style.borderColor = "#ddd";
+            iconDiv.style.backgroundColor = "transparent";
+          } else {
+            // Selecionar
+            selectedIds.push(idStr);
+            iconDiv.style.borderColor = "#007bff";
+            iconDiv.style.backgroundColor = "#f0f8ff";
           }
 
-          // Mostrar confirmação visual
-          if (typeof showMessageModal === 'function') {
-            showMessageModal(`Ícone "${item.description || item.name || 'selecionado'}" selecionado!`);
-          }
+          selectedIdsInput.value = selectedIds.join(",");
+          updateSelectedIconsArea();
         });
 
         iconsGrid.appendChild(iconDiv);
@@ -1024,16 +1095,17 @@ document.addEventListener("DOMContentLoaded", () => {
           images: selectedImages, // Passar o array de arquivos selecionados
         };
 
-        // Adicionar accessibility_icon_id se um pin foi selecionado
-        const selectedPinId = document.getElementById("selected-pin-id").value;
-        if (selectedPinId) {
-          // Verificar se é um ID numérico válido (não um fallback como "item-0")
-          const numericId = parseInt(selectedPinId);
-          if (!isNaN(numericId) && !selectedPinId.startsWith('item-')) {
-            commentData.accessibility_icon_id = numericId;
-          } else {
-            // Para IDs de fallback, usar o índice + 1 ou um valor padrão
-            commentData.accessibility_icon_id = 1;
+        // Adicionar comment_icon_ids se pins foram selecionados
+        const selectedPinIds = document.getElementById("selected-pin-ids")?.value || "";
+        if (selectedPinIds) {
+          // Filtrar IDs numéricos válidos
+          const validIds = selectedPinIds.split(",")
+            .filter(id => id && !id.startsWith('item-'))
+            .map(id => parseInt(id))
+            .filter(id => !isNaN(id));
+
+          if (validIds.length > 0) {
+            commentData.comment_icon_ids = validIds.join(",");
           }
         }
 
@@ -1054,19 +1126,27 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         ratingInput.value = "";
 
-        // Reset da seleção de pin de acessibilidade
-        const selectedPinInput = document.getElementById("selected-pin-id");
+        // Reset da seleção de pins de acessibilidade
+        const selectedPinIdsInput = document.getElementById("selected-pin-ids");
         const pinsSelectionArea = document.getElementById("accessibility-pins-selection-area");
         const pinsListContainer = document.getElementById("pins-list-from-api");
-        
-        if (selectedPinInput) {
-          selectedPinInput.value = "";
+        const selectedIconsArea = document.getElementById("selected-icons-area");
+        const selectedIconsList = document.getElementById("selected-icons-list");
+
+        if (selectedPinIdsInput) {
+          selectedPinIdsInput.value = "";
         }
         if (pinsSelectionArea) {
           pinsSelectionArea.style.display = "none";
         }
         if (pinsListContainer) {
           pinsListContainer.innerHTML = "";
+        }
+        if (selectedIconsArea) {
+          selectedIconsArea.style.display = "none";
+        }
+        if (selectedIconsList) {
+          selectedIconsList.innerHTML = "";
         }
 
         // fecha addCommentModal e reabre infoModal
