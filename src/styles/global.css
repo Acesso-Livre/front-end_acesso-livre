@@ -182,12 +182,16 @@ a {
 }
 
 .btn-secondary {
-  background: #6c757d;
-  color: white;
+  background: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  transition: all 0.2s;
 }
 
 .btn-secondary:hover {
-  background: #5a6268;
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #dc2626;
   box-shadow: var(--shadow-md);
 }
 
@@ -290,6 +294,13 @@ textarea.form-control {
   border-radius: 6px;
   cursor: pointer;
   font-family: var(--font-family-base);
+  transition: all 0.2s;
+}
+
+.btn-modal-cancel:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+  background: #fef2f2;
 }
 
 .btn-modal-primary {

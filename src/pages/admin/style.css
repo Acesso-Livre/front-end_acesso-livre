@@ -46,13 +46,65 @@ header {
   box-shadow: var(--shadow-md);
 }
 
-/* Botão do menu */
 /* Abas de navegação */
 #nav-tabs {
   display: flex;
   gap: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   border-bottom: 2px solid #ddd;
+}
+
+/* Responsivo mobile - Ajustar espaçamentos */
+@media (max-width: 480px) {
+  header {
+    padding: 10px 16px;
+  }
+
+  .header-left img {
+    height: 30px;
+  }
+
+  .header-left span {
+    display: none;
+    /* Oculta texto "Acesso Livre" para economizar espaço */
+  }
+
+  .header-title {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .logout-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  main {
+    padding: 0 15px 15px 15px;
+    /* Remove padding superior */
+  }
+
+  #nav-tabs {
+    display: flex !important;
+    margin-bottom: 15px !important;
+    gap: 0 !important;
+    width: 100% !important;
+  }
+
+  .tab-btn {
+    padding: 12px 5px !important;
+    font-size: 14px !important;
+    flex: 1 1 50% !important;
+    /* Cresce, encolhe, base 50% */
+    width: 50% !important;
+    max-width: 50% !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 !important;
+  }
 }
 
 .tab-btn {
@@ -86,8 +138,10 @@ header {
 
 main {
   max-width: 1100px;
-  margin: 30px auto;
-  padding: 30px;
+  margin: 10px auto;
+  /* Reduz margem superior */
+  padding: 0 30px 30px 30px;
+  /* Remove padding superior */
   border-radius: 10px;
 }
 
@@ -767,6 +821,46 @@ main {
 .carousel-image-item .btn-delete-image svg {
   width: 16px;
   height: 16px;
+}
+
+/* Navegação do carrossel de fotos dos comentários */
+#photoModal .swiper-button-next,
+#photoModal .swiper-button-prev {
+  width: 44px;
+  height: 44px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: transparent;
+}
+
+#photoModal .swiper-button-next::after,
+#photoModal .swiper-button-prev::after {
+  font-family: inherit;
+  font-size: 0;
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-right: 3px solid white;
+  border-bottom: 3px solid white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+#photoModal .swiper-button-next::after {
+  transform: translate(-60%, -50%) rotate(-45deg);
+}
+
+#photoModal .swiper-button-prev::after {
+  transform: translate(-40%, -50%) rotate(135deg);
+}
+
+#photoModal .swiper-button-next:hover,
+#photoModal .swiper-button-prev:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
 }
 
 /* Navegação do carrossel de edição */

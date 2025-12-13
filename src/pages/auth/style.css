@@ -447,3 +447,10 @@ input:-webkit-autofill:focus {
   font-family: var(--font-family-heading);
   font-weight: var(--font-weight-bold);
 }
+
+@media (max-width: 480px) {
+  .register-link {
+    font-size: var(--font-size-text);
+    margin-top: 15px;
+  }
+}

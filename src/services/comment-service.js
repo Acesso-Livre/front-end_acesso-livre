@@ -51,9 +51,13 @@ export const commentService = {
 
     async getIcons() {
         try {
-            return await apiClient.get("/comments/icons/");
+            const response = await apiClient.get("/comments/icons/");
+            return Array.isArray(response) ? response : (response?.comment_icons || []);
         } catch (error) {
-
+            // Hotfix: Backend returns 422 but sends valid data
+            if (error.status === 422 && error.data?.comment_icons) {
+                return error.data.comment_icons;
+            }
             return [];
         }
     },

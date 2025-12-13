@@ -667,9 +667,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // fechar add-comment modal
-    const addCommentBackBtn = document.querySelector(
-      `#${MODAL_IDS.addCommentModal} .back-btn`
-    );
+    const addCommentBackBtn = document.getElementById("btn-cancel-comment");
     if (addCommentBackBtn) {
       addCommentBackBtn.addEventListener("click", () => {
         const addModal = document.getElementById(MODAL_IDS.addCommentModal);
@@ -807,7 +805,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         const img = document.createElement("img");
-        img.src = item.url || item.image_url || item.image || '/assets/icons/generic.svg';
+        img.src = item.icon_url || item.url || item.image_url || item.image || '/assets/icons/generic.svg';
         img.alt = item.description || item.name || `Pin ID ${iconId}`;
         img.style.cssText = "width: 50px; height: 50px; margin-bottom: 5px; object-fit: contain;";
 
@@ -923,7 +921,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           if (!isAllowedImageFile(file)) {
             const fileExtension = file.name.split('.').pop().toUpperCase();
-            showMessageModal(`Arquivo rejeitado: "${file.name}"\n\nFormato ".${fileExtension}" não é permitido.\n\nUse apenas: PNG, JPG, JPEG, WEBP, HEIC ou HEIF.`, "Erro");
+            showAlert(`Arquivo rejeitado: "${file.name}"\n\nFormato ".${fileExtension}" não é permitido.\n\nUse apenas: PNG, JPG, JPEG, WEBP, HEIC ou HEIF.`, "Erro");
             continue;
           }
           selectedImages.push(file);
@@ -974,8 +972,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const commentText = document.getElementById("comment-text").value;
         const imgInput = document.getElementById("imgInput");
 
+        if (!name || name.trim() === "") {
+          showAlert("Por favor, preencha seu nome.", "Erro");
+          return;
+        }
+
+        if (!commentText || commentText.trim() === "") {
+          showAlert("Por favor, digite seu comentário.", "Erro");
+          return;
+        }
+
         if (!rating || rating === "") {
-          alert("Por favor, selecione uma avaliação com estrelas.");
+          showAlert("Por favor, selecione uma avaliação com estrelas.", "Erro");
           return;
         }
         const commentData = {

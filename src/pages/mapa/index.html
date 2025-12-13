@@ -134,7 +134,7 @@
             <form id="comment-form">
                 <div class="form-group">
                     <label for="user-name">Nome:</label>
-                    <input type="text" id="user-name" class="form-control" placeholder="Seu nome" required>
+                    <input type="text" id="user-name" class="form-control" placeholder="Seu nome">
                 </div>
 
                 <div class="form-group">
@@ -147,11 +147,11 @@
                         <span class="star" data-value="5">☆</span>
                     </div>
                 </div>
-                <input type="hidden" id="rating" name="rating" required>
+                <input type="hidden" id="rating" name="rating">
 
                 <div class="form-group">
                     <label for="comment-text">Comentário:</label>
-                    <textarea id="comment-text" class="form-control" placeholder="Digite seu comentário" required></textarea>
+                    <textarea id="comment-text" class="form-control" placeholder="Digite seu comentário"></textarea>
                 </div>
                 <div id="image-box">
                     <button id="btn-add-image" class="btn btn-secondary" type="button">Adicionar imagem</button>
@@ -175,7 +175,7 @@
                     <input type="hidden" id="selected-pin-ids" value="">
                 </div>
                 <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
-                    <button type="button" class="btn btn-secondary back-btn">Cancelar</button>
+                    <button type="button" id="btn-cancel-comment" class="btn btn-secondary">Cancelar</button>
                     <button type="submit" class="btn btn-primary submit-btn">Enviar</button>
                 </div>
             </form>

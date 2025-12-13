@@ -305,21 +305,81 @@ body {
   position: relative;
 }
 
-/* Ensure Swiper buttons are visible and styled correctly */
+/* Botões de navegação do Swiper - Estilo moderno */
 .swiper-button-next,
 .swiper-button-prev {
-  color: var(--primary-color);
-  background: rgba(255, 255, 255, 0.8);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+  background-color: var(--primary-color);
+  background-image: none !important;
+  /* Remove seta padrão se for imagem */
+  border-radius: 50% !important;
+  border: 2px solid white !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: transparent !important;
+  /* Remove seta padrão se for fonte */
+  z-index: 10;
+  margin: 0 !important;
 }
 
 .swiper-button-next::after,
 .swiper-button-prev::after {
-  font-size: 20px;
-  font-weight: bold;
+  font-family: inherit !important;
+  font-size: 0 !important;
+  content: '' !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-right: 3px solid white !important;
+  border-bottom: 3px solid white !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+}
+
+.swiper-button-next::after {
+  transform: translate(-60%, -50%) rotate(-45deg) !important;
+}
+
+.swiper-button-prev::after {
+  transform: translate(-40%, -50%) rotate(135deg) !important;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
+}
+
+/* Ajuste dos botões de navegação no mobile */
+@media (max-width: 480px) {
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .swiper-button-next {
+    right: 5px !important;
+  }
+
+  .swiper-button-prev {
+    left: 5px !important;
+  }
+
+  .swiper-button-next::after,
+  .swiper-button-prev::after {
+    width: 8px !important;
+    height: 8px !important;
+    border-width: 2px !important;
+  }
 }
 
 /* Restore missing structural styles */
@@ -518,15 +578,16 @@ h1 {
 }
 
 .action-buttons {
-  margin-top: 30px;
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 40px;
+  padding-bottom: 20px;
 }
 
 .comment-btn {
-  width: 100%;
+  width: 90%;
+  max-width: 400px;
   padding: 16px;
   background-color: #0a2a66;
   color: #fff;
@@ -538,9 +599,11 @@ h1 {
   box-shadow: 0 4px 12px rgba(10, 42, 102, 0.2);
   transition: all 0.3s ease;
   position: fixed;
-  bottom: 20px;
+  bottom: 15px;
+  /* Espaço pequeno do fundo */
   left: 50%;
   transform: translateX(-50%);
+  z-index: 100;
 }
 
 .comment-btn:hover {
@@ -763,20 +826,89 @@ h1 {
   display: flex;
 }
 
+/* Esconder botões de navegação do Swiper que podem vazar para o modal */
+#addCommentModal .swiper-button-next,
+#addCommentModal .swiper-button-prev {
+  display: none !important;
+}
+
 #add-comment-body {
   width: 90%;
   max-width: 500px;
-  padding: 30px;
+  padding: 24px;
   background-color: #fff;
   border-radius: 24px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  /* allow scrolling inside modal and avoid content cutoff */
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 40px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
-  padding-bottom: 110px;
-  /* leave space for fixed action buttons */
+}
+
+/* Responsivo para mobile */
+@media (max-width: 480px) {
+  #addCommentModal {
+    padding: 10px;
+  }
+
+  #add-comment-body {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 16px;
+    border-radius: 16px;
+    max-height: calc(100vh - 20px);
+  }
+
+  #add-comment-body h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  #comment-form {
+    gap: 14px;
+  }
+
+  #comment-form .form-group {
+    margin-bottom: 8px;
+  }
+
+  #comment-form textarea {
+    min-height: 80px;
+  }
+
+  #image-box {
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .star-rating {
+    gap: 4px;
+    padding: 8px;
+  }
+
+  .star {
+    font-size: 28px;
+  }
+
+  #comment-form .btn {
+    padding: 12px 16px;
+    font-size: 14px;
+    flex: 1;
+  }
+
+  /* Usando ID para máxima especificidade */
+  #btn-cancel-comment {
+    background: transparent !important;
+    color: var(--primary-color) !important;
+    border: 2px solid var(--primary-color) !important;
+  }
+
+  #btn-cancel-comment:active,
+  #btn-cancel-comment:hover {
+    background: #fef2f2 !important;
+    color: #dc2626 !important;
+    border-color: #dc2626 !important;
+  }
 }
 
 #add-comment-body h2 {
@@ -789,13 +921,13 @@ h1 {
 #comment-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 30px;
 }
 
 #comment-form label {
   font-weight: 600;
   color: #374151;
-  margin-bottom: -10px;
+  margin-bottom: 8px;
 }
 
 /* Form inputs removed - using .form-control from global.css */
@@ -804,18 +936,37 @@ h1 {
   min-height: 120px;
 }
 
+/* Botões de ação do modal de comentário */
+#comment-form .btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+#comment-form .btn-secondary {
+  background: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+#comment-form .btn-secondary:hover {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+  border-color: #dc2626 !important;
+}
+
 .submit-btn {
   padding: 10px 20px;
-  /* Reduzido de 16px */
   background-color: #0a2a66;
   color: #fff;
   border: none;
   border-radius: 12px;
   font-size: 14px;
-  /* Reduzido de 16px */
   font-weight: 600;
   cursor: pointer;
-  margin-top: 10px;
   transition: all 0.3s;
 }
 
