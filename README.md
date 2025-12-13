@@ -106,7 +106,7 @@ Abra um Pull Request
 
 👥 Equipe
 
-José Henrique Araújo Ravani — Front-end
+José Henrique Araújo Ravani 
 
 Francisco Simão
 
@@ -117,5 +117,6 @@ Lucas Souza
 Luís Roberto
 
 Projeto orientado pelo professor: Fabio Oliveira
+
 
 
