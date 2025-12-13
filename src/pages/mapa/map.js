@@ -452,7 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const fillZoom = Math.max(zoomH, zoomW);
     const baseZoom = fillZoom;
     map.setZoom(fillZoom);
-    map.setMinZoom(fillZoom - 0.1);
+    map.setMinZoom(fillZoom - 2);
     map.setMaxZoom(fillZoom + 1);
 
     // Keep pins scaled relative to the map zoom so they don't appear too large/small
