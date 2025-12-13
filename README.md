@@ -116,7 +116,10 @@ Lucas Souza
 
 Luís Roberto
 
+Pedro Wandrey
+
 Projeto orientado pelo professor: Fabio Oliveira
+
 
 
 
