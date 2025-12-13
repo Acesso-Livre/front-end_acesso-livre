@@ -1,52 +1,46 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pagina Inicial - Acesso Livre</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Comme:wght@100..900&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Comme:wght@100..900&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles/global.css" />
-    <link rel="stylesheet" href="./styles/index.css" />
-  </head>
 
-  <body>
-    <main>
-      <section class="blue-block-main" aria-label="Introdução">
-        <div class="section-text">
-          <h1>Mapa de Acessibilidade</h1>
-          <p>
-            Encontre e avalie os meios de Acessibilidade do IFBA Campus
-            Eunápolis. Juntos podemos construir um ambiente mais inclusivo.
-          </p>
-        </div>
-        <a
-          href="pages/mapa/"
-          class="explorar-mapa-btn"
-          aria-label="Explorar o mapa de acessibilidade"
-        >
-          Explorar mapa
-        </a>
-      </section>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pagina Inicial - Acesso Livre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Comme:wght@100..900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Comme:wght@100..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/global.css" />
+  <link rel="stylesheet" href="./styles/index.css" />
+</head>
 
-      <section class="page-comentarios" aria-label="Avaliações recentes">
-        <div class="title-comentarios">
-          <p>Avaliações recentes</p>
-        </div>
-        <div id="page-comentarios-section">
-          <!-- Comentários serão inseridos aqui via JavaScript -->
-        </div>
-      </section>
-    </main>
+<body>
+  <main>
+    <section class="blue-block-main" aria-label="Introdução">
+      <div id="section-text" class="section-text">
+        <h1>Mapa de Acessibilidade</h1>
+        <p>
+          Encontre e avalie os meios de Acessibilidade do IFBA Campus
+          Eunápolis. Juntos podemos construir um ambiente mais inclusivo.
+        </p>
+      </div>
+      <a href="pages/mapa/" class="explorar-mapa-btn" aria-label="Explorar o mapa de acessibilidade">
+        Explorar mapa
+      </a>
+    </section>
 
-    <script type="module" src="./main.js"></script>
-  </body>
+    <section class="page-comentarios" aria-label="Avaliações recentes">
+      <div class="title-comentarios">
+        <p>Avaliações recentes</p>
+      </div>
+      <div id="page-comentarios-section">
+        <!-- Comentários serão inseridos aqui via JavaScript -->
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./main.js"></script>
+</body>
+
 </html>

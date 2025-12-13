@@ -469,12 +469,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const zoomH = Math.log2(viewport.y / H);
     const zoomW = Math.log2(viewport.x / W);
     const fillZoom = Math.max(zoomH, zoomW);
+    const baseZoom = fillZoom;
     map.setZoom(fillZoom);
     map.setMinZoom(fillZoom - 2);
 
+    // Keep pins scaled relative to the map zoom so they don't appear too large/small
+    function updatePinScale() {
+      const zoom = map.getZoom();
+      const scale = Math.pow(2, zoom - baseZoom);
+
+      document.documentElement.style.setProperty(
+        "--pin-scale",
+        Math.max(0.4, Math.min(scale, 1.6))
+      );
+    }
+    updatePinScale();
+    map.on("zoom", updatePinScale);
+
     // Renderiza os pins usando a API (apenas aqui)
     await renderPinsOnMap(map, W, H);
-
     map.addControl(new BotaoCustom({ position: "bottomright" }));
 
     // --- AQUI: lógica de clique para mostrar e fechar modal ---
