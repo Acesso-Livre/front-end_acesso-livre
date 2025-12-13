@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const descEl = document.querySelector("#location-description");
       const starsEl = document.querySelector(".stars");
       const swiperWrapper = document.querySelector(".swiper-wrapper");
-      const infoList = document.querySelector("#info-content ul");
+      const infoContent = document.querySelector("#info-content");
       const commentsList = document.querySelector(
         "#review-content .comments-list"
       );
@@ -235,10 +235,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // =========================
       // 4. ITENS DE ACESSIBILIDADE (será atualizado após carregar comentários)
       // =========================
-      infoList.innerHTML = `
-        <li style="display: flex; justify-content: center; padding: 20px;">
+      infoContent.innerHTML = `
+        <div style="display: flex; justify-content: center; padding: 20px;">
           <span class="loader" style="width: 24px; height: 24px; border-width: 3px;"></span>
-        </li>
+        </div>
       `;
 
       // =========================
@@ -348,12 +348,24 @@ document.addEventListener("DOMContentLoaded", () => {
         // Converter Map para array de ícones únicos
         const allCommentIcons = Array.from(iconMap.values());
 
+        // Atualizar aba Descrição com a descrição do local
+        const descriptionText = document.getElementById("location-description-text");
+        if (descriptionText) {
+          descriptionText.textContent = details.description && details.description.trim()
+            ? details.description
+            : "Sem descrição disponível";
+        }
+
+        // Construir HTML apenas com ícones de acessibilidade para a aba Informações
+        let infoHtml = '';
+
         // Atualizar seção de Informações de Acessibilidade com os ícones
         if (allCommentIcons.length > 0) {
           // Placeholder SVG em base64 para quando a imagem não carregar
           const placeholderSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
 
-          infoList.innerHTML = `
+          infoHtml += `
+            <h4>Informações de Acessibilidade</h4>
             <div class="accessibility-icons-grid">
               ${allCommentIcons.map(icon => `
                 <div class="accessibility-icon-item">
@@ -370,8 +382,10 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           `;
         } else {
-          infoList.innerHTML = "<li>Nenhum item de acessibilidade informado</li>";
+          infoHtml += '<p style="color: #9ca3af; font-size: 14px;">Nenhum item de acessibilidade informado</p>';
         }
+
+        infoContent.innerHTML = infoHtml;
       } catch (error) {
         console.error("Erro ao carregar dados do local:", error);
         commentsList.innerHTML = "<p>Erro ao carregar comentários.</p>";
